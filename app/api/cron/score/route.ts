@@ -19,35 +19,46 @@ export async function GET(req: NextRequest) {
     })
 
     let scored = 0
+    let errors = 0
 
     for (const tender of tenders) {
-      const prompt = `Reponds UNIQUEMENT avec du JSON, sans markdown, sans backticks.
-Evalue cet appel d'offres pour une PME de nettoyage de locaux.
-Titre: ${tender.title}
-Acheteur: ${tender.buyer_name || 'Inconnu'}
-Departement: ${tender.buyer_dept || 'Inconnu'}
-Format de reponse: {"score": X, "reason": "explication"}
-Score de 1 a 10 (8-10 = nettoyage locaux, 5-7 = lie au nettoyage, 1-4 = pas pertinent)`
+      try {
+        const prompt = `Score this cleaning tender 1-10 for a cleaning company. Reply ONLY with JSON, no markdown.
+Title: ${tender.title}
+Buyer: ${tender.buyer_name || 'Unknown'}
+Dept: ${tender.buyer_dept || 'Unknown'}
+Reply format: {"score": X, "reason": "short reason"}`
 
-      const message = await anthropic.messages.create({
-        model: 'claude-3-haiku-20240307',
-        max_tokens: 150,
-        messages: [{ role: 'user', content: prompt }],
-      })
+        const message = await anthropic.messages.create({
+          model: 'claude-3-haiku-20240307',
+          max_tokens: 100,
+          messages: [{ role: 'user', content: prompt }],
+        })
 
-      let text = message.content[0].type === 'text' ? message.content[0].text : ''
-      text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim()
-      const parsed = JSON.parse(text)
+        let text = message.content[0].type === 'text' ? message.content[0].text : ''
+        text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim()
+        
+        const jsonMatch = text.match(/\{[^}]+\}/)
+        if (!jsonMatch) {
+          errors++
+          continue
+        }
 
-      await supabase
-        .from('tenders')
-        .update({ relevance_score: parsed.score, score_reason: parsed.reason })
-        .eq('id', tender.id)
+        const parsed = JSON.parse(jsonMatch[0])
 
-      scored++
+        await supabase
+          .from('tenders')
+          .update({ relevance_score: parsed.score, score_reason: parsed.reason })
+          .eq('id', tender.id)
+
+        scored++
+        await new Promise(r => setTimeout(r, 300))
+      } catch (err) {
+        errors++
+      }
     }
 
-    return NextResponse.json({ success: true, scored })
+    return NextResponse.json({ success: true, scored, errors })
   } catch (err) {
     return NextResponse.json({ error: String(err) })
   }
