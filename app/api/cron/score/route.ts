@@ -23,11 +23,12 @@ export async function GET(req: NextRequest) {
 
     for (const tender of tenders) {
       try {
-        const prompt = `Score this cleaning tender 1-10 for a cleaning company. Reply ONLY with JSON, no markdown.
-Title: ${tender.title}
-Buyer: ${tender.buyer_name || 'Unknown'}
-Dept: ${tender.buyer_dept || 'Unknown'}
-Reply format: {"score": X, "reason": "short reason"}`
+        const prompt = `Note cet appel d'offres de 1 a 10 pour une PME de nettoyage de locaux. Reponds UNIQUEMENT en JSON, sans markdown.
+Titre: ${tender.title}
+Acheteur: ${tender.buyer_name || 'Inconnu'}
+Departement: ${tender.buyer_dept || 'Inconnu'}
+Format: {"score": X, "reason": "raison courte en francais"}
+Score: 8-10 nettoyage locaux/batiments, 5-7 lie au nettoyage, 1-4 pas pertinent`
 
         const message = await anthropic.messages.create({
           model: 'claude-3-haiku-20240307',
