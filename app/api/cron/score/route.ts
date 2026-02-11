@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
       .from('tenders')
       .select('id, title, description, buyer_name, buyer_dept, cpv_codes, estimated_amount')
       .is('relevance_score', null)
-      .limit(2)
+      .limit(20)
 
     if (error || !tenders || tenders.length === 0) {
       return NextResponse.json({ step: 'no tenders', error: error?.message })
