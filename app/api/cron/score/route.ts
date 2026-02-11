@@ -34,11 +34,19 @@ export async function GET(req: NextRequest) {
         let text = message.content[0].type === 'text' ? message.content[0].text : ''
         text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim()
 
-        const jsonMatch = text.match(/\{[^}]+\}/)
-        if (!jsonMatch) {
-          details.push(tender.id + ': bad json: ' + text.substring(0, 50))
-          errors++
-          continue
+        let parsed
+        try {
+          parsed = JSON.parse(text)
+        } catch {
+          const scoreMatch = text.match(/"score"\s*:\s*(\d+)/)
+          const reasonMatch = text.match(/"reason"\s*:\s*"([^"]*(?:"[^"]*)*?)"\s*\}/) 
+          if (scoreMatch) {
+            parsed = { score: parseInt(scoreMatch[1]), reason: reasonMatch ? reasonMatch[1] : 'Score auto' }
+          } else {
+            details.push(tender.id + ': no score found')
+            errors++
+            continue
+          }
         }
 
         const parsed = JSON.parse(jsonMatch[0])
