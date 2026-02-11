@@ -1,9 +1,9 @@
-import Anthropic from '@anthropic-ai/sdk';
-import { supabase } from './supabase';
+import Anthropic from '@anthropic-ai/sdk'
+import { supabase } from './supabase'
 
 const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY!,
-});
+  apiKey: process.env.ANTHROPIC_API_KEY || 'placeholder',
+})
 
 export async function scoreTenders() {
   // Recuperer les AO pas encore scores

@@ -1,7 +1,7 @@
 import { Resend } from 'resend'
 import { supabase } from './supabase'
 
-const resend = new Resend(process.env.RESEND_API_KEY!)
+const resend = new Resend(process.env.RESEND_API_KEY || 'placeholder')
 
 export async function sendDigest() {
   const { data: subscribers, error: subError } = await supabase
