@@ -39,17 +39,14 @@ export async function GET(req: NextRequest) {
           parsed = JSON.parse(text)
         } catch {
           const scoreMatch = text.match(/"score"\s*:\s*(\d+)/)
-          const reasonMatch = text.match(/"reason"\s*:\s*"([^"]*(?:"[^"]*)*?)"\s*\}/) 
           if (scoreMatch) {
-            parsed = { score: parseInt(scoreMatch[1]), reason: reasonMatch ? reasonMatch[1] : 'Score auto' }
+            parsed = { score: parseInt(scoreMatch[1]), reason: 'Score auto' }
           } else {
             details.push(tender.id + ': no score found')
             errors++
             continue
           }
         }
-
-        const parsed = JSON.parse(jsonMatch[0])
 
         const { error: updateError } = await supabase
           .from('tenders')
@@ -70,7 +67,7 @@ export async function GET(req: NextRequest) {
       }
     }
 
-    return NextResponse.json({ success: true, scored, errors, details, remaining: tenders.length - scored - errors })
+    return NextResponse.json({ success: true, scored, errors, details })
   } catch (err) {
     return NextResponse.json({ error: String(err) })
   }
