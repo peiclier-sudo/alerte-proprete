@@ -1,15 +1,18 @@
 import { NextRequest, NextResponse } from 'next/server'
-import { scoreTenders } from '../../../../lib/scorer'
+import { supabase } from '../../../../lib/supabase'
 
 export async function GET(req: NextRequest) {
-  try {
-    const count = await scoreTenders()
-    return NextResponse.json({ success: true, scored: count })
-  } catch (error) {
-    console.error('[CRON score] Erreur:', error)
-    return NextResponse.json(
-      { error: 'Echec du scoring', details: String(error) },
-      { status: 500 }
-    )
-  }
+  const { data, error } = await supabase
+    .from('tenders')
+    .select('id, title')
+    .is('relevance_score', null)
+    .limit(3)
+
+  return NextResponse.json({
+    url_set: !!process.env.SUPABASE_URL,
+    url_value: process.env.SUPABASE_URL?.substring(0, 20) || 'EMPTY',
+    error: error?.message || null,
+    found: data?.length || 0,
+    titles: data?.map(t => t.title) || [],
+  })
 }
