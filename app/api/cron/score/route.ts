@@ -8,7 +8,8 @@ export async function GET(req: NextRequest) {
       .from('tenders')
       .select('id, title, buyer_name, buyer_dept')
       .is('relevance_score', null)
-      .limit(10)
+      .order('fetched_at', { ascending: true })
+      .limit(20)
 
     if (error || !tenders || tenders.length === 0) {
       return NextResponse.json({ done: true, message: 'Tous les AO sont scores' })
