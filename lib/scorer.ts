@@ -50,10 +50,11 @@ Le score va de 1 a 10:
         messages: [{ role: 'user', content: prompt }],
       });
 
-      const text =
+      let text =
         message.content[0].type === 'text' ? message.content[0].text : '';
+      text = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
       const parsed = JSON.parse(text);
-
+      
       await supabase
         .from('tenders')
         .update({
