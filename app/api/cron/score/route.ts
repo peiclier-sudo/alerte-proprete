@@ -30,7 +30,7 @@ Format de reponse: {"score": X, "reason": "explication"}
 Score de 1 a 10 (8-10 = nettoyage locaux, 5-7 = lie au nettoyage, 1-4 = pas pertinent)`
 
       const message = await anthropic.messages.create({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'claude-3-haiku-20240307',
         max_tokens: 150,
         messages: [{ role: 'user', content: prompt }],
       })
