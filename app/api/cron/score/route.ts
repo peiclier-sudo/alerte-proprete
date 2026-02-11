@@ -1,5 +1,5 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { scoreTenders } from '../../../../lib/scorer';
+import { NextRequest, NextResponse } from 'next/server'
+import { scoreTenders } from '../../../../lib/scorer'
 
 export async function GET(req: NextRequest) {
   // AUTH DESACTIVEE POUR TEST
@@ -12,10 +12,13 @@ export async function GET(req: NextRequest) {
   // }
 
   try {
-    const count = await scoreTenders();
-    return NextResponse.json({ success: true, scored: count });
+    const count = await scoreTenders()
+    return NextResponse.json({ success: true, scored: count })
   } catch (error) {
-    console.error('[CRON score] Erreur:', error);
-    return NextResponse.json({ error: 'Echec du scoring' }, { status: 500 });
+    console.error('[CRON score] Erreur:', error)
+    return NextResponse.json(
+      { error: 'Echec du scoring' },
+      { status: 500 }
+    )
   }
 }
