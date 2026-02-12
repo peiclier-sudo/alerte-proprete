@@ -73,38 +73,18 @@ export default function LandingPage() {
       color: '#1a1a1a',
       fontFamily: "'Source Sans 3', 'Helvetica Neue', sans-serif",
     }}>
+      
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html { scroll-behavior: smooth; }
-
         ::selection { background: #d1fae5; }
-
         input:focus { outline: none; border-color: #059669 !important; }
-
-        .cta-btn {
-          transition: all 0.2s ease;
-        }
-        .cta-btn:hover {
-          opacity: 0.92;
-          transform: translateY(-1px);
-        }
-
-        .ao-card {
-          transition: all 0.2s ease;
-        }
-        .ao-card:hover {
-          border-color: #d1d5db;
-        }
-
-        .faq-toggle {
-          transition: all 0.2s ease;
-          cursor: pointer;
-        }
-        .faq-toggle:hover {
-          background: #f3f4f6;
-        }
+        .cta-btn { transition: all 0.2s ease; }
+        .cta-btn:hover { opacity: 0.92; transform: translateY(-1px); }
+        .ao-card { transition: all 0.2s ease; }
+        .ao-card:hover { border-color: #d1d5db; }
+        .faq-toggle { transition: all 0.2s ease; cursor: pointer; }
+        .faq-toggle:hover { background: #f3f4f6; }
       `}</style>
 
       {/* NAV */}
