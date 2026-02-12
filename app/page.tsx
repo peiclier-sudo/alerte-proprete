@@ -143,7 +143,7 @@ export default function LandingPage() {
         }}>Essai gratuit</a>
       </nav>
 
-      {/* HERO — Pain-point led, benefit focused */}
+      {/* HERO */}
       <header style={{
         maxWidth: 760,
         margin: '0 auto',
@@ -157,7 +157,7 @@ export default function LandingPage() {
           letterSpacing: '0.08em',
           textTransform: 'uppercase',
           marginBottom: 20,
-        }}>Veille marchés publics de nettoyage</p>
+        }}>Pour les entreprises de nettoyage</p>
 
         <h1 style={{
           fontFamily: "'Fraunces', serif",
@@ -168,7 +168,7 @@ export default function LandingPage() {
           marginBottom: 20,
           letterSpacing: '-1px',
         }}>
-          Vous perdez des marchés publics parce que vous les découvrez trop tard.
+          Combien de marchés publics avez-vous raté ce mois-ci sans le savoir ?
         </h1>
 
         <p style={{
@@ -178,9 +178,9 @@ export default function LandingPage() {
           maxWidth: 580,
           margin: '0 auto 36px',
         }}>
-          AlertePropreté surveille le BOAMP chaque nuit et vous envoie
-          les appels d'offres de nettoyage dans vos départements,
-          classés par pertinence. Chaque matin à 5h, dans votre boîte mail.
+          Chaque matin avant 6h, recevez par email les appels d'offres
+          de nettoyage publiés dans vos départements — triés par pertinence,
+          prêts à être étudiés.
         </p>
 
         <a href="#inscription" className="cta-btn" style={{
@@ -192,14 +192,14 @@ export default function LandingPage() {
           textDecoration: 'none',
           fontSize: 16,
           fontWeight: 700,
-        }}>Essayer gratuitement pendant 14 jours</a>
+        }}>Tester gratuitement pendant 14 jours</a>
 
         <p style={{ fontSize: 13, color: '#999', marginTop: 12 }}>
-          Sans carte bancaire. Sans engagement.
+          Aucune carte bancaire requise.
         </p>
       </header>
 
-      {/* SOCIAL PROOF BAR — Numbers that build trust */}
+      {/* SOCIAL PROOF BAR */}
       <div style={{
         maxWidth: 760,
         margin: '0 auto 64px',
@@ -214,9 +214,9 @@ export default function LandingPage() {
           background: 'white',
         }}>
           {[
-            { val: '100+', label: 'AO de nettoyage par mois' },
+            { val: '100+', label: "appels d'offres détectés par mois" },
             { val: '96', label: 'départements couverts' },
-            { val: '< 2 min', label: 'de lecture chaque matin' },
+            { val: '2 min', label: 'de lecture par jour suffisent' },
           ].map((s, i) => (
             <div key={i} style={{
               padding: '20px 16px',
@@ -230,7 +230,7 @@ export default function LandingPage() {
         </div>
       </div>
 
-      {/* PROBLEM / SOLUTION — Address the pain directly */}
+      {/* PROBLEM / SOLUTION */}
       <section style={{
         maxWidth: 760,
         margin: '0 auto',
@@ -244,27 +244,26 @@ export default function LandingPage() {
           marginBottom: 40,
           textAlign: 'center',
           letterSpacing: '-0.5px',
-        }}>Le problème que vous connaissez bien</h2>
+        }}>Vous connaissez la situation</h2>
 
         <div style={{
           display: 'grid',
           gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
           gap: 24,
         }}>
-          {/* Problem */}
           <div style={{
             padding: '28px 24px',
             background: '#fef2f2',
             borderRadius: 10,
             border: '1px solid #fecaca',
           }}>
-            <p style={{ fontSize: 15, fontWeight: 700, color: '#991b1b', marginBottom: 16 }}>Sans AlertePropreté</p>
+            <p style={{ fontSize: 15, fontWeight: 700, color: '#991b1b', marginBottom: 16 }}>Aujourd'hui</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {[
-                'Vous passez 1h par jour à chercher des AO sur différentes plateformes',
-                'Vous découvrez des marchés après la date limite',
-                'Vous répondez à des AO peu pertinents, perdant temps et argent',
-                'Vos concurrents qui ont des veilleurs dédiés vous passent devant',
+                "Vous cherchez manuellement sur plusieurs sites, ça prend une heure chaque jour",
+                "Vous tombez sur des marchés intéressants… dont la deadline est passée",
+                "Vous répondez à des appels d'offres mal ciblés et perdez du temps",
+                "Vos concurrents qui font de la veille professionnelle remportent les marchés avant vous",
               ].map((p, i) => (
                 <div key={i} style={{ display: 'flex', gap: 10, fontSize: 14, color: '#7f1d1d', lineHeight: 1.6 }}>
                   <span style={{ flexShrink: 0, marginTop: 2 }}>—</span>
@@ -274,7 +273,6 @@ export default function LandingPage() {
             </div>
           </div>
 
-          {/* Solution */}
           <div style={{
             padding: '28px 24px',
             background: '#f0fdf4',
@@ -284,10 +282,10 @@ export default function LandingPage() {
             <p style={{ fontSize: 15, fontWeight: 700, color: '#166534', marginBottom: 16 }}>Avec AlertePropreté</p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
               {[
-                'Un email par jour avec uniquement les AO pertinents pour vous',
-                'Détection dès la publication, bien avant la deadline',
-                "Chaque AO est noté par l'IA : vous ne lisez que les meilleurs",
-                'Le même niveau de veille que les grands groupes, pour 39 €/mois',
+                "Un email par jour, uniquement les marchés qui vous concernent",
+                "Détection dès la publication — vous êtes parmi les premiers informés",
+                "Chaque marché est évalué : vous ne lisez que ceux qui valent le coup",
+                "Le même niveau de veille que les grands groupes, pour une fraction du prix",
               ].map((p, i) => (
                 <div key={i} style={{ display: 'flex', gap: 10, fontSize: 14, color: '#14532d', lineHeight: 1.6 }}>
                   <span style={{ flexShrink: 0, marginTop: 2 }}>+</span>
@@ -299,7 +297,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* HOW IT WORKS — Simple, 3-step, no emojis */}
+      {/* HOW IT WORKS */}
       <section style={{
         background: 'white',
         borderTop: '1px solid #e5e7eb',
@@ -315,24 +313,24 @@ export default function LandingPage() {
             marginBottom: 48,
             textAlign: 'center',
             letterSpacing: '-0.5px',
-          }}>Comment ça fonctionne</h2>
+          }}>Trois étapes. Zéro effort.</h2>
 
           <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
             {[
               {
                 num: '1',
-                title: 'Collecte automatique chaque nuit',
-                desc: "Notre système interroge le Bulletin Officiel des Annonces de Marchés Publics (BOAMP) et extrait tous les marchés liés au nettoyage, à la propreté et à l'entretien de locaux.",
+                title: 'On surveille les annonces officielles pour vous',
+                desc: "Chaque nuit, notre système passe en revue les nouvelles publications de marchés publics et identifie tout ce qui touche au nettoyage, à la propreté et à l'entretien de locaux.",
               },
               {
                 num: '2',
-                title: 'Analyse et scoring par intelligence artificielle',
-                desc: "Chaque appel d'offres est évalué de 1 à 10 selon sa pertinence pour une entreprise de nettoyage de locaux. Vous ne voyez que ceux qui comptent vraiment.",
+                title: 'On trie le pertinent du bruit',
+                desc: "Chaque marché est analysé automatiquement et reçoit une note de pertinence sur 10. Les marchés de nettoyage de bureaux ou de bâtiments publics remontent en haut. Les fournitures ou travaux sans rapport descendent en bas.",
               },
               {
                 num: '3',
-                title: 'Un email clair dans votre boîte, à 5h du matin',
-                desc: "Vous commencez votre journée avec la liste des opportunités dans vos départements, triées par pertinence. Titre, acheteur, deadline, lien direct vers l'AO.",
+                title: 'Vous ouvrez votre email, tout est là',
+                desc: "Avant 6h, vous recevez la liste des opportunités dans vos départements. Titre, acheteur, deadline, note de pertinence et lien direct. Vous décidez en un coup d'œil lesquels méritent une réponse.",
               },
             ].map((step, i) => (
               <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
@@ -359,7 +357,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* REAL EXAMPLES — Show, don't tell */}
+      {/* REAL EXAMPLES */}
       <section style={{
         maxWidth: 760,
         margin: '0 auto',
@@ -373,9 +371,9 @@ export default function LandingPage() {
           marginBottom: 12,
           textAlign: 'center',
           letterSpacing: '-0.5px',
-        }}>Ce que vous recevez chaque matin</h2>
+        }}>Voilà ce que vous recevez</h2>
         <p style={{ textAlign: 'center', color: '#777', marginBottom: 40, fontSize: 15 }}>
-          Exemples réels issus du BOAMP cette semaine
+          Vrais marchés publiés cette semaine, tels qu'ils apparaissent dans votre email
         </p>
 
         <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
@@ -437,11 +435,11 @@ export default function LandingPage() {
         </div>
 
         <p style={{ textAlign: 'center', fontSize: 13, color: '#999', marginTop: 16 }}>
-          Score de pertinence calculé par IA — 10 = parfaitement adapté à une PME de nettoyage
+          La note de pertinence va de 1 à 10. Plus elle est haute, plus le marché correspond à votre activité de nettoyage.
         </p>
       </section>
 
-      {/* PRICING — Single plan, clear value */}
+      {/* PRICING */}
       <section id="tarif" style={{
         background: 'white',
         borderTop: '1px solid #e5e7eb',
@@ -456,7 +454,7 @@ export default function LandingPage() {
             color: '#111',
             marginBottom: 40,
             letterSpacing: '-0.5px',
-          }}>Un seul tarif, tout inclus</h2>
+          }}>Un tarif simple, sans surprise</h2>
 
           <div style={{
             padding: '40px 32px',
@@ -476,12 +474,12 @@ export default function LandingPage() {
 
             <div style={{ textAlign: 'left', marginBottom: 32 }}>
               {[
-                'Veille quotidienne sur le BOAMP',
-                'Scoring de pertinence par IA',
-                'Email digest chaque matin',
+                'Email quotidien avec les marchés du jour',
                 'Tous les départements de votre choix',
-                'Détection dès publication',
-                'Support par email',
+                'Marchés triés par pertinence pour votre activité',
+                'Détection dès la publication officielle',
+                'Lien direct vers chaque appel d\'offres',
+                'Support par email sous 24h',
               ].map((f, i) => (
                 <div key={i} style={{
                   padding: '10px 0',
@@ -511,7 +509,7 @@ export default function LandingPage() {
             }}>Commencer l'essai gratuit</a>
 
             <p style={{ fontSize: 13, color: '#999', marginTop: 10 }}>
-              14 jours gratuits — Sans carte bancaire — Sans engagement
+              14 jours gratuits — Aucune carte bancaire — Résiliable en un clic
             </p>
           </div>
 
@@ -521,8 +519,7 @@ export default function LandingPage() {
             marginTop: 24,
             lineHeight: 1.6,
           }}>
-            Un seul marché remporté rembourse des années d'abonnement.
-            <br />La question n'est pas le prix, c'est combien de marchés vous ratez aujourd'hui.
+            Un seul marché remporté grâce à AlertePropreté rembourse des années d'abonnement.
           </p>
         </div>
       </section>
@@ -541,9 +538,9 @@ export default function LandingPage() {
           marginBottom: 8,
           textAlign: 'center',
           letterSpacing: '-0.5px',
-        }}>Démarrez votre essai gratuit</h2>
+        }}>Recevez vos premiers marchés demain matin</h2>
         <p style={{ textAlign: 'center', color: '#777', marginBottom: 36, fontSize: 15 }}>
-          Recevez votre premier email demain matin
+          Inscrivez-vous en 30 secondes, aucune carte bancaire demandée
         </p>
 
         {submitted ? (
@@ -555,10 +552,10 @@ export default function LandingPage() {
             textAlign: 'center',
           }}>
             <p style={{ fontSize: 22, fontWeight: 700, color: '#166534', marginBottom: 8, fontFamily: "'Fraunces', serif" }}>
-              Inscription confirmée.
+              C'est tout bon.
             </p>
             <p style={{ color: '#555', fontSize: 15, lineHeight: 1.7 }}>
-              Votre premier digest arrivera demain matin à 5h00
+              Demain matin avant 6h, vous recevrez votre premier email
               avec les appels d'offres de nettoyage dans vos départements.
             </p>
           </div>
@@ -571,7 +568,7 @@ export default function LandingPage() {
           }}>
             <div style={{ marginBottom: 16 }}>
               <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#333', marginBottom: 6 }}>
-                Email professionnel
+                Votre email professionnel
               </label>
               <input
                 type="email"
@@ -593,13 +590,13 @@ export default function LandingPage() {
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
               <div>
                 <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#333', marginBottom: 6 }}>
-                  Nom
+                  Votre nom
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Votre nom"
+                  placeholder="Jean Dupont"
                   style={{
                     width: '100%',
                     padding: '12px 14px',
@@ -619,7 +616,7 @@ export default function LandingPage() {
                   type="text"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  placeholder="Nom de l'entreprise"
+                  placeholder="Nom de votre société"
                   style={{
                     width: '100%',
                     padding: '12px 14px',
@@ -635,7 +632,7 @@ export default function LandingPage() {
 
             <div style={{ marginBottom: 24, position: 'relative' }}>
               <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#333', marginBottom: 6 }}>
-                Départements à surveiller
+                Quels départements voulez-vous surveiller ?
               </label>
 
               {selectedDepts.length > 0 && (
@@ -665,7 +662,7 @@ export default function LandingPage() {
                 value={deptSearch}
                 onChange={(e) => { setDeptSearch(e.target.value); setShowDeptDropdown(true) }}
                 onFocus={() => setShowDeptDropdown(true)}
-                placeholder="Tapez pour rechercher..."
+                placeholder="Tapez un numéro ou un nom..."
                 style={{
                   width: '100%',
                   padding: '12px 14px',
@@ -746,17 +743,17 @@ export default function LandingPage() {
                 fontFamily: "'Source Sans 3', sans-serif",
               }}
             >
-              {isSubmitting ? 'Inscription...' : 'Démarrer mon essai gratuit'}
+              {isSubmitting ? 'Inscription...' : "Démarrer l'essai gratuit"}
             </button>
 
             <p style={{ textAlign: 'center', fontSize: 12, color: '#999', marginTop: 10 }}>
-              14 jours gratuits. Sans carte bancaire.
+              14 jours gratuits. Aucune carte bancaire.
             </p>
           </div>
         )}
       </section>
 
-      {/* FAQ — Accordion style */}
+      {/* FAQ */}
       <section style={{
         maxWidth: 640,
         margin: '0 auto',
@@ -770,28 +767,32 @@ export default function LandingPage() {
           marginBottom: 32,
           textAlign: 'center',
           letterSpacing: '-0.5px',
-        }}>Questions fréquentes</h2>
+        }}>Questions courantes</h2>
 
         {[
           {
-            q: "D'où viennent les appels d'offres ?",
-            a: "Directement du BOAMP (Bulletin Officiel des Annonces de Marchés Publics), la source officielle de l'État. Tous les marchés publics y sont publiés obligatoirement. Nous ne dépendons d'aucun intermédiaire."
+            q: "D'où viennent les marchés que vous détectez ?",
+            a: "Du Bulletin Officiel des Annonces de Marchés Publics (BOAMP), la source officielle de l'État français. C'est le site où tous les marchés publics doivent être publiés. Nous le surveillons chaque nuit automatiquement."
           },
           {
-            q: "Comment fonctionne le scoring de pertinence ?",
-            a: "Notre intelligence artificielle analyse le titre, le descripteur, l'acheteur et les codes CPV de chaque marché. Elle attribue un score de 1 à 10 selon la pertinence pour une entreprise de nettoyage de locaux. Un 8 ou plus signifie un marché directement lié au nettoyage de bâtiments."
+            q: "Qu'est-ce que la note de pertinence exactement ?",
+            a: "C'est un score de 1 à 10 que notre système attribue à chaque marché. Il analyse le titre, le descriptif et le type de prestation pour déterminer si le marché concerne bien du nettoyage de locaux. Un 8 ou plus signifie que c'est directement dans votre cœur de métier. En dessous de 5, c'est probablement hors sujet."
           },
           {
-            q: "Est-ce que ça couvre aussi la vitrerie et l'entretien ?",
-            a: "Oui. Le système détecte les marchés de nettoyage de locaux, de vitrerie, d'entretien de bâtiments et de propreté en général. Tout ce qui touche au secteur de la propreté est couvert."
+            q: "Est-ce que ça couvre aussi la vitrerie, la propreté urbaine, etc. ?",
+            a: "Oui. Nettoyage de locaux, vitrerie, entretien de bâtiments, propreté — tout ce qui touche à votre secteur est détecté. Si un marché mentionne le nettoyage dans son intitulé ou ses codes, nous le trouvons."
           },
           {
-            q: "Puis-je modifier mes départements après l'inscription ?",
-            a: "Oui, à tout moment. Contactez-nous par email et vos préférences seront mises à jour pour le lendemain matin."
+            q: "Je peux changer mes départements en cours de route ?",
+            a: "Bien sûr. Un simple email suffit. Le changement est effectif dès le lendemain."
           },
           {
-            q: "Quel est l'engagement ?",
-            a: "Aucun. L'essai dure 14 jours sans carte bancaire. Ensuite, l'abonnement est de 39 €/mois, résiliable à tout moment en un clic. Pas de frais cachés, pas de période minimum."
+            q: "39 €/mois, ça vaut le coup pour une petite structure ?",
+            a: "Un marché public de nettoyage, même petit, représente plusieurs milliers d'euros par an. Un seul marché remporté grâce à une détection plus rapide rembourse largement l'abonnement. Et vous économisez l'heure de veille quotidienne."
+          },
+          {
+            q: "Et si je veux arrêter ?",
+            a: "Pas de problème. L'essai de 14 jours est gratuit, sans carte bancaire. Ensuite l'abonnement est mensuel, sans engagement. Vous pouvez résilier à tout moment en un email."
           },
         ].map((faq, i) => (
           <div key={i} style={{
@@ -844,7 +845,7 @@ export default function LandingPage() {
           marginBottom: 20,
           lineHeight: 1.4,
         }}>
-          Demain matin à 5h, vous pourriez avoir vos premiers marchés.
+          Demain matin, vous saurez exactement quels marchés méritent votre attention.
         </p>
         <a href="#inscription" className="cta-btn" style={{
           display: 'inline-block',
@@ -855,7 +856,7 @@ export default function LandingPage() {
           textDecoration: 'none',
           fontSize: 16,
           fontWeight: 700,
-        }}>Essayer gratuitement</a>
+        }}>Tester gratuitement pendant 14 jours</a>
       </section>
 
       {/* FOOTER */}
@@ -869,7 +870,7 @@ export default function LandingPage() {
           <span style={{ fontFamily: "'Fraunces', serif", fontSize: 15, fontWeight: 700, color: '#1a1a1a' }}>propreté</span>
         </div>
         <p style={{ fontSize: 12, color: '#999' }}>
-          AlertePropreté — Veille automatisée des marchés publics de nettoyage
+          AlertePropreté — Veille marchés publics de nettoyage
         </p>
       </footer>
     </div>
