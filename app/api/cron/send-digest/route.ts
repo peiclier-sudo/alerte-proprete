@@ -2,7 +2,6 @@ import { NextRequest, NextResponse } from 'next/server'
 import { supabase } from '../../../../lib/supabase'
 
 export async function GET(req: NextRequest) {
-  // Check subscribers
   const { data: subs, error: subErr } = await supabase
     .from('subscribers')
     .select('*')
@@ -15,9 +14,8 @@ export async function GET(req: NextRequest) {
 
   const sub = subs[0]
   const depts = sub.departments || []
-  const orFilter = depts.map((d: string) => `buyer_dept.cs.{"${d}"}`).join(',')
+  const orFilter = depts.map((d: string) => `buyer_dept.like.%${d}%`).join(',')
 
-  // Check tenders
   const { data: tenders, error: tErr } = await supabase
     .from('tenders')
     .select('id, title, relevance_score, buyer_dept')

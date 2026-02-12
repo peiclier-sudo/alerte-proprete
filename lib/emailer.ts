@@ -2,7 +2,7 @@ import { Resend } from 'resend'
 import { supabase } from './supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY || 'placeholder')
-  
+
 export async function sendDigest() {
   const { data: subscribers, error: subError } = await supabase
     .from('subscribers')
@@ -20,7 +20,7 @@ export async function sendDigest() {
   for (const sub of subscribers) {
     try {
       const depts = sub.departments || []
-      const orFilter = depts.map((d: string) => `buyer_dept.cs.{"${d}"}`).join(',')
+      const orFilter = depts.map((d: string) => `buyer_dept.like.%${d}%`).join(',')
       const { data: tenders, error: tError } = await supabase
         .from('tenders')
         .select('*')
@@ -47,7 +47,7 @@ export async function sendDigest() {
         continue
       }
 
-      const tendersHtml = newTenders.map(t => 
+      const tendersHtml = newTenders.map(t =>
         '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:12px;">' +
           '<div style="display:flex;justify-content:space-between;align-items:center;">' +
             '<strong style="color:#1a202c;font-size:15px;">' + t.title + '</strong>' +
@@ -66,7 +66,7 @@ export async function sendDigest() {
         '</div>'
       ).join('')
 
-      const html = 
+      const html =
         '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">' +
           '<h1 style="color:#2d3748;font-size:22px;">Vos alertes proprete du jour</h1>' +
           '<p style="color:#718096;">Bonjour ' + (sub.name || '') + ',<br>' +
