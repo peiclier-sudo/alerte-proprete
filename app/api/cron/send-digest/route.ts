@@ -74,7 +74,7 @@ export async function GET(req: NextRequest) {
         '</div>'
 
       const { error } = await resend.emails.send({
-        from: 'AlerteProprete <onboarding@resend.dev>',
+        from: 'AlertePropreté <contact@alerteproprete.fr>',
         to: sub.email,
         subject: newTenders.length + ' appel(s) d\'offres nettoyage',
         html,
