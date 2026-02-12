@@ -3,6 +3,11 @@ import { Resend } from 'resend'
 import { supabase } from '../../../../lib/supabase'
 
 export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Non autorise.' }, { status: 401 })
+  }
+
   try {
     const resend = new Resend(process.env.RESEND_API_KEY || '')
 
@@ -13,7 +18,7 @@ export async function GET(req: NextRequest) {
       .in('plan', ['trial', 'active'])
 
     if (!subs || subs.length === 0) {
-      return NextResponse.json({ emails_sent: 0, reason: 'no subscribers' })
+      return NextResponse.json({ emails_sent: 0 })
     }
 
     let sent = 0

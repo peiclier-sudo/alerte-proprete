@@ -3,6 +3,11 @@ import Anthropic from '@anthropic-ai/sdk'
 import { supabase } from '../../../../lib/supabase'
 
 export async function GET(req: NextRequest) {
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json({ error: 'Non autorise.' }, { status: 401 })
+  }
+
   try {
     const { data: tenders, error } = await supabase
       .from('tenders')
@@ -20,8 +25,6 @@ export async function GET(req: NextRequest) {
     })
 
     let scored = 0
-    let errors = 0
-    const details: string[] = []
 
     for (const tender of tenders) {
       try {
@@ -42,32 +45,23 @@ export async function GET(req: NextRequest) {
           if (scoreMatch) {
             parsed = { score: parseInt(scoreMatch[1]), reason: 'Score auto' }
           } else {
-            details.push(tender.id + ': no score found')
-            errors++
             continue
           }
         }
 
-        const { error: updateError } = await supabase
+        await supabase
           .from('tenders')
           .update({ relevance_score: parsed.score, score_reason: parsed.reason })
           .eq('id', tender.id)
 
-        if (updateError) {
-          details.push(tender.id + ': update failed: ' + updateError.message)
-          errors++
-        } else {
-          scored++
-        }
-
+        scored++
         await new Promise(r => setTimeout(r, 500))
-      } catch (err) {
-        details.push(tender.id + ': ' + String(err).substring(0, 80))
-        errors++
+      } catch {
+        continue
       }
     }
 
-    return NextResponse.json({ success: true, scored, errors, details })
+    return NextResponse.json({ success: true, scored })
   } catch (err) {
     return NextResponse.json({ error: String(err) })
   }

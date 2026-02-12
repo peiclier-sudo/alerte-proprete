@@ -2,14 +2,13 @@ import { NextRequest, NextResponse } from 'next/server'
 import { fetchBoampTenders } from '../../../../lib/boamp'
 
 export async function GET(req: NextRequest) {
-  // AUTH DESACTIVEE POUR TEST
-  // const authHeader = req.headers.get('authorization')
-  // if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
-  //   return NextResponse.json(
-  //     { error: 'Non autorise. Header Authorization requis.' },
-  //     { status: 401 }
-  //   )
-  // }
+  const authHeader = req.headers.get('authorization')
+  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+    return NextResponse.json(
+      { error: 'Non autorise. Header Authorization requis.' },
+      { status: 401 }
+    )
+  }
 
   try {
     const startTime = Date.now()
