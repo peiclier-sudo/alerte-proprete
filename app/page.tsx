@@ -26,33 +26,6 @@ const DEPARTEMENTS = [
   "973 - Guyane","974 - Réunion","976 - Mayotte"
 ]
 
-const EXEMPLE_AOS = [
-  {
-    title: "Nettoyage intérieur et extérieur des bâtiments communaux",
-    buyer: "Mairie de Nantes",
-    dept: "44",
-    score: 9,
-    deadline: "28/02/2026",
-    reason: "Nettoyage de locaux communaux, très pertinent"
-  },
-  {
-    title: "Prestations de nettoyage des locaux et vitreries",
-    buyer: "CPAM du Puy-de-Dôme",
-    dept: "63",
-    score: 9,
-    deadline: "15/03/2026",
-    reason: "Nettoyage + vitrerie de locaux administratifs"
-  },
-  {
-    title: "Mise en propreté des locaux et des vitres",
-    buyer: "Conseil Départemental 92",
-    dept: "92",
-    score: 10,
-    deadline: "05/03/2026",
-    reason: "Marché de propreté multi-sites, idéal PME"
-  }
-]
-
 export default function LandingPage() {
   const [email, setEmail] = useState('')
   const [name, setName] = useState('')
@@ -62,8 +35,9 @@ export default function LandingPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitted, setSubmitted] = useState(false)
   const [showDeptDropdown, setShowDeptDropdown] = useState(false)
+  const [openFaq, setOpenFaq] = useState<number | null>(null)
 
-  const filteredDepts = DEPARTEMENTS.filter(d => 
+  const filteredDepts = DEPARTEMENTS.filter(d =>
     d.toLowerCase().includes(deptSearch.toLowerCase())
   )
 
@@ -93,419 +67,366 @@ export default function LandingPage() {
   }
 
   return (
-    <div style={{ 
-      minHeight: '100vh', 
-      background: '#0a1628',
-      color: '#e8edf5',
-      fontFamily: "'DM Sans', sans-serif",
-      overflowX: 'hidden'
+    <div style={{
+      minHeight: '100vh',
+      background: '#fafaf8',
+      color: '#1a1a1a',
+      fontFamily: "'Source Sans 3', 'Helvetica Neue', sans-serif",
     }}>
-      {/* Google Fonts */}
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,700;1,9..40,400&family=Playfair+Display:wght@700;900&display=swap');
-        
+        @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700;9..144,800&family=Source+Sans+3:wght@300;400;500;600;700&display=swap');
+
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         html { scroll-behavior: smooth; }
 
-        @keyframes fadeInUp {
-          from { opacity: 0; transform: translateY(30px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
+        ::selection { background: #d1fae5; }
 
-        @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
-        }
+        input:focus { outline: none; border-color: #059669 !important; }
 
-        @keyframes shimmer {
-          0% { background-position: -200% center; }
-          100% { background-position: 200% center; }
-        }
-
-        @keyframes pulse {
-          0%, 100% { opacity: 0.4; }
-          50% { opacity: 0.8; }
-        }
-
-        .fade-in-up {
-          animation: fadeInUp 0.8s ease forwards;
-        }
-
-        .fade-in-up-delay-1 {
-          animation: fadeInUp 0.8s ease 0.15s forwards;
-          opacity: 0;
-        }
-
-        .fade-in-up-delay-2 {
-          animation: fadeInUp 0.8s ease 0.3s forwards;
-          opacity: 0;
-        }
-
-        .fade-in-up-delay-3 {
-          animation: fadeInUp 0.8s ease 0.45s forwards;
-          opacity: 0;
-        }
-
-        .shimmer-text {
-          background: linear-gradient(90deg, #34d399 0%, #6ee7b7 25%, #ffffff 50%, #6ee7b7 75%, #34d399 100%);
-          background-size: 200% auto;
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-          animation: shimmer 4s linear infinite;
-        }
-
-        .card-hover {
-          transition: all 0.3s ease;
-        }
-        .card-hover:hover {
-          transform: translateY(-4px);
-          box-shadow: 0 20px 60px rgba(52, 211, 153, 0.15);
-        }
-
-        .btn-primary {
-          transition: all 0.3s ease;
-          position: relative;
-          overflow: hidden;
-        }
-        .btn-primary:hover {
-          transform: translateY(-2px);
-          box-shadow: 0 12px 40px rgba(52, 211, 153, 0.4);
-        }
-
-        .dept-tag {
+        .cta-btn {
           transition: all 0.2s ease;
         }
-        .dept-tag:hover {
-          background: rgba(52, 211, 153, 0.3) !important;
+        .cta-btn:hover {
+          opacity: 0.92;
+          transform: translateY(-1px);
         }
 
-        .glow-dot {
-          animation: pulse 3s ease infinite;
+        .ao-card {
+          transition: all 0.2s ease;
+        }
+        .ao-card:hover {
+          border-color: #d1d5db;
         }
 
-        input:focus, textarea:focus {
-          outline: none;
-          border-color: #34d399 !important;
-          box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.15);
+        .faq-toggle {
+          transition: all 0.2s ease;
+          cursor: pointer;
         }
-
-        ::selection {
-          background: rgba(52, 211, 153, 0.3);
-        }
-
-        .faq-item {
-          transition: all 0.3s ease;
-        }
-        .faq-item:hover {
-          background: rgba(52, 211, 153, 0.05);
+        .faq-toggle:hover {
+          background: #f3f4f6;
         }
       `}</style>
 
-      {/* HERO SECTION */}
+      {/* NAV */}
+      <nav style={{
+        maxWidth: 1080,
+        margin: '0 auto',
+        padding: '20px 24px',
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}>
+        <div style={{ display: 'flex', alignItems: 'baseline', gap: 2 }}>
+          <span style={{
+            fontFamily: "'Fraunces', serif",
+            fontSize: 20,
+            fontWeight: 800,
+            color: '#059669',
+            letterSpacing: '-0.5px',
+          }}>alerte</span>
+          <span style={{
+            fontFamily: "'Fraunces', serif",
+            fontSize: 20,
+            fontWeight: 800,
+            color: '#1a1a1a',
+            letterSpacing: '-0.5px',
+          }}>propreté</span>
+        </div>
+        <a href="#inscription" className="cta-btn" style={{
+          padding: '10px 20px',
+          background: '#059669',
+          color: 'white',
+          borderRadius: 6,
+          textDecoration: 'none',
+          fontSize: 14,
+          fontWeight: 600,
+        }}>Essai gratuit</a>
+      </nav>
+
+      {/* HERO — Pain-point led, benefit focused */}
       <header style={{
-        position: 'relative',
-        padding: '40px 24px 80px',
-        maxWidth: 1200,
+        maxWidth: 760,
         margin: '0 auto',
+        padding: '72px 24px 64px',
+        textAlign: 'center',
       }}>
-        {/* Decorative elements */}
-        <div style={{
-          position: 'absolute',
-          top: 100,
-          right: -100,
-          width: 400,
-          height: 400,
-          background: 'radial-gradient(circle, rgba(52, 211, 153, 0.08) 0%, transparent 70%)',
-          borderRadius: '50%',
-          pointerEvents: 'none',
-        }} />
-        <div style={{
-          position: 'absolute',
-          top: 300,
-          left: -150,
-          width: 300,
-          height: 300,
-          background: 'radial-gradient(circle, rgba(59, 130, 246, 0.06) 0%, transparent 70%)',
-          borderRadius: '50%',
-          pointerEvents: 'none',
-        }} />
+        <p style={{
+          fontSize: 14,
+          fontWeight: 600,
+          color: '#059669',
+          letterSpacing: '0.08em',
+          textTransform: 'uppercase',
+          marginBottom: 20,
+        }}>Veille marchés publics de nettoyage</p>
 
-        {/* Nav */}
-        <nav className="fade-in-up" style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 80,
+        <h1 style={{
+          fontFamily: "'Fraunces', serif",
+          fontSize: 'clamp(32px, 5.5vw, 52px)',
+          fontWeight: 800,
+          lineHeight: 1.15,
+          color: '#111',
+          marginBottom: 20,
+          letterSpacing: '-1px',
         }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-            <div style={{
-              width: 40,
-              height: 40,
-              background: 'linear-gradient(135deg, #34d399, #059669)',
-              borderRadius: 10,
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              fontSize: 20,
-            }}>🧹</div>
-            <span style={{
-              fontFamily: "'Playfair Display', serif",
-              fontSize: 22,
-              fontWeight: 900,
-              letterSpacing: '-0.5px',
-            }}>AlertePropreté</span>
-          </div>
-          <a href="#tarif" style={{
-            color: '#34d399',
-            textDecoration: 'none',
-            fontSize: 15,
-            fontWeight: 500,
-            padding: '10px 24px',
-            border: '1px solid rgba(52, 211, 153, 0.3)',
-            borderRadius: 8,
-            transition: 'all 0.3s ease',
-          }}>Voir le tarif →</a>
-        </nav>
+          Vous perdez des marchés publics parce que vous les découvrez trop tard.
+        </h1>
 
-        {/* Hero content */}
-        <div style={{ maxWidth: 800, margin: '0 auto', textAlign: 'center' }}>
-          <div className="fade-in-up" style={{
-            display: 'inline-block',
-            padding: '6px 16px',
-            background: 'rgba(52, 211, 153, 0.1)',
-            border: '1px solid rgba(52, 211, 153, 0.2)',
-            borderRadius: 100,
-            fontSize: 13,
-            fontWeight: 500,
-            color: '#6ee7b7',
-            marginBottom: 24,
-            letterSpacing: '0.5px',
-          }}>
-            <span className="glow-dot" style={{
-              display: 'inline-block',
-              width: 6,
-              height: 6,
-              background: '#34d399',
-              borderRadius: '50%',
-              marginRight: 8,
-              verticalAlign: 'middle',
-            }} />
-            VEILLE AUTOMATISÉE DES MARCHÉS PUBLICS
-          </div>
-
-          <h1 className="fade-in-up-delay-1" style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: 'clamp(36px, 6vw, 64px)',
-            fontWeight: 900,
-            lineHeight: 1.1,
-            marginBottom: 24,
-            letterSpacing: '-1px',
-          }}>
-            Ne ratez plus aucun<br />
-            <span className="shimmer-text">appel d'offres</span><br />
-            de nettoyage
-          </h1>
-
-          <p className="fade-in-up-delay-2" style={{
-            fontSize: 'clamp(16px, 2vw, 20px)',
-            color: '#8896b0',
-            lineHeight: 1.7,
-            maxWidth: 560,
-            margin: '0 auto 40px',
-          }}>
-            Recevez chaque matin les marchés publics de propreté
-            dans vos départements, scorés par IA selon leur pertinence.
-          </p>
-
-          <div className="fade-in-up-delay-3" style={{ display: 'flex', gap: 16, justifyContent: 'center', flexWrap: 'wrap' }}>
-            <a href="#inscription" className="btn-primary" style={{
-              padding: '16px 36px',
-              background: 'linear-gradient(135deg, #34d399, #059669)',
-              color: '#0a1628',
-              borderRadius: 10,
-              fontWeight: 700,
-              fontSize: 16,
-              textDecoration: 'none',
-              display: 'inline-block',
-            }}>
-              Essai gratuit 14 jours
-            </a>
-            <a href="#exemples" style={{
-              padding: '16px 36px',
-              background: 'transparent',
-              color: '#8896b0',
-              borderRadius: 10,
-              fontWeight: 500,
-              fontSize: 16,
-              textDecoration: 'none',
-              border: '1px solid rgba(136, 150, 176, 0.2)',
-              display: 'inline-block',
-              transition: 'all 0.3s ease',
-            }}>
-              Voir un exemple
-            </a>
-          </div>
-        </div>
-
-        {/* Stats bar */}
-        <div className="fade-in-up-delay-3" style={{
-          display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-          gap: 1,
-          background: 'rgba(255,255,255,0.05)',
-          borderRadius: 16,
-          overflow: 'hidden',
-          marginTop: 80,
-          border: '1px solid rgba(255,255,255,0.05)',
+        <p style={{
+          fontSize: 'clamp(16px, 2vw, 19px)',
+          color: '#555',
+          lineHeight: 1.7,
+          maxWidth: 580,
+          margin: '0 auto 36px',
         }}>
-          {[
-            { value: '100+', label: 'AO de nettoyage / mois' },
-            { value: '96 depts', label: 'couverts en France' },
-            { value: '5h00', label: 'dans votre boîte mail' },
-            { value: 'IA', label: 'scoring de pertinence' },
-          ].map((stat, i) => (
-            <div key={i} style={{
-              padding: '28px 24px',
-              textAlign: 'center',
-              background: 'rgba(255,255,255,0.02)',
-            }}>
-              <div style={{
-                fontSize: 28,
-                fontWeight: 700,
-                color: '#34d399',
-                fontFamily: "'DM Sans', sans-serif",
-              }}>{stat.value}</div>
-              <div style={{ fontSize: 13, color: '#6b7a94', marginTop: 4 }}>{stat.label}</div>
-            </div>
-          ))}
-        </div>
-      </header>
-
-      {/* HOW IT WORKS */}
-      <section style={{
-        padding: '80px 24px',
-        maxWidth: 1200,
-        margin: '0 auto',
-      }}>
-        <h2 style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 'clamp(28px, 4vw, 42px)',
-          fontWeight: 900,
-          textAlign: 'center',
-          marginBottom: 16,
-          letterSpacing: '-0.5px',
-        }}>Comment ça marche</h2>
-        <p style={{ textAlign: 'center', color: '#6b7a94', marginBottom: 60, fontSize: 17 }}>
-          3 étapes, zéro effort de votre part
+          AlertePropreté surveille le BOAMP chaque nuit et vous envoie
+          les appels d'offres de nettoyage dans vos départements,
+          classés par pertinence. Chaque matin à 5h, dans votre boîte mail.
         </p>
 
+        <a href="#inscription" className="cta-btn" style={{
+          display: 'inline-block',
+          padding: '16px 40px',
+          background: '#059669',
+          color: 'white',
+          borderRadius: 8,
+          textDecoration: 'none',
+          fontSize: 16,
+          fontWeight: 700,
+        }}>Essayer gratuitement pendant 14 jours</a>
+
+        <p style={{ fontSize: 13, color: '#999', marginTop: 12 }}>
+          Sans carte bancaire. Sans engagement.
+        </p>
+      </header>
+
+      {/* SOCIAL PROOF BAR — Numbers that build trust */}
+      <div style={{
+        maxWidth: 760,
+        margin: '0 auto 64px',
+        padding: '0 24px',
+      }}>
         <div style={{
           display: 'grid',
-          gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-          gap: 24,
+          gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
+          border: '1px solid #e5e7eb',
+          borderRadius: 10,
+          overflow: 'hidden',
+          background: 'white',
         }}>
           {[
-            {
-              step: '01',
-              icon: '🔍',
-              title: 'Collecte automatique',
-              desc: 'Notre système scanne le BOAMP (Bulletin Officiel) chaque nuit et extrait les marchés liés au nettoyage et à la propreté.',
-            },
-            {
-              step: '02',
-              icon: '🤖',
-              title: "Scoring par l'IA",
-              desc: "Chaque appel d'offres est analysé et noté de 1 à 10 selon sa pertinence pour une entreprise de nettoyage de locaux.",
-            },
-            {
-              step: '03',
-              icon: '📬',
-              title: 'Email personnalisé',
-              desc: 'Vous recevez chaque matin uniquement les AO pertinents dans vos départements, classés par score.',
-            },
-          ].map((item, i) => (
-            <div key={i} className="card-hover" style={{
-              padding: 36,
-              background: 'linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
-              borderRadius: 16,
-              border: '1px solid rgba(255,255,255,0.06)',
-              position: 'relative',
-              overflow: 'hidden',
+            { val: '100+', label: 'AO de nettoyage par mois' },
+            { val: '96', label: 'départements couverts' },
+            { val: '< 2 min', label: 'de lecture chaque matin' },
+          ].map((s, i) => (
+            <div key={i} style={{
+              padding: '20px 16px',
+              textAlign: 'center',
+              borderRight: i < 2 ? '1px solid #e5e7eb' : 'none',
             }}>
-              <div style={{
-                position: 'absolute',
-                top: 16,
-                right: 20,
-                fontSize: 72,
-                fontWeight: 900,
-                color: 'rgba(52, 211, 153, 0.06)',
-                fontFamily: "'Playfair Display', serif",
-                lineHeight: 1,
-              }}>{item.step}</div>
-              <div style={{ fontSize: 36, marginBottom: 20 }}>{item.icon}</div>
-              <h3 style={{
-                fontSize: 20,
-                fontWeight: 700,
-                marginBottom: 12,
-                color: '#e8edf5',
-              }}>{item.title}</h3>
-              <p style={{
-                fontSize: 15,
-                color: '#6b7a94',
-                lineHeight: 1.7,
-              }}>{item.desc}</p>
+              <div style={{ fontSize: 24, fontWeight: 700, color: '#059669', fontFamily: "'Fraunces', serif" }}>{s.val}</div>
+              <div style={{ fontSize: 13, color: '#777', marginTop: 2 }}>{s.label}</div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* PROBLEM / SOLUTION — Address the pain directly */}
+      <section style={{
+        maxWidth: 760,
+        margin: '0 auto',
+        padding: '0 24px 80px',
+      }}>
+        <h2 style={{
+          fontFamily: "'Fraunces', serif",
+          fontSize: 'clamp(24px, 3.5vw, 32px)',
+          fontWeight: 700,
+          color: '#111',
+          marginBottom: 40,
+          textAlign: 'center',
+          letterSpacing: '-0.5px',
+        }}>Le problème que vous connaissez bien</h2>
+
+        <div style={{
+          display: 'grid',
+          gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
+          gap: 24,
+        }}>
+          {/* Problem */}
+          <div style={{
+            padding: '28px 24px',
+            background: '#fef2f2',
+            borderRadius: 10,
+            border: '1px solid #fecaca',
+          }}>
+            <p style={{ fontSize: 15, fontWeight: 700, color: '#991b1b', marginBottom: 16 }}>Sans AlertePropreté</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                'Vous passez 1h par jour à chercher des AO sur différentes plateformes',
+                'Vous découvrez des marchés après la date limite',
+                'Vous répondez à des AO peu pertinents, perdant temps et argent',
+                'Vos concurrents qui ont des veilleurs dédiés vous passent devant',
+              ].map((p, i) => (
+                <div key={i} style={{ display: 'flex', gap: 10, fontSize: 14, color: '#7f1d1d', lineHeight: 1.6 }}>
+                  <span style={{ flexShrink: 0, marginTop: 2 }}>—</span>
+                  <span>{p}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Solution */}
+          <div style={{
+            padding: '28px 24px',
+            background: '#f0fdf4',
+            borderRadius: 10,
+            border: '1px solid #bbf7d0',
+          }}>
+            <p style={{ fontSize: 15, fontWeight: 700, color: '#166534', marginBottom: 16 }}>Avec AlertePropreté</p>
+            <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+              {[
+                'Un email par jour avec uniquement les AO pertinents pour vous',
+                'Détection dès la publication, bien avant la deadline',
+                "Chaque AO est noté par l'IA : vous ne lisez que les meilleurs",
+                'Le même niveau de veille que les grands groupes, pour 39 €/mois',
+              ].map((p, i) => (
+                <div key={i} style={{ display: 'flex', gap: 10, fontSize: 14, color: '#14532d', lineHeight: 1.6 }}>
+                  <span style={{ flexShrink: 0, marginTop: 2 }}>+</span>
+                  <span>{p}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* EXEMPLES AO */}
-      <section id="exemples" style={{
+      {/* HOW IT WORKS — Simple, 3-step, no emojis */}
+      <section style={{
+        background: 'white',
+        borderTop: '1px solid #e5e7eb',
+        borderBottom: '1px solid #e5e7eb',
         padding: '80px 24px',
-        maxWidth: 1200,
+      }}>
+        <div style={{ maxWidth: 760, margin: '0 auto' }}>
+          <h2 style={{
+            fontFamily: "'Fraunces', serif",
+            fontSize: 'clamp(24px, 3.5vw, 32px)',
+            fontWeight: 700,
+            color: '#111',
+            marginBottom: 48,
+            textAlign: 'center',
+            letterSpacing: '-0.5px',
+          }}>Comment ça fonctionne</h2>
+
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 36 }}>
+            {[
+              {
+                num: '1',
+                title: 'Collecte automatique chaque nuit',
+                desc: "Notre système interroge le Bulletin Officiel des Annonces de Marchés Publics (BOAMP) et extrait tous les marchés liés au nettoyage, à la propreté et à l'entretien de locaux.",
+              },
+              {
+                num: '2',
+                title: 'Analyse et scoring par intelligence artificielle',
+                desc: "Chaque appel d'offres est évalué de 1 à 10 selon sa pertinence pour une entreprise de nettoyage de locaux. Vous ne voyez que ceux qui comptent vraiment.",
+              },
+              {
+                num: '3',
+                title: 'Un email clair dans votre boîte, à 5h du matin',
+                desc: "Vous commencez votre journée avec la liste des opportunités dans vos départements, triées par pertinence. Titre, acheteur, deadline, lien direct vers l'AO.",
+              },
+            ].map((step, i) => (
+              <div key={i} style={{ display: 'flex', gap: 20, alignItems: 'flex-start' }}>
+                <div style={{
+                  width: 40,
+                  height: 40,
+                  borderRadius: '50%',
+                  background: '#059669',
+                  color: 'white',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontWeight: 700,
+                  fontSize: 16,
+                  flexShrink: 0,
+                }}>{step.num}</div>
+                <div>
+                  <h3 style={{ fontSize: 17, fontWeight: 700, color: '#111', marginBottom: 6 }}>{step.title}</h3>
+                  <p style={{ fontSize: 15, color: '#555', lineHeight: 1.7 }}>{step.desc}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* REAL EXAMPLES — Show, don't tell */}
+      <section style={{
+        maxWidth: 760,
         margin: '0 auto',
+        padding: '80px 24px',
       }}>
         <h2 style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 'clamp(28px, 4vw, 42px)',
-          fontWeight: 900,
+          fontFamily: "'Fraunces', serif",
+          fontSize: 'clamp(24px, 3.5vw, 32px)',
+          fontWeight: 700,
+          color: '#111',
+          marginBottom: 12,
           textAlign: 'center',
-          marginBottom: 16,
           letterSpacing: '-0.5px',
-        }}>Exemples d'appels d'offres</h2>
-        <p style={{ textAlign: 'center', color: '#6b7a94', marginBottom: 60, fontSize: 17 }}>
-          Voici le type d'AO que vous recevrez chaque matin
+        }}>Ce que vous recevez chaque matin</h2>
+        <p style={{ textAlign: 'center', color: '#777', marginBottom: 40, fontSize: 15 }}>
+          Exemples réels issus du BOAMP cette semaine
         </p>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: 16, maxWidth: 720, margin: '0 auto' }}>
-          {EXEMPLE_AOS.map((ao, i) => (
-            <div key={i} className="card-hover" style={{
-              padding: '24px 28px',
-              background: 'linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
-              borderRadius: 14,
-              border: '1px solid rgba(255,255,255,0.06)',
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+          {[
+            {
+              title: "Nettoyage intérieur et extérieur des bâtiments communaux et intercommunaux — 2026 à 2029",
+              buyer: "Communauté de communes Loire-Atlantique",
+              dept: "44",
+              score: 9,
+              deadline: "28/02/2026",
+            },
+            {
+              title: "Prestations de nettoyage des locaux et de la vitrerie des sites de la CPAM",
+              buyer: "CPAM du Puy-de-Dôme",
+              dept: "63",
+              score: 9,
+              deadline: "15/03/2026",
+            },
+            {
+              title: "Mise en propreté des locaux et des vitres — Conseil Départemental",
+              buyer: "Département des Hauts-de-Seine",
+              dept: "92",
+              score: 10,
+              deadline: "05/03/2026",
+            },
+          ].map((ao, i) => (
+            <div key={i} className="ao-card" style={{
+              padding: '20px 24px',
+              background: 'white',
+              borderRadius: 8,
+              border: '1px solid #e5e7eb',
               display: 'flex',
               justifyContent: 'space-between',
               alignItems: 'flex-start',
-              gap: 20,
+              gap: 16,
             }}>
               <div style={{ flex: 1 }}>
-                <h4 style={{ fontSize: 16, fontWeight: 600, marginBottom: 8, lineHeight: 1.4 }}>{ao.title}</h4>
-                <p style={{ fontSize: 13, color: '#6b7a94', marginBottom: 6 }}>
-                  {ao.buyer} — Département {ao.dept}
+                <p style={{ fontSize: 15, fontWeight: 600, color: '#111', marginBottom: 6, lineHeight: 1.4 }}>
+                  {ao.title}
                 </p>
-                <p style={{ fontSize: 13, color: '#34d399' }}>{ao.reason}</p>
-                <p style={{ fontSize: 12, color: '#4a5568', marginTop: 8 }}>⏰ Deadline : {ao.deadline}</p>
+                <p style={{ fontSize: 13, color: '#777' }}>
+                  {ao.buyer} — Dpt {ao.dept} — Limite : {ao.deadline}
+                </p>
               </div>
               <div style={{
-                background: ao.score >= 9 ? 'linear-gradient(135deg, #34d399, #059669)' : 'linear-gradient(135deg, #fbbf24, #d97706)',
-                color: ao.score >= 9 ? '#0a1628' : '#0a1628',
-                padding: '8px 14px',
-                borderRadius: 10,
-                fontWeight: 800,
-                fontSize: 18,
+                background: ao.score >= 9 ? '#059669' : '#d97706',
+                color: 'white',
+                padding: '6px 12px',
+                borderRadius: 6,
+                fontWeight: 700,
+                fontSize: 15,
                 whiteSpace: 'nowrap',
                 flexShrink: 0,
               }}>
@@ -514,135 +435,143 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
+
+        <p style={{ textAlign: 'center', fontSize: 13, color: '#999', marginTop: 16 }}>
+          Score de pertinence calculé par IA — 10 = parfaitement adapté à une PME de nettoyage
+        </p>
       </section>
 
-      {/* PRICING */}
+      {/* PRICING — Single plan, clear value */}
       <section id="tarif" style={{
+        background: 'white',
+        borderTop: '1px solid #e5e7eb',
+        borderBottom: '1px solid #e5e7eb',
         padding: '80px 24px',
-        maxWidth: 600,
-        margin: '0 auto',
       }}>
-        <h2 style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 'clamp(28px, 4vw, 42px)',
-          fontWeight: 900,
-          textAlign: 'center',
-          marginBottom: 60,
-          letterSpacing: '-0.5px',
-        }}>Un prix simple</h2>
-
-        <div className="card-hover" style={{
-          padding: '48px 40px',
-          background: 'linear-gradient(145deg, rgba(52, 211, 153, 0.08), rgba(52, 211, 153, 0.02))',
-          borderRadius: 20,
-          border: '1px solid rgba(52, 211, 153, 0.15)',
-          textAlign: 'center',
-        }}>
-          <div style={{
-            display: 'inline-block',
-            padding: '4px 14px',
-            background: 'rgba(52, 211, 153, 0.15)',
-            borderRadius: 100,
-            fontSize: 12,
-            fontWeight: 600,
-            color: '#6ee7b7',
-            marginBottom: 24,
-            letterSpacing: '1px',
-          }}>14 JOURS D'ESSAI GRATUIT</div>
-
-          <div style={{ marginBottom: 8 }}>
-            <span style={{
-              fontSize: 64,
-              fontWeight: 900,
-              fontFamily: "'Playfair Display', serif",
-              color: '#ffffff',
-            }}>39€</span>
-            <span style={{ fontSize: 20, color: '#6b7a94', marginLeft: 4 }}>/mois</span>
-          </div>
-          <p style={{ color: '#6b7a94', marginBottom: 32, fontSize: 15 }}>Sans engagement · Annulable à tout moment</p>
-
-          <div style={{ textAlign: 'left', maxWidth: 360, margin: '0 auto 36px' }}>
-            {[
-              'Veille quotidienne automatisée',
-              'Tous les départements de France',
-              'Scoring IA de pertinence',
-              'Email digest chaque matin',
-              'Sources : BOAMP + profils acheteurs',
-              'Support par email',
-            ].map((feature, i) => (
-              <div key={i} style={{
-                padding: '10px 0',
-                borderBottom: i < 5 ? '1px solid rgba(255,255,255,0.04)' : 'none',
-                display: 'flex',
-                alignItems: 'center',
-                gap: 12,
-                fontSize: 15,
-                color: '#c0c9d9',
-              }}>
-                <span style={{ color: '#34d399', fontSize: 16 }}>✓</span>
-                {feature}
-              </div>
-            ))}
-          </div>
-
-          <a href="#inscription" className="btn-primary" style={{
-            display: 'inline-block',
-            padding: '16px 48px',
-            background: 'linear-gradient(135deg, #34d399, #059669)',
-            color: '#0a1628',
-            borderRadius: 10,
+        <div style={{ maxWidth: 480, margin: '0 auto', textAlign: 'center' }}>
+          <h2 style={{
+            fontFamily: "'Fraunces', serif",
+            fontSize: 'clamp(24px, 3.5vw, 32px)',
             fontWeight: 700,
-            fontSize: 16,
-            textDecoration: 'none',
+            color: '#111',
+            marginBottom: 40,
+            letterSpacing: '-0.5px',
+          }}>Un seul tarif, tout inclus</h2>
+
+          <div style={{
+            padding: '40px 32px',
+            border: '2px solid #059669',
+            borderRadius: 12,
+            background: '#fafaf8',
           }}>
-            Démarrer l'essai gratuit
-          </a>
+            <div style={{ marginBottom: 24 }}>
+              <span style={{
+                fontSize: 52,
+                fontWeight: 800,
+                fontFamily: "'Fraunces', serif",
+                color: '#111',
+              }}>39 €</span>
+              <span style={{ fontSize: 18, color: '#777' }}> / mois</span>
+            </div>
+
+            <div style={{ textAlign: 'left', marginBottom: 32 }}>
+              {[
+                'Veille quotidienne sur le BOAMP',
+                'Scoring de pertinence par IA',
+                'Email digest chaque matin',
+                'Tous les départements de votre choix',
+                'Détection dès publication',
+                'Support par email',
+              ].map((f, i) => (
+                <div key={i} style={{
+                  padding: '10px 0',
+                  borderBottom: i < 5 ? '1px solid #e5e7eb' : 'none',
+                  fontSize: 15,
+                  color: '#333',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 10,
+                }}>
+                  <span style={{ color: '#059669', fontWeight: 700 }}>&#10003;</span>
+                  {f}
+                </div>
+              ))}
+            </div>
+
+            <a href="#inscription" className="cta-btn" style={{
+              display: 'block',
+              padding: '14px',
+              background: '#059669',
+              color: 'white',
+              borderRadius: 8,
+              textDecoration: 'none',
+              fontSize: 16,
+              fontWeight: 700,
+              textAlign: 'center',
+            }}>Commencer l'essai gratuit</a>
+
+            <p style={{ fontSize: 13, color: '#999', marginTop: 10 }}>
+              14 jours gratuits — Sans carte bancaire — Sans engagement
+            </p>
+          </div>
+
+          <p style={{
+            fontSize: 14,
+            color: '#777',
+            marginTop: 24,
+            lineHeight: 1.6,
+          }}>
+            Un seul marché remporté rembourse des années d'abonnement.
+            <br />La question n'est pas le prix, c'est combien de marchés vous ratez aujourd'hui.
+          </p>
         </div>
       </section>
 
       {/* INSCRIPTION FORM */}
       <section id="inscription" style={{
-        padding: '80px 24px',
-        maxWidth: 560,
+        maxWidth: 500,
         margin: '0 auto',
+        padding: '80px 24px',
       }}>
         <h2 style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 'clamp(28px, 4vw, 42px)',
-          fontWeight: 900,
+          fontFamily: "'Fraunces', serif",
+          fontSize: 'clamp(24px, 3.5vw, 32px)',
+          fontWeight: 700,
+          color: '#111',
+          marginBottom: 8,
           textAlign: 'center',
-          marginBottom: 16,
           letterSpacing: '-0.5px',
-        }}>Commencez votre essai</h2>
-        <p style={{ textAlign: 'center', color: '#6b7a94', marginBottom: 48, fontSize: 17 }}>
-          14 jours gratuits, sans carte bancaire
+        }}>Démarrez votre essai gratuit</h2>
+        <p style={{ textAlign: 'center', color: '#777', marginBottom: 36, fontSize: 15 }}>
+          Recevez votre premier email demain matin
         </p>
 
         {submitted ? (
           <div style={{
-            padding: 48,
-            background: 'linear-gradient(145deg, rgba(52, 211, 153, 0.1), rgba(52, 211, 153, 0.03))',
-            borderRadius: 20,
-            border: '1px solid rgba(52, 211, 153, 0.2)',
+            padding: 40,
+            background: '#f0fdf4',
+            borderRadius: 10,
+            border: '1px solid #bbf7d0',
             textAlign: 'center',
           }}>
-            <div style={{ fontSize: 48, marginBottom: 16 }}>🎉</div>
-            <h3 style={{ fontSize: 22, fontWeight: 700, marginBottom: 12 }}>Inscription réussie !</h3>
-            <p style={{ color: '#6b7a94', fontSize: 15, lineHeight: 1.7 }}>
-              Vous recevrez votre premier email demain matin à 5h00<br />
-              avec les meilleurs appels d'offres de nettoyage.
+            <p style={{ fontSize: 22, fontWeight: 700, color: '#166534', marginBottom: 8, fontFamily: "'Fraunces', serif" }}>
+              Inscription confirmée.
+            </p>
+            <p style={{ color: '#555', fontSize: 15, lineHeight: 1.7 }}>
+              Votre premier digest arrivera demain matin à 5h00
+              avec les appels d'offres de nettoyage dans vos départements.
             </p>
           </div>
         ) : (
           <div style={{
-            padding: '40px 36px',
-            background: 'linear-gradient(145deg, rgba(255,255,255,0.04), rgba(255,255,255,0.01))',
-            borderRadius: 20,
-            border: '1px solid rgba(255,255,255,0.06)',
+            padding: '32px 28px',
+            background: 'white',
+            borderRadius: 10,
+            border: '1px solid #e5e7eb',
           }}>
-            <div style={{ marginBottom: 20 }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#8896b0', marginBottom: 8 }}>
-                Email professionnel *
+            <div style={{ marginBottom: 16 }}>
+              <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#333', marginBottom: 6 }}>
+                Email professionnel
               </label>
               <input
                 type="email"
@@ -651,77 +580,81 @@ export default function LandingPage() {
                 placeholder="vous@entreprise.com"
                 style={{
                   width: '100%',
-                  padding: '14px 16px',
-                  background: 'rgba(0,0,0,0.3)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 10,
-                  color: '#e8edf5',
+                  padding: '12px 14px',
+                  background: '#fafaf8',
+                  border: '1px solid #d1d5db',
+                  borderRadius: 6,
+                  color: '#111',
                   fontSize: 15,
                 }}
               />
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginBottom: 20 }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12, marginBottom: 16 }}>
               <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#8896b0', marginBottom: 8 }}>
+                <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#333', marginBottom: 6 }}>
                   Nom
                 </label>
                 <input
                   type="text"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
-                  placeholder="Jean Dupont"
+                  placeholder="Votre nom"
                   style={{
                     width: '100%',
-                    padding: '14px 16px',
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: 10,
-                    color: '#e8edf5',
+                    padding: '12px 14px',
+                    background: '#fafaf8',
+                    border: '1px solid #d1d5db',
+                    borderRadius: 6,
+                    color: '#111',
                     fontSize: 15,
                   }}
                 />
               </div>
               <div>
-                <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#8896b0', marginBottom: 8 }}>
+                <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#333', marginBottom: 6 }}>
                   Entreprise
                 </label>
                 <input
                   type="text"
                   value={company}
                   onChange={(e) => setCompany(e.target.value)}
-                  placeholder="PropreNet SARL"
+                  placeholder="Nom de l'entreprise"
                   style={{
                     width: '100%',
-                    padding: '14px 16px',
-                    background: 'rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(255,255,255,0.08)',
-                    borderRadius: 10,
-                    color: '#e8edf5',
+                    padding: '12px 14px',
+                    background: '#fafaf8',
+                    border: '1px solid #d1d5db',
+                    borderRadius: 6,
+                    color: '#111',
                     fontSize: 15,
                   }}
                 />
               </div>
             </div>
 
-            <div style={{ marginBottom: 28, position: 'relative' }}>
-              <label style={{ display: 'block', fontSize: 13, fontWeight: 500, color: '#8896b0', marginBottom: 8 }}>
-                Départements surveillés *
+            <div style={{ marginBottom: 24, position: 'relative' }}>
+              <label style={{ display: 'block', fontSize: 14, fontWeight: 600, color: '#333', marginBottom: 6 }}>
+                Départements à surveiller
               </label>
 
               {selectedDepts.length > 0 && (
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 10 }}>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 8 }}>
                   {selectedDepts.map(code => (
-                    <span key={code} className="dept-tag" onClick={() => setSelectedDepts(selectedDepts.filter(d => d !== code))} style={{
-                      padding: '4px 12px',
-                      background: 'rgba(52, 211, 153, 0.15)',
-                      border: '1px solid rgba(52, 211, 153, 0.3)',
-                      borderRadius: 6,
-                      fontSize: 13,
-                      color: '#6ee7b7',
-                      cursor: 'pointer',
-                    }}>
-                      {code} ✕
+                    <span
+                      key={code}
+                      onClick={() => setSelectedDepts(selectedDepts.filter(d => d !== code))}
+                      style={{
+                        padding: '3px 10px',
+                        background: '#d1fae5',
+                        borderRadius: 4,
+                        fontSize: 13,
+                        color: '#065f46',
+                        cursor: 'pointer',
+                        fontWeight: 500,
+                      }}
+                    >
+                      {code} ×
                     </span>
                   ))}
                 </div>
@@ -732,14 +665,14 @@ export default function LandingPage() {
                 value={deptSearch}
                 onChange={(e) => { setDeptSearch(e.target.value); setShowDeptDropdown(true) }}
                 onFocus={() => setShowDeptDropdown(true)}
-                placeholder="Rechercher un département..."
+                placeholder="Tapez pour rechercher..."
                 style={{
                   width: '100%',
-                  padding: '14px 16px',
-                  background: 'rgba(0,0,0,0.3)',
-                  border: '1px solid rgba(255,255,255,0.08)',
-                  borderRadius: 10,
-                  color: '#e8edf5',
+                  padding: '12px 14px',
+                  background: '#fafaf8',
+                  border: '1px solid #d1d5db',
+                  borderRadius: 6,
+                  color: '#111',
                   fontSize: 15,
                 }}
               />
@@ -750,15 +683,16 @@ export default function LandingPage() {
                   top: '100%',
                   left: 0,
                   right: 0,
-                  maxHeight: 200,
+                  maxHeight: 180,
                   overflowY: 'auto',
-                  background: '#0f1f38',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 10,
+                  background: 'white',
+                  border: '1px solid #d1d5db',
+                  borderRadius: 6,
                   marginTop: 4,
                   zIndex: 10,
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.08)',
                 }}>
-                  {filteredDepts.slice(0, 15).map(dept => {
+                  {filteredDepts.slice(0, 12).map(dept => {
                     const code = dept.split(' - ')[0]
                     const isSelected = selectedDepts.includes(code)
                     return (
@@ -766,13 +700,13 @@ export default function LandingPage() {
                         key={dept}
                         onClick={() => toggleDept(dept)}
                         style={{
-                          padding: '10px 16px',
+                          padding: '9px 14px',
                           cursor: 'pointer',
                           fontSize: 14,
-                          color: isSelected ? '#34d399' : '#8896b0',
-                          background: isSelected ? 'rgba(52, 211, 153, 0.08)' : 'transparent',
-                          borderBottom: '1px solid rgba(255,255,255,0.03)',
-                          transition: 'background 0.15s ease',
+                          color: isSelected ? '#059669' : '#333',
+                          fontWeight: isSelected ? 600 : 400,
+                          background: isSelected ? '#f0fdf4' : 'transparent',
+                          borderBottom: '1px solid #f3f4f6',
                         }}
                       >
                         {isSelected ? '✓ ' : ''}{dept}
@@ -782,15 +716,14 @@ export default function LandingPage() {
                   <div
                     onClick={() => setShowDeptDropdown(false)}
                     style={{
-                      padding: '10px 16px',
+                      padding: '8px 14px',
                       textAlign: 'center',
                       cursor: 'pointer',
                       fontSize: 13,
-                      color: '#4a5568',
-                      borderTop: '1px solid rgba(255,255,255,0.05)',
+                      color: '#999',
                     }}
                   >
-                    Fermer ▲
+                    Fermer
                   </div>
                 </div>
               )}
@@ -799,115 +732,144 @@ export default function LandingPage() {
             <button
               onClick={handleSubmit}
               disabled={!email || selectedDepts.length === 0 || isSubmitting}
-              className="btn-primary"
+              className="cta-btn"
               style={{
                 width: '100%',
-                padding: '16px',
-                background: (!email || selectedDepts.length === 0) 
-                  ? 'rgba(255,255,255,0.05)' 
-                  : 'linear-gradient(135deg, #34d399, #059669)',
-                color: (!email || selectedDepts.length === 0) ? '#4a5568' : '#0a1628',
+                padding: '14px',
+                background: (!email || selectedDepts.length === 0) ? '#d1d5db' : '#059669',
+                color: (!email || selectedDepts.length === 0) ? '#999' : 'white',
                 border: 'none',
-                borderRadius: 10,
+                borderRadius: 8,
                 fontWeight: 700,
                 fontSize: 16,
                 cursor: (!email || selectedDepts.length === 0) ? 'not-allowed' : 'pointer',
-                fontFamily: "'DM Sans', sans-serif",
+                fontFamily: "'Source Sans 3', sans-serif",
               }}
             >
-              {isSubmitting ? 'Inscription en cours...' : 'Démarrer mon essai gratuit →'}
+              {isSubmitting ? 'Inscription...' : 'Démarrer mon essai gratuit'}
             </button>
 
-            <p style={{ textAlign: 'center', fontSize: 12, color: '#4a5568', marginTop: 12 }}>
-              Sans carte bancaire · 14 jours gratuits · Annulable à tout moment
+            <p style={{ textAlign: 'center', fontSize: 12, color: '#999', marginTop: 10 }}>
+              14 jours gratuits. Sans carte bancaire.
             </p>
           </div>
         )}
       </section>
 
-      {/* FAQ */}
+      {/* FAQ — Accordion style */}
       <section style={{
-        padding: '80px 24px',
-        maxWidth: 700,
+        maxWidth: 640,
         margin: '0 auto',
+        padding: '0 24px 80px',
       }}>
         <h2 style={{
-          fontFamily: "'Playfair Display', serif",
-          fontSize: 'clamp(28px, 4vw, 42px)',
-          fontWeight: 900,
+          fontFamily: "'Fraunces', serif",
+          fontSize: 'clamp(24px, 3.5vw, 32px)',
+          fontWeight: 700,
+          color: '#111',
+          marginBottom: 32,
           textAlign: 'center',
-          marginBottom: 48,
           letterSpacing: '-0.5px',
         }}>Questions fréquentes</h2>
 
         {[
           {
             q: "D'où viennent les appels d'offres ?",
-            a: "Nous collectons les AO directement depuis le BOAMP (Bulletin Officiel des Annonces de Marchés Publics), la source officielle de l'État français. Tous les marchés publics y sont publiés obligatoirement."
+            a: "Directement du BOAMP (Bulletin Officiel des Annonces de Marchés Publics), la source officielle de l'État. Tous les marchés publics y sont publiés obligatoirement. Nous ne dépendons d'aucun intermédiaire."
           },
           {
-            q: "Comment fonctionne le scoring IA ?",
-            a: "Notre intelligence artificielle analyse chaque appel d'offres et lui attribue un score de 1 à 10 selon sa pertinence pour une entreprise de nettoyage de locaux. Un score de 8-10 signifie un marché directement lié au nettoyage de bâtiments."
+            q: "Comment fonctionne le scoring de pertinence ?",
+            a: "Notre intelligence artificielle analyse le titre, le descripteur, l'acheteur et les codes CPV de chaque marché. Elle attribue un score de 1 à 10 selon la pertinence pour une entreprise de nettoyage de locaux. Un 8 ou plus signifie un marché directement lié au nettoyage de bâtiments."
           },
           {
-            q: "À quelle heure reçoit-on l'email ?",
-            a: "Chaque matin à 5h00, vous recevez un email avec les nouveaux appels d'offres détectés dans vos départements. Vous commencez votre journée avec toutes les opportunités en main."
+            q: "Est-ce que ça couvre aussi la vitrerie et l'entretien ?",
+            a: "Oui. Le système détecte les marchés de nettoyage de locaux, de vitrerie, d'entretien de bâtiments et de propreté en général. Tout ce qui touche au secteur de la propreté est couvert."
           },
           {
-            q: "Puis-je changer mes départements ?",
-            a: "Oui, vous pouvez modifier vos départements surveillés à tout moment. Le changement prend effet dès le lendemain matin."
+            q: "Puis-je modifier mes départements après l'inscription ?",
+            a: "Oui, à tout moment. Contactez-nous par email et vos préférences seront mises à jour pour le lendemain matin."
           },
           {
-            q: "Y a-t-il un engagement ?",
-            a: "Aucun engagement. Vous commencez par 14 jours d'essai gratuit sans carte bancaire, puis 39€/mois sans engagement. Vous pouvez annuler à tout moment en un clic."
-          },
-          {
-            q: "C'est uniquement pour le nettoyage ?",
-            a: "Oui, AlertePropreté est spécialisé dans le secteur de la propreté et du nettoyage. C'est ce qui nous permet d'avoir un scoring IA beaucoup plus précis que les plateformes généralistes."
+            q: "Quel est l'engagement ?",
+            a: "Aucun. L'essai dure 14 jours sans carte bancaire. Ensuite, l'abonnement est de 39 €/mois, résiliable à tout moment en un clic. Pas de frais cachés, pas de période minimum."
           },
         ].map((faq, i) => (
-          <div key={i} className="faq-item" style={{
-            padding: '24px 28px',
-            borderBottom: '1px solid rgba(255,255,255,0.04)',
-            borderRadius: 8,
+          <div key={i} style={{
+            borderBottom: '1px solid #e5e7eb',
           }}>
-            <h4 style={{ fontSize: 16, fontWeight: 600, marginBottom: 10, color: '#e8edf5' }}>
-              {faq.q}
-            </h4>
-            <p style={{ fontSize: 15, color: '#6b7a94', lineHeight: 1.7 }}>
-              {faq.a}
-            </p>
+            <div
+              className="faq-toggle"
+              onClick={() => setOpenFaq(openFaq === i ? null : i)}
+              style={{
+                padding: '18px 0',
+                display: 'flex',
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}
+            >
+              <p style={{ fontSize: 15, fontWeight: 600, color: '#111' }}>{faq.q}</p>
+              <span style={{
+                fontSize: 20,
+                color: '#999',
+                transform: openFaq === i ? 'rotate(45deg)' : 'none',
+                transition: 'transform 0.2s ease',
+                flexShrink: 0,
+                marginLeft: 12,
+              }}>+</span>
+            </div>
+            {openFaq === i && (
+              <p style={{
+                fontSize: 14,
+                color: '#555',
+                lineHeight: 1.7,
+                paddingBottom: 18,
+              }}>{faq.a}</p>
+            )}
           </div>
         ))}
       </section>
 
+      {/* FINAL CTA */}
+      <section style={{
+        maxWidth: 640,
+        margin: '0 auto',
+        padding: '0 24px 80px',
+        textAlign: 'center',
+      }}>
+        <p style={{
+          fontFamily: "'Fraunces', serif",
+          fontSize: 'clamp(20px, 3vw, 26px)',
+          fontWeight: 700,
+          color: '#111',
+          marginBottom: 20,
+          lineHeight: 1.4,
+        }}>
+          Demain matin à 5h, vous pourriez avoir vos premiers marchés.
+        </p>
+        <a href="#inscription" className="cta-btn" style={{
+          display: 'inline-block',
+          padding: '14px 36px',
+          background: '#059669',
+          color: 'white',
+          borderRadius: 8,
+          textDecoration: 'none',
+          fontSize: 16,
+          fontWeight: 700,
+        }}>Essayer gratuitement</a>
+      </section>
+
       {/* FOOTER */}
       <footer style={{
-        padding: '48px 24px',
-        borderTop: '1px solid rgba(255,255,255,0.04)',
+        borderTop: '1px solid #e5e7eb',
+        padding: '32px 24px',
         textAlign: 'center',
-        maxWidth: 1200,
-        margin: '0 auto',
       }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, marginBottom: 16 }}>
-          <div style={{
-            width: 28,
-            height: 28,
-            background: 'linear-gradient(135deg, #34d399, #059669)',
-            borderRadius: 7,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontSize: 14,
-          }}>🧹</div>
-          <span style={{
-            fontFamily: "'Playfair Display', serif",
-            fontSize: 16,
-            fontWeight: 700,
-          }}>AlertePropreté</span>
+        <div style={{ display: 'flex', alignItems: 'baseline', justifyContent: 'center', gap: 2, marginBottom: 8 }}>
+          <span style={{ fontFamily: "'Fraunces', serif", fontSize: 15, fontWeight: 700, color: '#059669' }}>alerte</span>
+          <span style={{ fontFamily: "'Fraunces', serif", fontSize: 15, fontWeight: 700, color: '#1a1a1a' }}>propreté</span>
         </div>
-        <p style={{ fontSize: 13, color: '#4a5568' }}>
-          © 2026 AlertePropreté · Veille automatisée des marchés publics de nettoyage
+        <p style={{ fontSize: 12, color: '#999' }}>
+          AlertePropreté — Veille automatisée des marchés publics de nettoyage
         </p>
       </footer>
     </div>
