@@ -2,7 +2,7 @@ import { Resend } from 'resend'
 import { supabase } from './supabase'
 
 const resend = new Resend(process.env.RESEND_API_KEY || 'placeholder')
-
+  
 export async function sendDigest() {
   const { data: subscribers, error: subError } = await supabase
     .from('subscribers')
@@ -19,11 +19,13 @@ export async function sendDigest() {
 
   for (const sub of subscribers) {
     try {
+      const depts = sub.departments || []
+      const orFilter = depts.map((d: string) => `buyer_dept.cs.{"${d}"}`).join(',')
       const { data: tenders, error: tError } = await supabase
         .from('tenders')
         .select('*')
         .gte('relevance_score', sub.min_score || 5)
-        .in('buyer_dept', sub.departments || [])
+        .or(orFilter)
         .order('relevance_score', { ascending: false })
         .limit(10)
 
