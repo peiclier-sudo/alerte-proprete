@@ -4,7 +4,8 @@ import { supabase } from '../../../../lib/supabase'
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
-  if (authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const isVercelCron = req.headers.get('user-agent')?.includes('vercel-cron')
+  if (!isVercelCron && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json({ error: 'Non autorise.' }, { status: 401 })
   }
 
@@ -50,26 +51,26 @@ export async function GET(req: NextRequest) {
       const tendersHtml = newTenders.map(t =>
         '<div style="border:1px solid #e2e8f0;border-radius:8px;padding:16px;margin-bottom:12px;">' +
           '<strong style="color:#1a202c;font-size:15px;">' + t.title + '</strong>' +
-          '<span style="background:#48bb78;color:white;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:bold;margin-left:8px;">' + t.relevance_score + '/10</span>' +
+          '<span style="background:#059669;color:white;padding:2px 10px;border-radius:12px;font-size:13px;font-weight:bold;margin-left:8px;">' + t.relevance_score + '/10</span>' +
           '<p style="color:#718096;font-size:13px;margin:8px 0 4px;">' +
             (t.buyer_name || 'Acheteur inconnu') + ' - Dept ' + (t.buyer_dept || '??') +
           '</p>' +
           '<p style="color:#718096;font-size:13px;margin:4px 0;">' + (t.score_reason || '') + '</p>' +
           '<p style="margin:8px 0 4px;">' +
-            (t.deadline ? 'Deadline: ' + new Date(t.deadline).toLocaleDateString('fr-FR') : '') +
+            (t.deadline ? 'Limite : ' + new Date(t.deadline).toLocaleDateString('fr-FR') : '') +
           '</p>' +
-          '<a href="' + t.url + '" style="color:#3182ce;font-size:13px;">Voir l\'appel d\'offres</a>' +
+          '<a href="' + t.url + '" style="color:#059669;font-size:13px;">Voir l\'appel d\'offres</a>' +
         '</div>'
       ).join('')
 
       const html =
         '<div style="font-family:Arial,sans-serif;max-width:600px;margin:0 auto;padding:20px;">' +
-          '<h1 style="color:#2d3748;font-size:22px;">Vos alertes proprete du jour</h1>' +
-          '<p style="color:#718096;">Bonjour ' + (sub.name || '') + ',<br>' +
-          'Voici ' + newTenders.length + ' nouvel(s) appel(s) d\'offres pour vos departements.</p>' +
+          '<h1 style="color:#111;font-size:22px;">Vos marchés du jour</h1>' +
+          '<p style="color:#555;">Bonjour ' + (sub.name || '') + ',<br>' +
+          'Voici ' + newTenders.length + ' nouvel(s) appel(s) d\'offres de nettoyage dans vos départements.</p>' +
           tendersHtml +
-          '<hr style="border:none;border-top:1px solid #e2e8f0;margin:24px 0;">' +
-          '<p style="color:#a0aec0;font-size:12px;text-align:center;">AlerteProprete.fr</p>' +
+          '<hr style="border:none;border-top:1px solid #e5e7eb;margin:24px 0;">' +
+          '<p style="color:#999;font-size:12px;text-align:center;">AlertePropreté — alerteproprete.fr</p>' +
         '</div>'
 
       const { error } = await resend.emails.send({
