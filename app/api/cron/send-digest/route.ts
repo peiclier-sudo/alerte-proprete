@@ -7,7 +7,7 @@ export async function GET(req: NextRequest) {
   try {
     const { data, error } = await resend.emails.send({
       from: 'AlerteProprete <onboarding@resend.dev>',
-      to: 'TON-VRAI-EMAIL-ICI',
+      to: 'p.eiclier@gmail.com',
       subject: 'Test AlerteProprete',
       html: '<h1>Ca marche!</h1><p>Si tu vois cet email, Resend fonctionne.</p>',
     })
