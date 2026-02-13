@@ -3,8 +3,8 @@ import { fetchBoampTenders } from '../../../../lib/boamp'
 
 export async function GET(req: NextRequest) {
   const authHeader = req.headers.get('authorization')
-  const isVercelCron = req.headers.get('user-agent')?.includes('vercel-cron')
-  if (!isVercelCron && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
+  const cronSecret = req.headers.get('x-vercel-cron-auth-token')
+  if (!cronSecret && authHeader !== `Bearer ${process.env.CRON_SECRET}`) {
     return NextResponse.json(
       { error: 'Non autorise. Header Authorization requis.' },
       { status: 401 }
