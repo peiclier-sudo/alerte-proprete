@@ -6,7 +6,7 @@ export const gardiennage: SectorConfig = {
   name: "Gardiennage & Sécurité",
   shortName: "Sécurité",
   tagline: "sécurité",
-  emoji: "🛡️",
+  emoji: "",
 
   // ─── Data Pipeline ──────────────────────────────────────
   cpvPrefixes: ["79710", "79711", "79713", "79714", "79715"],
@@ -243,7 +243,7 @@ Pour chaque AO, retourne un JSON :
   email: {
     fromName: "MonMarché Sécurité",
     subjectTemplate:
-      "🛡️ {{count}} marchés de sécurité pour vous — {{date}}",
+      "{{count}} marchés de sécurité pour vous — {{date}}",
     digestIntro:
       "Voici les nouveaux marchés de gardiennage et sécurité qui correspondent à votre profil.",
   },

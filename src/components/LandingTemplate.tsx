@@ -5,7 +5,7 @@ import Link from "next/link";
 import type { SectorConfig } from "@/lib/types";
 
 export function LandingTemplate({ config }: { config: SectorConfig }) {
-  const { landing, slug, shortName, emoji } = config;
+  const { landing, slug, shortName } = config;
   const c = landing.color;
 
   return (
@@ -41,11 +41,11 @@ export function LandingTemplate({ config }: { config: SectorConfig }) {
 
       <main>
         <TopBar shortName={shortName} color={c} />
-        <HeroSection landing={landing} emoji={emoji} />
+        <HeroSection landing={landing} />
         <MetricsRibbon />
         <ProblemSection painPoints={landing.painPoints} color={c} />
         <ProcessSection steps={landing.steps} color={c} />
-        <DigestPreview color={c} shortName={shortName} emoji={emoji} />
+        <DigestPreview color={c} shortName={shortName} />
         <PricingSection pricing={landing.pricing} color={c} />
         <FaqSection faq={landing.faq} color={c} />
         <CtaSection cta={landing.ctaFinal} slug={slug} color={c} colorDark={landing.colorDark} />
@@ -104,7 +104,7 @@ function TopBar({ shortName, color }: { shortName: string; color: string }) {
 }
 
 /* ── Hero ───────────────────────────────────────── */
-function HeroSection({ landing, emoji }: { landing: SectorConfig["landing"]; emoji: string }) {
+function HeroSection({ landing }: { landing: SectorConfig["landing"] }) {
   const c = landing.color;
   return (
     <section style={{ borderBottom: "1px solid var(--line)" }}>
@@ -316,7 +316,7 @@ function ProcessSection({ steps, color }: { steps: SectorConfig["landing"]["step
 }
 
 /* ── Digest Preview ─────────────────────────────── */
-function DigestPreview({ color, shortName, emoji }: { color: string; shortName: string; emoji: string }) {
+function DigestPreview({ color, shortName }: { color: string; shortName: string }) {
   return (
     <section style={{ padding: "72px 28px", background: "var(--bg2)" }}>
       <div style={{ maxWidth: 580, margin: "0 auto" }}>
@@ -335,7 +335,7 @@ function DigestPreview({ color, shortName, emoji }: { color: string; shortName: 
           }}>
             {/* Email header */}
             <div style={{ padding: "16px 22px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 12 }}>
-              <div style={{ width: 36, height: 36, borderRadius: 8, background: color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17 }}>{emoji}</div>
+              <div style={{ width: 36, height: 36, borderRadius: 8, background: color }} />
               <div style={{ flex: 1 }}>
                 <div style={{ fontFamily: "var(--body)", fontSize: 13, fontWeight: 700, color: "var(--ink)" }}>MonMarché {shortName}</div>
                 <div style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)" }}>3 marchés · lundi 3 mars</div>

@@ -6,7 +6,7 @@ export const proprete: SectorConfig = {
   name: "Propreté & Nettoyage",
   shortName: "Propreté",
   tagline: "nettoyage",
-  emoji: "✨",
+  emoji: "",
 
   // ─── Data Pipeline ──────────────────────────────────────
   cpvPrefixes: ["90910", "90911", "90914", "90919"],
@@ -212,7 +212,7 @@ Pour chaque AO, retourne un JSON :
   // ─── Email ──────────────────────────────────────────────
   email: {
     fromName: "MonMarché Propreté",
-    subjectTemplate: "🧹 {{count}} marchés de nettoyage pour vous — {{date}}",
+    subjectTemplate: "{{count}} marchés de nettoyage pour vous — {{date}}",
     digestIntro:
       "Voici les nouveaux marchés de nettoyage qui correspondent à votre profil.",
   },
