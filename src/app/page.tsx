@@ -1,5 +1,5 @@
-import Link from "next/link";
 import { getAllSectors } from "@/lib/sectors";
+import SectorCard from "@/components/SectorCard";
 
 export const metadata = {
   title: "MonMarché — Marchés publics qualifiés par IA pour les PME",
@@ -69,46 +69,16 @@ export default function HomePage() {
 
           <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 2 }}>
             {sectors.map((sector, i) => (
-              <Link
+              <SectorCard
                 key={sector.slug}
-                href={`/${sector.slug}`}
-                style={{
-                  textDecoration: "none", color: "inherit",
-                  display: "block", padding: "36px 28px",
-                  background: "#fff",
-                  borderRadius: i === 0 ? "12px 0 0 12px" : i === 2 ? "0 12px 12px 0" : 0,
-                  border: "1px solid #e4e1db",
-                  transition: "all 0.3s cubic-bezier(0.16, 1, 0.3, 1)",
-                  position: "relative", overflow: "hidden",
-                }}
-                onMouseEnter={(e) => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.background = sector.landing.colorLight;
-                  el.style.borderColor = sector.landing.color;
-                }}
-                onMouseLeave={(e) => {
-                  const el = e.currentTarget as HTMLElement;
-                  el.style.background = "#fff";
-                  el.style.borderColor = "#e4e1db";
-                }}
-              >
-                <div style={{ fontSize: 32, marginBottom: 20 }}>{sector.emoji}</div>
-                <h2 style={{
-                  fontFamily: "'Instrument Serif', serif", fontSize: 24,
-                  color: "#0f0f0f", letterSpacing: "-0.02em", marginBottom: 8,
-                }}>
-                  {sector.name}
-                </h2>
-                <p style={{ fontSize: 13, lineHeight: 1.6, color: "#7a7a7a", marginBottom: 20 }}>
-                  {sector.seo.description.split(".")[0]}.
-                </p>
-                <div style={{
-                  fontFamily: "'IBM Plex Mono', monospace", fontSize: 11, fontWeight: 600,
-                  color: sector.landing.color, display: "flex", alignItems: "center", gap: 4,
-                }}>
-                  Découvrir <span>→</span>
-                </div>
-              </Link>
+                slug={sector.slug}
+                emoji={sector.emoji}
+                name={sector.name}
+                description={`${sector.seo.description.split(".")[0]}.`}
+                color={sector.landing.color}
+                colorLight={sector.landing.colorLight}
+                borderRadius={i === 0 ? "12px 0 0 12px" : i === 2 ? "0 12px 12px 0" : "0"}
+              />
             ))}
           </div>
 
