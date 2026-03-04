@@ -55,8 +55,8 @@ export default function SectorCard({
         style={{
           position: "absolute",
           top: -16, right: -6,
-          fontFamily: "'Instrument Serif', serif",
-          fontSize: 150,
+          fontFamily: "'Space Grotesk', sans-serif",
+          fontSize: 150, fontWeight: 700,
           color: hovered ? `${color}14` : "rgba(0,0,0,.025)",
           lineHeight: 1,
           transition: "color .4s ease",
@@ -78,8 +78,9 @@ export default function SectorCard({
 
         {/* name */}
         <h3 style={{
-          fontFamily: "'Instrument Serif', serif",
+          fontFamily: "'Space Grotesk', sans-serif",
           fontSize: 26, letterSpacing: "-0.02em",
+          fontWeight: 700,
           color: "#0f0f0f", lineHeight: 1.15, marginBottom: 10,
         }}>
           {name}
@@ -95,7 +96,7 @@ export default function SectorCard({
 
         {/* stat */}
         <div style={{
-          fontFamily: "'IBM Plex Mono', monospace",
+          fontFamily: "'JetBrains Mono', monospace",
           fontSize: 10, letterSpacing: ".04em",
           color: hovered ? colorDark : "#b0b0b0",
           transition: "color .3s ease",
@@ -113,8 +114,8 @@ export default function SectorCard({
         {/* cta */}
         <div style={{
           display: "flex", alignItems: "center", gap: 8,
-          fontFamily: "'IBM Plex Mono', monospace",
-          fontSize: 12, fontWeight: 600,
+          fontFamily: "'JetBrains Mono', monospace",
+          fontSize: 12, fontWeight: 500,
           color: hovered ? color : "#0f0f0f",
           transition: "color .3s ease",
         }}>

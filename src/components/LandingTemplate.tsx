@@ -11,7 +11,7 @@ export function LandingTemplate({ config }: { config: SectorConfig }) {
   return (
     <>
       <style jsx global>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Satoshi:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
         :root {
           --c: ${c};
           --cl: ${landing.colorLight};
@@ -23,9 +23,9 @@ export function LandingTemplate({ config }: { config: SectorConfig }) {
           --bg: #fcfbf9;
           --bg2: #f4f2ee;
           --line: #e4e1db;
-          --serif: 'Instrument Serif', Georgia, serif;
-          --body: 'Satoshi', system-ui, sans-serif;
-          --mono: 'IBM Plex Mono', monospace;
+          --serif: 'Space Grotesk', system-ui, sans-serif;
+          --body: 'Plus Jakarta Sans', system-ui, sans-serif;
+          --mono: 'JetBrains Mono', monospace;
         }
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
         html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
@@ -85,7 +85,7 @@ function TopBar({ shortName, color }: { shortName: string; color: string }) {
     }}>
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "14px 28px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "baseline", gap: 3 }}>
-          <span style={{ fontFamily: "var(--serif)", fontSize: 24, color, fontStyle: "italic", letterSpacing: "-0.02em" }}>mon</span>
+          <span style={{ fontFamily: "var(--serif)", fontSize: 24, color, fontWeight: 700, letterSpacing: "-0.02em" }}>mon</span>
           <span style={{ fontFamily: "var(--serif)", fontSize: 24, color: "var(--ink)", letterSpacing: "-0.02em" }}>marché</span>
           <span style={{ fontFamily: "var(--mono)", fontSize: 9, fontWeight: 600, color: "var(--ink4)", marginLeft: 8, textTransform: "uppercase", letterSpacing: "0.12em" }}>{shortName}</span>
         </Link>
@@ -301,7 +301,7 @@ function ProcessSection({ steps, color }: { steps: SectorConfig["landing"]["step
                 height: "100%",
               }}>
                 <div style={{
-                  fontFamily: "var(--serif)", fontSize: 56, fontStyle: "italic",
+                  fontFamily: "var(--serif)", fontSize: 56, fontWeight: 700,
                   color, opacity: 0.25, lineHeight: 1, marginBottom: 16,
                 }}>{String(i + 1).padStart(2, "0")}</div>
                 <h3 style={{ fontFamily: "var(--body)", fontSize: 17, fontWeight: 900, color: "#fff", marginBottom: 10, letterSpacing: "-0.01em" }}>{s.title}</h3>
@@ -516,7 +516,7 @@ function CtaSection({ cta, slug, color, colorDark }: { cta: SectorConfig["landin
 function FooterBar({ color }: { color: string }) {
   return (
     <footer style={{ borderTop: "1px solid var(--line)", padding: "24px 28px", display: "flex", justifyContent: "center", alignItems: "baseline", gap: 4 }}>
-      <span style={{ fontFamily: "var(--serif)", fontSize: 15, color, fontStyle: "italic" }}>mon</span>
+      <span style={{ fontFamily: "var(--serif)", fontSize: 15, color, fontWeight: 700 }}>mon</span>
       <span style={{ fontFamily: "var(--serif)", fontSize: 15, color: "var(--ink)" }}>marché</span>
       <span style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", marginLeft: 12 }}>Marchés publics · IA · PME · 2025</span>
     </footer>

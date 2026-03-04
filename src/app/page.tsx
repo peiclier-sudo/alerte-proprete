@@ -13,7 +13,7 @@ export default function HomePage() {
   return (
     <>
       <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Satoshi:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap');
         *{margin:0;padding:0;box-sizing:border-box}
         @keyframes mmUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
         @keyframes mmPulse{0%,100%{opacity:1}50%{opacity:.35}}
@@ -33,7 +33,7 @@ export default function HomePage() {
         }
       `}</style>
 
-      <main style={{ fontFamily: "'Satoshi', system-ui, sans-serif" }}>
+      <main style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
 
         {/* ═══════ HERO ═══════ */}
         <section style={{
@@ -44,10 +44,19 @@ export default function HomePage() {
           position: "relative",
           overflow: "hidden",
         }}>
+          {/* dot grid */}
+          <div style={{
+            position: "absolute", inset: 0,
+            backgroundImage: "radial-gradient(circle, rgba(255,255,255,.03) 1px, transparent 1px)",
+            backgroundSize: "32px 32px",
+            pointerEvents: "none",
+          }} />
+
           {/* top accent */}
           <div style={{
             height: 2,
-            background: "linear-gradient(90deg, #059669 0%, #059669 25%, transparent 100%)",
+            background: "linear-gradient(90deg, #6366F1 0%, #A78BFA 40%, transparent 100%)",
+            position: "relative", zIndex: 2,
           }} />
 
           {/* nav */}
@@ -59,26 +68,26 @@ export default function HomePage() {
             position: "relative",
             zIndex: 2,
           }}>
-            <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
               <span style={{
-                fontFamily: "'Instrument Serif', serif",
-                fontSize: 24, color: "#059669",
-                fontStyle: "italic", letterSpacing: "-0.02em",
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 24, color: "#818CF8",
+                fontWeight: 700, letterSpacing: "-0.02em",
               }}>mon</span>
               <span style={{
-                fontFamily: "'Instrument Serif', serif",
+                fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: 24, color: "#fafafa",
-                letterSpacing: "-0.02em",
+                fontWeight: 500, letterSpacing: "-0.02em",
               }}>marché</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{
                 width: 6, height: 6, borderRadius: "50%",
-                background: "#059669", display: "inline-block",
+                background: "#818CF8", display: "inline-block",
                 animation: "mmPulse 2.5s ease infinite",
               }} />
               <span style={{
-                fontFamily: "'IBM Plex Mono', monospace",
+                fontFamily: "'JetBrains Mono', monospace",
                 fontSize: 10, color: "rgba(255,255,255,.32)",
                 letterSpacing: ".06em",
               }}>veille active</span>
@@ -98,15 +107,22 @@ export default function HomePage() {
             {/* headline */}
             <div style={{ animation: "mmUp .7s ease both" }}>
               <h1 style={{
-                fontFamily: "'Instrument Serif', serif",
-                fontSize: "clamp(44px, 7vw, 88px)",
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: "clamp(44px, 7vw, 84px)",
                 lineHeight: 1.02,
                 color: "#fafafa",
                 letterSpacing: "-0.04em",
+                fontWeight: 700,
                 maxWidth: 860,
               }}>
                 Les marchés publics<br />
-                qui vous <span style={{ color: "#059669", fontStyle: "italic" }}>correspondent</span>.
+                qui vous{" "}
+                <span style={{
+                  background: "linear-gradient(135deg, #818CF8, #C084FC)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                  backgroundClip: "text",
+                }}>correspondent</span>.
               </h1>
             </div>
 
@@ -114,11 +130,11 @@ export default function HomePage() {
             <div style={{ animation: "mmUp .7s ease .15s both" }}>
               <div style={{
                 width: 40, height: 2,
-                background: "#059669",
+                background: "linear-gradient(90deg, #6366F1, #A78BFA)",
                 marginTop: 32, borderRadius: 1,
               }} />
               <p style={{
-                fontSize: "clamp(15px, 1.4vw, 19px)",
+                fontSize: "clamp(15px, 1.4vw, 18px)",
                 lineHeight: 1.7,
                 color: "rgba(255,255,255,.42)",
                 maxWidth: 480,
@@ -140,12 +156,12 @@ export default function HomePage() {
               ].map(({ n, l }) => (
                 <div key={l}>
                   <div style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
-                    fontSize: 24, fontWeight: 600,
-                    color: "#059669", letterSpacing: "-0.02em",
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 24, fontWeight: 500,
+                    color: "#818CF8", letterSpacing: "-0.02em",
                   }}>{n}</div>
                   <div style={{
-                    fontFamily: "'IBM Plex Mono', monospace",
+                    fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 10, color: "rgba(255,255,255,.25)",
                     letterSpacing: ".05em", marginTop: 6,
                   }}>{l}</div>
@@ -159,11 +175,16 @@ export default function HomePage() {
             position: "absolute", bottom: 28, left: "50%",
             transform: "translateX(-50%)", zIndex: 2,
             display: "flex", flexDirection: "column",
-            alignItems: "center", gap: 6,
+            alignItems: "center", gap: 8,
             animation: "mmFloat 3s ease infinite, mmUp .6s ease 1s both",
           }}>
+            <div style={{ display: "flex", gap: 6 }}>
+              <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#0EA5E9" }} />
+              <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#10B981" }} />
+              <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#EA580C" }} />
+            </div>
             <span style={{
-              fontFamily: "'IBM Plex Mono', monospace",
+              fontFamily: "'JetBrains Mono', monospace",
               fontSize: 9, color: "rgba(255,255,255,.18)",
               letterSpacing: ".14em", textTransform: "uppercase",
             }}>secteurs</span>
@@ -174,7 +195,7 @@ export default function HomePage() {
           <div style={{
             position: "absolute", top: "12%", right: "-10%",
             width: "50vw", height: "50vw", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(5,150,105,.06) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(99,102,241,.06) 0%, transparent 70%)",
             filter: "blur(80px)", pointerEvents: "none",
           }} />
         </section>
@@ -187,19 +208,19 @@ export default function HomePage() {
             <div className="mm-sh" style={{ marginBottom: 52 }}>
               <div>
                 <span style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: 10, fontWeight: 600,
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 10, fontWeight: 500,
                   color: "#b0b0b0", textTransform: "uppercase",
                   letterSpacing: ".14em",
                 }}>secteurs</span>
                 <h2 style={{
-                  fontFamily: "'Instrument Serif', serif",
+                  fontFamily: "'Space Grotesk', sans-serif",
                   fontSize: "clamp(26px, 3.5vw, 42px)",
-                  letterSpacing: "-0.03em",
+                  letterSpacing: "-0.03em", fontWeight: 700,
                   marginTop: 8, color: "#0f0f0f", lineHeight: 1.1,
                 }}>
                   Trois verticales,<br />
-                  <span style={{ color: "#059669", fontStyle: "italic" }}>
+                  <span style={{ color: "#6366F1" }}>
                     une obsession.
                   </span>
                 </h2>
@@ -244,9 +265,9 @@ export default function HomePage() {
               <a
                 href="mailto:contact@monmarche.fr?subject=Waitlist"
                 style={{
-                  fontFamily: "'IBM Plex Mono', monospace",
-                  fontSize: 11, fontWeight: 600,
-                  color: "#059669", textDecoration: "none",
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 11, fontWeight: 500,
+                  color: "#6366F1", textDecoration: "none",
                   display: "flex", alignItems: "center", gap: 6,
                 }}
               >
@@ -260,22 +281,22 @@ export default function HomePage() {
         <footer className="mm-ft" style={{
           background: "#09090b", padding: "28px 40px",
         }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 3 }}>
+          <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
             <span style={{
-              fontFamily: "'Instrument Serif', serif",
-              fontSize: 15, color: "#059669", fontStyle: "italic",
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 15, color: "#818CF8", fontWeight: 700,
             }}>mon</span>
             <span style={{
-              fontFamily: "'Instrument Serif', serif",
-              fontSize: 15, color: "#fafafa",
+              fontFamily: "'Space Grotesk', sans-serif",
+              fontSize: 15, color: "#fafafa", fontWeight: 500,
             }}>marché</span>
           </div>
           <span style={{
-            fontFamily: "'IBM Plex Mono', monospace",
+            fontFamily: "'JetBrains Mono', monospace",
             fontSize: 10, color: "rgba(255,255,255,.22)",
             letterSpacing: ".05em",
           }}>
-            marchés publics · ia · pme · 2025
+            marchés publics · ia · pme · 2026
           </span>
         </footer>
       </main>
