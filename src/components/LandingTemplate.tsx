@@ -276,17 +276,11 @@ function ProblemSection({ painPoints, color }: { painPoints: SectorConfig["landi
 /* ── Process / How it works ─────────────────────── */
 function ProcessSection({ steps, color }: { steps: SectorConfig["landing"]["steps"]; color: string }) {
   return (
-    <section id="process" style={{ background: "var(--ink)", padding: "72px 28px", position: "relative", overflow: "hidden" }}>
-      {/* Subtle grid pattern */}
-      <div style={{
-        position: "absolute", inset: 0, opacity: 0.04,
-        backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-        backgroundSize: "48px 48px",
-      }} />
-      <div style={{ maxWidth: 920, margin: "0 auto", position: "relative", zIndex: 2 }}>
+    <section id="process" style={{ background: "var(--cl)", padding: "72px 28px" }}>
+      <div style={{ maxWidth: 920, margin: "0 auto" }}>
         <F>
           <p style={{ fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.14em" }}>Fonctionnement</p>
-          <h2 style={{ fontFamily: "var(--serif)", fontSize: "clamp(30px, 4vw, 44px)", color: "#fff", marginTop: 10, lineHeight: 1.1, letterSpacing: "-0.025em" }}>
+          <h2 style={{ fontFamily: "var(--serif)", fontSize: "clamp(30px, 4vw, 44px)", color: "var(--ink)", marginTop: 10, lineHeight: 1.1, letterSpacing: "-0.025em" }}>
             Trois étapes.<br />Deux minutes.
           </h2>
         </F>
@@ -295,17 +289,17 @@ function ProcessSection({ steps, color }: { steps: SectorConfig["landing"]["step
           {steps.map((s, i) => (
             <F key={i} delay={i * 100}>
               <div style={{
-                padding: "36px 28px", background: "rgba(255,255,255,0.03)",
+                padding: "36px 28px", background: "#fff",
                 borderRadius: i === 0 ? "12px 0 0 12px" : i === 2 ? "0 12px 12px 0" : 0,
-                border: "1px solid rgba(255,255,255,0.06)",
+                border: "1px solid var(--line)",
                 height: "100%",
               }}>
                 <div style={{
                   fontFamily: "var(--serif)", fontSize: 56, fontWeight: 700,
-                  color, opacity: 0.25, lineHeight: 1, marginBottom: 16,
+                  color, opacity: 0.2, lineHeight: 1, marginBottom: 16,
                 }}>{String(i + 1).padStart(2, "0")}</div>
-                <h3 style={{ fontFamily: "var(--body)", fontSize: 17, fontWeight: 900, color: "#fff", marginBottom: 10, letterSpacing: "-0.01em" }}>{s.title}</h3>
-                <p style={{ fontFamily: "var(--body)", fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", fontWeight: 400 }}>{s.description}</p>
+                <h3 style={{ fontFamily: "var(--body)", fontSize: 17, fontWeight: 900, color: "var(--ink)", marginBottom: 10, letterSpacing: "-0.01em" }}>{s.title}</h3>
+                <p style={{ fontFamily: "var(--body)", fontSize: 14, lineHeight: 1.7, color: "var(--ink3)", fontWeight: 400 }}>{s.description}</p>
               </div>
             </F>
           ))}
@@ -479,32 +473,31 @@ function CtaSection({ cta, slug, color, colorDark }: { cta: SectorConfig["landin
   }
 
   return (
-    <section id="start" style={{ background: colorDark, padding: "72px 28px", position: "relative", overflow: "hidden" }}>
-      <div style={{ position: "absolute", top: -80, right: -60, width: 300, height: 300, borderRadius: "50%", background: `radial-gradient(circle, ${color}18 0%, transparent 70%)` }} />
+    <section id="start" style={{ background: "var(--cl)", padding: "72px 28px", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", top: -80, right: -60, width: 300, height: 300, borderRadius: "50%", background: `radial-gradient(circle, ${color}10 0%, transparent 70%)` }} />
       <div style={{ maxWidth: 460, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
         <F>
-          <h2 style={{ fontFamily: "var(--serif)", fontSize: "clamp(26px, 3.5vw, 38px)", color: "#fff", lineHeight: 1.15, letterSpacing: "-0.02em" }}>{cta.title}</h2>
-          <p style={{ fontFamily: "var(--body)", fontSize: 15, color: "rgba(255,255,255,0.45)", marginTop: 14, fontWeight: 400 }}>{cta.subtitle}</p>
+          <h2 style={{ fontFamily: "var(--serif)", fontSize: "clamp(26px, 3.5vw, 38px)", color: "var(--ink)", lineHeight: 1.15, letterSpacing: "-0.02em" }}>{cta.title}</h2>
+          <p style={{ fontFamily: "var(--body)", fontSize: 15, color: "var(--ink3)", marginTop: 14, fontWeight: 400 }}>{cta.subtitle}</p>
         </F>
         {result?.success ? (
-          <F><div style={{ marginTop: 32, background: "rgba(255,255,255,0.07)", borderRadius: 10, padding: 24, border: "1px solid rgba(255,255,255,0.08)" }}>
-            <span style={{ fontSize: 24 }}>🎉</span>
-            <p style={{ fontFamily: "var(--body)", fontSize: 15, fontWeight: 700, color: "#fff", marginTop: 8 }}>{result.message}</p>
+          <F><div style={{ marginTop: 32, background: "#fff", borderRadius: 10, padding: 24, border: "1px solid var(--line)" }}>
+            <p style={{ fontFamily: "var(--body)", fontSize: 15, fontWeight: 700, color: "var(--ink)" }}>{result.message}</p>
           </div></F>
         ) : (
           <F delay={80}>
             <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 8 }}>
               <input type="text" placeholder="SIRET (ex: 123 456 789 00012)" value={siret} onChange={e => setSiret(e.target.value)}
-                style={{ padding: "13px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", fontFamily: "var(--mono)", fontSize: 13, color: "#fff", outline: "none" }} />
+                style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--mono)", fontSize: 13, color: "var(--ink)", outline: "none" }} />
               <input type="email" placeholder="Email professionnel" value={email} onChange={e => setEmail(e.target.value)}
-                style={{ padding: "13px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", fontFamily: "var(--body)", fontSize: 14, color: "#fff", outline: "none" }} />
+                style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", outline: "none" }} />
               <button onClick={submit} disabled={loading || !email || !siret}
-                style={{ padding: "14px", borderRadius: 8, background: "#fff", color: colorDark, fontFamily: "var(--body)", fontSize: 14, fontWeight: 900, border: "none", cursor: "pointer", opacity: loading ? 0.5 : 1, letterSpacing: "-0.01em" }}>
+                style={{ padding: "14px", borderRadius: 8, background: color, color: "#fff", fontFamily: "var(--body)", fontSize: 14, fontWeight: 900, border: "none", cursor: "pointer", opacity: loading ? 0.5 : 1, letterSpacing: "-0.01em" }}>
                 {loading ? "..." : cta.buttonText}
               </button>
             </div>
             {result?.error && <p style={{ fontFamily: "var(--body)", fontSize: 12, color: "#f87171", marginTop: 10 }}>{result.error}</p>}
-            <p style={{ fontFamily: "var(--body)", fontSize: 11, color: "rgba(255,255,255,0.28)", marginTop: 12 }}>14 jours gratuits · Sans CB · Résiliable en 1 clic</p>
+            <p style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", marginTop: 12 }}>14 jours gratuits · Sans CB · Résiliable en 1 clic</p>
           </F>
         )}
       </div>
