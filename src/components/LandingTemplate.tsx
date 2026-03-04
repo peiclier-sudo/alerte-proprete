@@ -1,370 +1,524 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import Link from "next/link";
 import type { SectorConfig } from "@/lib/types";
 
-// ─── Main Component ───────────────────────────────────────
-
 export function LandingTemplate({ config }: { config: SectorConfig }) {
-  const { landing, slug, name, shortName, emoji, seo } = config;
-  const color = landing.color;
+  const { landing, slug, shortName, emoji } = config;
+  const c = landing.color;
 
   return (
-    <main className="min-h-screen bg-white">
-      {/* Nav */}
-      <nav className="border-b border-gray-100 px-6 py-4 sticky top-0 bg-white/95 backdrop-blur-sm z-50">
-        <div className="max-w-5xl mx-auto flex items-center justify-between">
-          <Link href="/" className="flex items-baseline gap-0.5">
-            <span className="text-xl font-extrabold" style={{ color }}>
-              mon
-            </span>
-            <span className="text-xl font-extrabold text-gray-900">marché</span>
-            <span className="text-xs font-medium text-gray-400 ml-2">
-              {shortName}
-            </span>
-          </Link>
-          <a
-            href="#pricing"
-            className="text-sm font-semibold px-4 py-2 rounded-lg transition"
-            style={{ background: color, color: "#fff" }}
-          >
-            Commencer
-          </a>
+    <>
+      <style jsx global>{`
+        @import url('https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Satoshi:wght@300;400;500;700;900&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+        :root {
+          --c: ${c};
+          --cl: ${landing.colorLight};
+          --cd: ${landing.colorDark};
+          --ink: #0f0f0f;
+          --ink2: #3d3d3d;
+          --ink3: #7a7a7a;
+          --ink4: #b0b0b0;
+          --bg: #fcfbf9;
+          --bg2: #f4f2ee;
+          --line: #e4e1db;
+          --serif: 'Instrument Serif', Georgia, serif;
+          --body: 'Satoshi', system-ui, sans-serif;
+          --mono: 'IBM Plex Mono', monospace;
+        }
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+        html { scroll-behavior: smooth; -webkit-font-smoothing: antialiased; }
+        body { font-family: var(--body); color: var(--ink); background: var(--bg); }
+        ::selection { background: ${c}25; }
+        .fade-up {
+          opacity: 0; transform: translateY(28px);
+          transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .fade-up.in { opacity: 1; transform: none; }
+        @keyframes pulse-dot { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+      `}</style>
+
+      <main>
+        <TopBar shortName={shortName} color={c} />
+        <HeroSection landing={landing} emoji={emoji} />
+        <MetricsRibbon />
+        <ProblemSection painPoints={landing.painPoints} color={c} />
+        <ProcessSection steps={landing.steps} color={c} />
+        <DigestPreview color={c} shortName={shortName} emoji={emoji} />
+        <PricingSection pricing={landing.pricing} color={c} />
+        <FaqSection faq={landing.faq} color={c} />
+        <CtaSection cta={landing.ctaFinal} slug={slug} color={c} colorDark={landing.colorDark} />
+        <FooterBar color={c} />
+      </main>
+    </>
+  );
+}
+
+/* ── Observer hook ──────────────────────────────── */
+function useFade() {
+  const ref = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = ref.current; if (!el) return;
+    const o = new IntersectionObserver(([e]) => { if (e.isIntersecting) { el.classList.add("in"); o.disconnect(); } }, { threshold: 0.1 });
+    o.observe(el); return () => o.disconnect();
+  }, []);
+  return ref;
+}
+function F({ children, delay = 0, as = "div", style = {} }: { children: React.ReactNode; delay?: number; as?: string; style?: React.CSSProperties }) {
+  const ref = useFade();
+  return <div ref={ref} className="fade-up" style={{ transitionDelay: `${delay}ms`, ...style }}>{children}</div>;
+}
+
+/* ── Top Bar ────────────────────────────────────── */
+function TopBar({ shortName, color }: { shortName: string; color: string }) {
+  const [sc, setSc] = useState(false);
+  useEffect(() => { const h = () => setSc(window.scrollY > 40); window.addEventListener("scroll", h, { passive: true }); return () => window.removeEventListener("scroll", h); }, []);
+
+  return (
+    <header style={{
+      position: "sticky", top: 0, zIndex: 99,
+      background: sc ? "rgba(252,251,249,0.88)" : "transparent",
+      backdropFilter: sc ? "blur(16px) saturate(1.4)" : "none",
+      borderBottom: sc ? "1px solid var(--line)" : "1px solid transparent",
+      transition: "all 0.35s ease",
+    }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "14px 28px", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "baseline", gap: 3 }}>
+          <span style={{ fontFamily: "var(--serif)", fontSize: 24, color, fontStyle: "italic", letterSpacing: "-0.02em" }}>mon</span>
+          <span style={{ fontFamily: "var(--serif)", fontSize: 24, color: "var(--ink)", letterSpacing: "-0.02em" }}>marché</span>
+          <span style={{ fontFamily: "var(--mono)", fontSize: 9, fontWeight: 600, color: "var(--ink4)", marginLeft: 8, textTransform: "uppercase", letterSpacing: "0.12em" }}>{shortName}</span>
+        </Link>
+        <nav style={{ display: "flex", gap: 24, alignItems: "center" }}>
+          <a href="#process" style={{ fontFamily: "var(--body)", fontSize: 13, color: "var(--ink3)", textDecoration: "none", fontWeight: 500, letterSpacing: "0.01em" }}>Comment</a>
+          <a href="#pricing" style={{ fontFamily: "var(--body)", fontSize: 13, color: "var(--ink3)", textDecoration: "none", fontWeight: 500 }}>Tarifs</a>
+          <a href="#start" style={{
+            fontFamily: "var(--body)", fontSize: 13, fontWeight: 700, color: "#fff",
+            background: color, padding: "9px 20px", borderRadius: 6, textDecoration: "none",
+            letterSpacing: "0.01em",
+          }}>Essai gratuit</a>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+/* ── Hero ───────────────────────────────────────── */
+function HeroSection({ landing, emoji }: { landing: SectorConfig["landing"]; emoji: string }) {
+  const c = landing.color;
+  return (
+    <section style={{ borderBottom: "1px solid var(--line)" }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "60px 28px 56px", display: "grid", gridTemplateColumns: "1fr 380px", gap: 60, alignItems: "center" }}>
+        {/* Left — text */}
+        <div>
+          <F>
+            <div style={{ display: "inline-flex", alignItems: "center", gap: 8, marginBottom: 28 }}>
+              <span style={{ width: 7, height: 7, borderRadius: "50%", background: c, animation: "pulse-dot 2.4s infinite" }} />
+              <span style={{ fontFamily: "var(--mono)", fontSize: 11, fontWeight: 500, color: "var(--ink3)", letterSpacing: "0.04em" }}>
+                {landing.socialProof.stat} {landing.socialProof.label}
+              </span>
+            </div>
+          </F>
+          <F delay={60}>
+            <h1 style={{
+              fontFamily: "var(--serif)", fontSize: "clamp(40px, 5.2vw, 62px)",
+              lineHeight: 1.05, color: "var(--ink)", letterSpacing: "-0.03em",
+              maxWidth: 580,
+            }}>
+              {landing.heroQuestion}
+            </h1>
+          </F>
+          <F delay={130}>
+            <p style={{
+              fontFamily: "var(--body)", fontSize: 17, lineHeight: 1.7, color: "var(--ink2)",
+              maxWidth: 480, marginTop: 24, fontWeight: 400,
+            }}>
+              {landing.heroSubtitle}
+            </p>
+          </F>
+          <F delay={200}>
+            <div style={{ marginTop: 36, display: "flex", gap: 10, maxWidth: 440 }}>
+              <input type="text" placeholder="Votre SIRET" style={{
+                flex: 1, padding: "13px 14px", borderRadius: 6, border: "1.5px solid var(--line)",
+                fontFamily: "var(--mono)", fontSize: 13, background: "#fff", color: "var(--ink)", outline: "none",
+                transition: "border 0.2s",
+              }}
+              onFocus={(e) => e.currentTarget.style.borderColor = c}
+              onBlur={(e) => e.currentTarget.style.borderColor = "var(--line)"}
+              />
+              <a href="#start" style={{
+                padding: "13px 22px", borderRadius: 6, background: c, color: "#fff",
+                fontFamily: "var(--body)", fontSize: 14, fontWeight: 700, textDecoration: "none",
+                whiteSpace: "nowrap",
+              }}>Démarrer →</a>
+            </div>
+            <p style={{ fontFamily: "var(--body)", fontSize: 12, color: "var(--ink4)", marginTop: 10 }}>
+              14 jours gratuits · Sans CB · Résiliable en 1 clic
+            </p>
+          </F>
         </div>
-      </nav>
 
-      {/* Hero */}
-      <section className="max-w-3xl mx-auto px-6 pt-16 pb-12 text-center">
-        <div
-          className="inline-flex items-center gap-2 text-sm font-medium px-3 py-1 rounded-full mb-6"
-          style={{ background: landing.colorLight, color: landing.colorDark }}
-        >
-          {emoji} {landing.socialProof.stat} {landing.socialProof.label}
+        {/* Right — mock score cards */}
+        <F delay={250}>
+          <div style={{ position: "relative" }}>
+            {[
+              { score: 94, title: "Entretien locaux — Mairie de Lyon", meta: "180K€ · 36 mois · 76", days: 21, top: 0 },
+              { score: 76, title: "Maintenance bâtiments communaux", meta: "95K€ · 24 mois · 45", days: 14, top: 108 },
+              { score: 61, title: "Prestations de service — Évreux", meta: "55K€ · 36 mois · 27", days: 6, top: 216 },
+            ].map((card, i) => (
+              <div key={i} style={{
+                position: i === 0 ? "relative" : "relative",
+                marginTop: i > 0 ? 12 : 0,
+                padding: "18px 20px", borderRadius: 10,
+                background: "#fff", border: "1px solid var(--line)",
+                boxShadow: "0 2px 8px rgba(0,0,0,0.03)",
+                display: "flex", gap: 14, alignItems: "center",
+                transform: `translateX(${i * -8}px)`,
+              }}>
+                <div style={{
+                  width: 46, height: 46, borderRadius: 10, flexShrink: 0,
+                  background: card.score >= 80 ? `${c}10` : card.score >= 60 ? "#fef9ee" : "#f8f8f8",
+                  border: `2px solid ${card.score >= 80 ? c : card.score >= 60 ? "#e5a820" : "#d4d4d4"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <span style={{
+                    fontFamily: "var(--mono)", fontSize: 18, fontWeight: 600,
+                    color: card.score >= 80 ? c : card.score >= 60 ? "#b8860b" : "#888",
+                  }}>{card.score}</span>
+                </div>
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "var(--body)", fontSize: 13, fontWeight: 700, color: "var(--ink)", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                    {card.title}
+                  </div>
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--ink3)", marginTop: 3 }}>
+                    {card.meta}
+                  </div>
+                </div>
+                <div style={{
+                  fontFamily: "var(--mono)", fontSize: 10, fontWeight: 600,
+                  color: card.days <= 7 ? "#c0392b" : "var(--ink4)",
+                  whiteSpace: "nowrap",
+                }}>{card.days}j</div>
+              </div>
+            ))}
+            {/* Decorative blur */}
+            <div style={{
+              position: "absolute", bottom: -20, left: 20, right: 20, height: 40,
+              background: `linear-gradient(to bottom, transparent, var(--bg))`,
+              pointerEvents: "none",
+            }} />
+          </div>
+        </F>
+      </div>
+    </section>
+  );
+}
+
+/* ── Metrics Ribbon ─────────────────────────────── */
+function MetricsRibbon() {
+  const items = [
+    { val: "7h00", lbl: "envoi quotidien" },
+    { val: "< 2 min", lbl: "temps de lecture" },
+    { val: "100%", lbl: "AO qualifiés IA" },
+    { val: "0,002€", lbl: "coût par analyse" },
+  ];
+  return (
+    <div style={{
+      borderBottom: "1px solid var(--line)", padding: "18px 28px",
+      display: "flex", justifyContent: "center", gap: 56, flexWrap: "wrap",
+    }}>
+      {items.map((it, i) => (
+        <div key={i} style={{ textAlign: "center" }}>
+          <div style={{ fontFamily: "var(--mono)", fontSize: 15, fontWeight: 600, color: "var(--ink)" }}>{it.val}</div>
+          <div style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", marginTop: 2, letterSpacing: "0.02em" }}>{it.lbl}</div>
         </div>
+      ))}
+    </div>
+  );
+}
 
-        <h1 className="text-3xl md:text-5xl font-extrabold text-gray-900 leading-tight tracking-tight">
-          {landing.heroQuestion}
-        </h1>
+/* ── Problem / Pain Points ──────────────────────── */
+function ProblemSection({ painPoints, color }: { painPoints: SectorConfig["landing"]["painPoints"]; color: string }) {
+  return (
+    <section style={{ maxWidth: 920, margin: "0 auto", padding: "72px 28px" }}>
+      <F>
+        <p style={{ fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.14em" }}>Le problème</p>
+        <h2 style={{ fontFamily: "var(--serif)", fontSize: "clamp(30px, 4vw, 44px)", color: "var(--ink)", marginTop: 10, lineHeight: 1.1, letterSpacing: "-0.025em", maxWidth: 500 }}>
+          Vous perdez des marchés.<br /><span style={{ color: "var(--ink3)", fontStyle: "italic" }}>Pas par incompétence.</span>
+        </h2>
+      </F>
 
-        <p className="mt-6 text-lg text-gray-500 max-w-2xl mx-auto leading-relaxed">
-          {landing.heroSubtitle}
-        </p>
+      <div style={{ marginTop: 48, display: "flex", flexDirection: "column", gap: 1 }}>
+        {painPoints.map((pp, i) => (
+          <F key={i} delay={i * 80}>
+            <div style={{
+              display: "grid", gridTemplateColumns: "1fr 1px 1fr", background: "#fff",
+              borderRadius: i === 0 ? "12px 12px 0 0" : i === painPoints.length - 1 ? "0 0 12px 12px" : 0,
+              border: "1px solid var(--line)", borderTop: i > 0 ? "none" : undefined,
+            }}>
+              <div style={{ padding: "24px 28px" }}>
+                <span style={{ fontFamily: "var(--mono)", fontSize: 9, fontWeight: 600, color: "#c0392b", textTransform: "uppercase", letterSpacing: "0.1em" }}>Sans MonMarché</span>
+                <p style={{ fontFamily: "var(--body)", fontSize: 14, lineHeight: 1.65, color: "var(--ink2)", marginTop: 8 }}>{pp.before}</p>
+              </div>
+              <div style={{ background: `linear-gradient(to bottom, var(--line), ${color}40, var(--line))` }} />
+              <div style={{ padding: "24px 28px" }}>
+                <span style={{ fontFamily: "var(--mono)", fontSize: 9, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.1em" }}>Avec MonMarché</span>
+                <p style={{ fontFamily: "var(--body)", fontSize: 14, lineHeight: 1.65, color: "var(--ink)", marginTop: 8, fontWeight: 500 }}>{pp.after}</p>
+              </div>
+            </div>
+          </F>
+        ))}
+      </div>
+    </section>
+  );
+}
 
-        {/* Signup form */}
-        <SignupForm sectorSlug={slug} color={color} />
-      </section>
-
-      {/* Pain Points */}
-      <section className="py-16" style={{ background: landing.colorLight }}>
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">
-            Avant / Après MonMarché
+/* ── Process / How it works ─────────────────────── */
+function ProcessSection({ steps, color }: { steps: SectorConfig["landing"]["steps"]; color: string }) {
+  return (
+    <section id="process" style={{ background: "var(--ink)", padding: "72px 28px", position: "relative", overflow: "hidden" }}>
+      {/* Subtle grid pattern */}
+      <div style={{
+        position: "absolute", inset: 0, opacity: 0.04,
+        backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
+        backgroundSize: "48px 48px",
+      }} />
+      <div style={{ maxWidth: 920, margin: "0 auto", position: "relative", zIndex: 2 }}>
+        <F>
+          <p style={{ fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.14em" }}>Fonctionnement</p>
+          <h2 style={{ fontFamily: "var(--serif)", fontSize: "clamp(30px, 4vw, 44px)", color: "#fff", marginTop: 10, lineHeight: 1.1, letterSpacing: "-0.025em" }}>
+            Trois étapes.<br />Deux minutes.
           </h2>
-          <div className="space-y-4">
-            {landing.painPoints.map((pp, i) => (
-              <div
-                key={i}
-                className="grid md:grid-cols-2 gap-0 rounded-xl overflow-hidden bg-white shadow-sm"
-              >
-                <div className="p-6 border-b md:border-b-0 md:border-r border-gray-100">
-                  <div className="text-xs font-bold text-red-400 uppercase tracking-wide mb-2">
-                    ❌ Aujourd&apos;hui
-                  </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {pp.before}
-                  </p>
+        </F>
+
+        <div style={{ marginTop: 56, display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 2 }}>
+          {steps.map((s, i) => (
+            <F key={i} delay={i * 100}>
+              <div style={{
+                padding: "36px 28px", background: "rgba(255,255,255,0.03)",
+                borderRadius: i === 0 ? "12px 0 0 12px" : i === 2 ? "0 12px 12px 0" : 0,
+                border: "1px solid rgba(255,255,255,0.06)",
+                height: "100%",
+              }}>
+                <div style={{
+                  fontFamily: "var(--serif)", fontSize: 56, fontStyle: "italic",
+                  color, opacity: 0.25, lineHeight: 1, marginBottom: 16,
+                }}>{String(i + 1).padStart(2, "0")}</div>
+                <h3 style={{ fontFamily: "var(--body)", fontSize: 17, fontWeight: 900, color: "#fff", marginBottom: 10, letterSpacing: "-0.01em" }}>{s.title}</h3>
+                <p style={{ fontFamily: "var(--body)", fontSize: 14, lineHeight: 1.7, color: "rgba(255,255,255,0.45)", fontWeight: 400 }}>{s.description}</p>
+              </div>
+            </F>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Digest Preview ─────────────────────────────── */
+function DigestPreview({ color, shortName, emoji }: { color: string; shortName: string; emoji: string }) {
+  return (
+    <section style={{ padding: "72px 28px", background: "var(--bg2)" }}>
+      <div style={{ maxWidth: 580, margin: "0 auto" }}>
+        <F>
+          <p style={{ fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.14em", textAlign: "center" }}>Aperçu</p>
+          <h2 style={{ fontFamily: "var(--serif)", fontSize: 36, color: "var(--ink)", marginTop: 10, lineHeight: 1.1, letterSpacing: "-0.025em", textAlign: "center" }}>
+            Ce que vous recevez à 7h
+          </h2>
+        </F>
+
+        <F delay={100}>
+          <div style={{
+            marginTop: 36, background: "#fff", borderRadius: 14, overflow: "hidden",
+            boxShadow: "0 12px 48px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.03)",
+            border: "1px solid var(--line)",
+          }}>
+            {/* Email header */}
+            <div style={{ padding: "16px 22px", borderBottom: "1px solid var(--line)", display: "flex", alignItems: "center", gap: 12 }}>
+              <div style={{ width: 36, height: 36, borderRadius: 8, background: color, display: "flex", alignItems: "center", justifyContent: "center", fontSize: 17 }}>{emoji}</div>
+              <div style={{ flex: 1 }}>
+                <div style={{ fontFamily: "var(--body)", fontSize: 13, fontWeight: 700, color: "var(--ink)" }}>MonMarché {shortName}</div>
+                <div style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)" }}>3 marchés · lundi 3 mars</div>
+              </div>
+              <span style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--ink4)" }}>7:00</span>
+            </div>
+            {/* Items */}
+            {[
+              { score: 94, t: "Entretien locaux administratifs — Mairie de Rouen", m: "Ville de Rouen · 76 · 180K€ · 36 mois", d: 21, renew: true },
+              { score: 76, t: "Maintenance bâtiments communaux", m: "CC Cœur de Loire · 45 · 95K€ · 24 mois", d: 14, renew: false },
+              { score: 61, t: "Prestations — Groupe scolaire Voltaire", m: "Ville d'Évreux · 27 · 55K€ · 36 mois", d: 6, renew: true },
+            ].map((r, i, a) => (
+              <div key={i} style={{ padding: "16px 22px", borderBottom: i < a.length - 1 ? "1px solid #f0efeb" : "none", display: "flex", gap: 12, alignItems: "center" }}>
+                <div style={{
+                  width: 42, height: 42, borderRadius: 8, flexShrink: 0,
+                  background: r.score >= 80 ? `${color}0d` : r.score >= 60 ? "#fdf6e3" : "#f8f8f6",
+                  border: `1.5px solid ${r.score >= 80 ? color : r.score >= 60 ? "#daa520" : "#ccc"}`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                }}>
+                  <span style={{ fontFamily: "var(--mono)", fontSize: 16, fontWeight: 600, color: r.score >= 80 ? color : r.score >= 60 ? "#b8860b" : "#999" }}>{r.score}</span>
                 </div>
-                <div className="p-6">
-                  <div
-                    className="text-xs font-bold uppercase tracking-wide mb-2"
-                    style={{ color }}
-                  >
-                    ✅ Avec MonMarché
+                <div style={{ flex: 1, minWidth: 0 }}>
+                  <div style={{ fontFamily: "var(--body)", fontSize: 13, fontWeight: 600, color: "var(--ink)", lineHeight: 1.3, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>{r.t}</div>
+                  <div style={{ fontFamily: "var(--mono)", fontSize: 10, color: "var(--ink3)", marginTop: 3, display: "flex", gap: 8, flexWrap: "wrap" }}>
+                    <span>{r.m}</span>
+                    {r.renew && <span style={{ color }}>↻ reconduction</span>}
                   </div>
-                  <p className="text-gray-600 text-sm leading-relaxed">
-                    {pp.after}
-                  </p>
                 </div>
+                <span style={{ fontFamily: "var(--mono)", fontSize: 10, fontWeight: 600, color: r.d <= 7 ? "#c0392b" : "var(--ink4)" }}>{r.d}j</span>
               </div>
             ))}
           </div>
-        </div>
-      </section>
+        </F>
+      </div>
+    </section>
+  );
+}
 
-      {/* How it works */}
-      <section className="py-16">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">
-            Comment ça marche
+/* ── Pricing ────────────────────────────────────── */
+function PricingSection({ pricing, color }: { pricing: SectorConfig["landing"]["pricing"]; color: string }) {
+  return (
+    <section id="pricing" style={{ padding: "72px 28px" }}>
+      <div style={{ maxWidth: 760, margin: "0 auto" }}>
+        <F>
+          <p style={{ fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.14em" }}>Tarifs</p>
+          <h2 style={{ fontFamily: "var(--serif)", fontSize: 36, color: "var(--ink)", marginTop: 10, lineHeight: 1.1, letterSpacing: "-0.025em" }}>
+            Simple. Sans engagement.
           </h2>
-          <div className="grid md:grid-cols-3 gap-8">
-            {landing.steps.map((step, i) => (
-              <div key={i} className="text-center">
-                <div
-                  className="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold text-lg mx-auto mb-4"
-                  style={{ background: color }}
-                >
-                  {i + 1}
-                </div>
-                <h3 className="font-bold text-gray-900 mb-2">{step.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">
-                  {step.description}
-                </p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Pricing */}
-      <section id="pricing" className="py-16 bg-gray-50">
-        <div className="max-w-4xl mx-auto px-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-3">
-            Tarifs simples, sans engagement
-          </h2>
-          <p className="text-sm text-gray-500 text-center mb-10">
-            Annulable à tout moment. Un seul marché gagné rembourse des années d&apos;abonnement.
+          <p style={{ fontFamily: "var(--body)", fontSize: 14, color: "var(--ink3)", marginTop: 10 }}>
+            Un seul marché gagné rembourse des années d&apos;abonnement.
           </p>
-          <div className="grid md:grid-cols-2 gap-6 max-w-2xl mx-auto">
-            {landing.pricing.map((tier) => (
-              <div
-                key={tier.name}
-                className={`p-8 rounded-xl bg-white ${
-                  tier.popular
-                    ? "ring-2 shadow-lg relative"
-                    : "border border-gray-200"
-                }`}
-                style={tier.popular ? { "--tw-ring-color": color } as any : {}}
-              >
-                {tier.popular && (
-                  <div
-                    className="absolute -top-3 left-1/2 -translate-x-1/2 text-xs font-bold text-white px-3 py-1 rounded-full"
-                    style={{ background: color }}
-                  >
-                    Populaire
-                  </div>
-                )}
-                <h3 className="text-lg font-bold text-gray-900">{tier.name}</h3>
-                <div className="flex items-baseline gap-1 mt-3 mb-6">
-                  <span className="text-4xl font-extrabold text-gray-900">
-                    {tier.price}€
-                  </span>
-                  <span className="text-gray-400 text-sm">/{tier.period}</span>
+        </F>
+
+        <div style={{ marginTop: 40, display: "grid", gridTemplateColumns: "1fr 1fr", gap: 2 }}>
+          {pricing.map((t, i) => (
+            <F key={t.name} delay={i * 80}>
+              <div style={{
+                padding: "36px 32px", borderRadius: i === 0 ? "12px 0 0 12px" : "0 12px 12px 0",
+                background: t.popular ? "var(--ink)" : "#fff",
+                border: t.popular ? "none" : "1px solid var(--line)",
+                position: "relative", height: "100%", display: "flex", flexDirection: "column",
+              }}>
+                {t.popular && <div style={{ position: "absolute", top: 0, left: 28, right: 28, height: 2, background: color, borderRadius: "0 0 2px 2px" }} />}
+                <span style={{
+                  fontFamily: "var(--mono)", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em",
+                  color: t.popular ? color : "var(--ink4)",
+                }}>{t.name}{t.popular ? " · recommandé" : ""}</span>
+                <div style={{ display: "flex", alignItems: "baseline", gap: 3, margin: "18px 0 28px" }}>
+                  <span style={{ fontFamily: "var(--serif)", fontSize: 44, color: t.popular ? "#fff" : "var(--ink)", letterSpacing: "-0.03em" }}>{t.price}€</span>
+                  <span style={{ fontFamily: "var(--body)", fontSize: 13, color: t.popular ? "rgba(255,255,255,0.35)" : "var(--ink4)" }}>/{t.period}</span>
                 </div>
-                <ul className="space-y-3 mb-8">
-                  {tier.features.map((f, i) => (
-                    <li key={i} className="flex gap-2 text-sm text-gray-600">
-                      <span style={{ color }}>✓</span>
-                      {f}
-                    </li>
+                <div style={{ flex: 1 }}>
+                  {t.features.map((f, j) => (
+                    <div key={j} style={{ display: "flex", gap: 8, marginBottom: 12, fontFamily: "var(--body)", fontSize: 13, lineHeight: 1.5, color: t.popular ? "rgba(255,255,255,0.6)" : "var(--ink2)" }}>
+                      <span style={{ color, flexShrink: 0 }}>✓</span><span>{f}</span>
+                    </div>
                   ))}
-                </ul>
-                <a
-                  href="#signup"
-                  className="block text-center py-3 rounded-lg font-semibold text-sm transition"
-                  style={
-                    tier.popular
-                      ? { background: color, color: "#fff" }
-                      : {
-                          background: "transparent",
-                          color,
-                          border: `2px solid ${color}`,
-                        }
-                  }
-                >
-                  {tier.cta}
-                </a>
+                </div>
+                <a href="#start" style={{
+                  display: "block", textAlign: "center", padding: "13px 20px", borderRadius: 8,
+                  fontFamily: "var(--body)", fontSize: 14, fontWeight: 700, textDecoration: "none", marginTop: 20,
+                  ...(t.popular ? { background: color, color: "#fff" } : { background: "transparent", color, border: `1.5px solid ${color}` }),
+                }}>{t.cta}</a>
               </div>
-            ))}
-          </div>
+            </F>
+          ))}
         </div>
-      </section>
-
-      {/* FAQ */}
-      <section className="py-16">
-        <div className="max-w-2xl mx-auto px-6">
-          <h2 className="text-2xl font-bold text-gray-900 text-center mb-10">
-            Questions fréquentes
-          </h2>
-          <div className="space-y-2">
-            {landing.faq.map((item, i) => (
-              <FaqItem key={i} question={item.question} answer={item.answer} color={color} />
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Final CTA */}
-      <section className="py-16" style={{ background: landing.colorDark }}>
-        <div className="max-w-2xl mx-auto px-6 text-center">
-          <h2 className="text-2xl md:text-3xl font-bold text-white mb-4">
-            {landing.ctaFinal.title}
-          </h2>
-          <p className="text-white/70 mb-8">{landing.ctaFinal.subtitle}</p>
-          <SignupForm sectorSlug={slug} color="#fff" dark />
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="border-t border-gray-100 py-8 text-center text-xs text-gray-400">
-        <div className="flex items-baseline justify-center gap-0.5 mb-2">
-          <span className="font-extrabold" style={{ color }}>
-            mon
-          </span>
-          <span className="font-extrabold text-gray-900">marché</span>
-        </div>
-        Marchés publics qualifiés par IA pour les PME · 2025
-      </footer>
-    </main>
+      </div>
+    </section>
   );
 }
 
-// ─── Signup Form ──────────────────────────────────────────
-
-function SignupForm({
-  sectorSlug,
-  color,
-  dark = false,
-}: {
-  sectorSlug: string;
-  color: string;
-  dark?: boolean;
-}) {
-  const [email, setEmail] = useState("");
-  const [siret, setSiret] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<{
-    success?: boolean;
-    message?: string;
-    error?: string;
-  } | null>(null);
-
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setResult(null);
-
-    try {
-      const res = await fetch("/api/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, siret, sector_slug: sectorSlug }),
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        setResult({ success: true, message: data.message });
-      } else {
-        setResult({ error: data.error });
-      }
-    } catch {
-      setResult({ error: "Erreur réseau. Réessayez." });
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  if (result?.success) {
-    return (
-      <div
-        className="mt-8 p-6 rounded-xl text-center"
-        style={{ background: dark ? "rgba(255,255,255,0.1)" : "#f0fdf4" }}
-      >
-        <div className="text-2xl mb-2">🎉</div>
-        <p className={`font-semibold ${dark ? "text-white" : "text-gray-900"}`}>
-          {result.message}
-        </p>
-      </div>
-    );
-  }
-
+/* ── FAQ ─────────────────────────────────────────── */
+function FaqSection({ faq, color }: { faq: SectorConfig["landing"]["faq"]; color: string }) {
   return (
-    <div id="signup" className="mt-8 max-w-md mx-auto">
-      <div className="flex flex-col gap-3">
-        <input
-          type="text"
-          placeholder="Votre SIRET (ex: 123 456 789 00012)"
-          value={siret}
-          onChange={(e) => setSiret(e.target.value)}
-          className={`w-full px-4 py-3 rounded-lg border text-sm ${
-            dark
-              ? "bg-white/10 border-white/20 text-white placeholder:text-white/50"
-              : "bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
-          }`}
-        />
-        <input
-          type="email"
-          placeholder="Votre email professionnel"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          className={`w-full px-4 py-3 rounded-lg border text-sm ${
-            dark
-              ? "bg-white/10 border-white/20 text-white placeholder:text-white/50"
-              : "bg-white border-gray-200 text-gray-900 placeholder:text-gray-400"
-          }`}
-        />
-        <button
-          onClick={handleSubmit as any}
-          disabled={loading || !email || !siret}
-          className="w-full py-3 rounded-lg font-semibold text-sm transition disabled:opacity-50"
-          style={
-            dark
-              ? { background: "#fff", color: "#111" }
-              : { background: color, color: "#fff" }
-          }
-        >
-          {loading ? "Inscription..." : "Recevoir mon premier digest gratuit →"}
-        </button>
+    <section style={{ padding: "72px 28px", background: "var(--bg2)" }}>
+      <div style={{ maxWidth: 620, margin: "0 auto" }}>
+        <F><h2 style={{ fontFamily: "var(--serif)", fontSize: 32, color: "var(--ink)", letterSpacing: "-0.02em", marginBottom: 36 }}>Questions fréquentes</h2></F>
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          {faq.map((f, i) => <F key={i} delay={i * 50}><Accordion q={f.question} a={f.answer} color={color} /></F>)}
+        </div>
       </div>
-      {result?.error && (
-        <p className="mt-3 text-sm text-red-500 text-center">{result.error}</p>
-      )}
-      <p
-        className={`mt-3 text-xs text-center ${
-          dark ? "text-white/50" : "text-gray-400"
-        }`}
-      >
-        Gratuit 14 jours · Sans carte bancaire · Annulable en 1 clic
-      </p>
-    </div>
+    </section>
   );
 }
 
-// ─── FAQ Accordion ────────────────────────────────────────
-
-function FaqItem({
-  question,
-  answer,
-  color,
-}: {
-  question: string;
-  answer: string;
-  color: string;
-}) {
+function Accordion({ q, a, color }: { q: string; a: string; color: string }) {
   const [open, setOpen] = useState(false);
+  return (
+    <div style={{ background: "#fff", borderRadius: 8, border: "1px solid var(--line)", overflow: "hidden" }}>
+      <button onClick={() => setOpen(!open)} style={{
+        width: "100%", display: "flex", justifyContent: "space-between", alignItems: "flex-start",
+        padding: "18px 22px", background: "none", border: "none", cursor: "pointer", textAlign: "left", gap: 14,
+      }}>
+        <span style={{ fontFamily: "var(--body)", fontSize: 14, fontWeight: 600, color: "var(--ink)", lineHeight: 1.5 }}>{q}</span>
+        <span style={{
+          fontSize: 18, color: "var(--ink4)", transition: "transform 0.3s cubic-bezier(0.16,1,0.3,1)",
+          transform: open ? "rotate(45deg)" : "none", flexShrink: 0,
+        }}>+</span>
+      </button>
+      <div style={{ maxHeight: open ? 500 : 0, overflow: "hidden", transition: "max-height 0.45s cubic-bezier(0.16,1,0.3,1)" }}>
+        <div style={{ padding: "0 22px 18px", fontFamily: "var(--body)", fontSize: 13, lineHeight: 1.8, color: "var(--ink2)" }}>{a}</div>
+      </div>
+    </div>
+  );
+}
+
+/* ── Final CTA ──────────────────────────────────── */
+function CtaSection({ cta, slug, color, colorDark }: { cta: SectorConfig["landing"]["ctaFinal"]; slug: string; color: string; colorDark: string }) {
+  const [email, setEmail] = useState(""); const [siret, setSiret] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [result, setResult] = useState<{ success?: boolean; message?: string; error?: string } | null>(null);
+
+  async function submit() {
+    if (!email || !siret) return; setLoading(true); setResult(null);
+    try {
+      const r = await fetch("/api/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, siret, sector_slug: slug }) });
+      const d = await r.json();
+      r.ok ? setResult({ success: true, message: d.message }) : setResult({ error: d.error });
+    } catch { setResult({ error: "Erreur réseau." }); } finally { setLoading(false); }
+  }
 
   return (
-    <div className="border border-gray-100 rounded-lg overflow-hidden">
-      <button
-        onClick={() => setOpen(!open)}
-        className="w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition"
-      >
-        <span className="font-semibold text-gray-900 text-sm pr-4">
-          {question}
-        </span>
-        <span
-          className="text-lg transition-transform flex-shrink-0"
-          style={{ color, transform: open ? "rotate(45deg)" : "rotate(0)" }}
-        >
-          +
-        </span>
-      </button>
-      {open && (
-        <div className="px-5 pb-5 text-sm text-gray-500 leading-relaxed">
-          {answer}
-        </div>
-      )}
-    </div>
+    <section id="start" style={{ background: colorDark, padding: "72px 28px", position: "relative", overflow: "hidden" }}>
+      <div style={{ position: "absolute", top: -80, right: -60, width: 300, height: 300, borderRadius: "50%", background: `radial-gradient(circle, ${color}18 0%, transparent 70%)` }} />
+      <div style={{ maxWidth: 460, margin: "0 auto", textAlign: "center", position: "relative", zIndex: 2 }}>
+        <F>
+          <h2 style={{ fontFamily: "var(--serif)", fontSize: "clamp(26px, 3.5vw, 38px)", color: "#fff", lineHeight: 1.15, letterSpacing: "-0.02em" }}>{cta.title}</h2>
+          <p style={{ fontFamily: "var(--body)", fontSize: 15, color: "rgba(255,255,255,0.45)", marginTop: 14, fontWeight: 400 }}>{cta.subtitle}</p>
+        </F>
+        {result?.success ? (
+          <F><div style={{ marginTop: 32, background: "rgba(255,255,255,0.07)", borderRadius: 10, padding: 24, border: "1px solid rgba(255,255,255,0.08)" }}>
+            <span style={{ fontSize: 24 }}>🎉</span>
+            <p style={{ fontFamily: "var(--body)", fontSize: 15, fontWeight: 700, color: "#fff", marginTop: 8 }}>{result.message}</p>
+          </div></F>
+        ) : (
+          <F delay={80}>
+            <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 8 }}>
+              <input type="text" placeholder="SIRET (ex: 123 456 789 00012)" value={siret} onChange={e => setSiret(e.target.value)}
+                style={{ padding: "13px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", fontFamily: "var(--mono)", fontSize: 13, color: "#fff", outline: "none" }} />
+              <input type="email" placeholder="Email professionnel" value={email} onChange={e => setEmail(e.target.value)}
+                style={{ padding: "13px 14px", borderRadius: 8, border: "1px solid rgba(255,255,255,0.1)", background: "rgba(255,255,255,0.05)", fontFamily: "var(--body)", fontSize: 14, color: "#fff", outline: "none" }} />
+              <button onClick={submit} disabled={loading || !email || !siret}
+                style={{ padding: "14px", borderRadius: 8, background: "#fff", color: colorDark, fontFamily: "var(--body)", fontSize: 14, fontWeight: 900, border: "none", cursor: "pointer", opacity: loading ? 0.5 : 1, letterSpacing: "-0.01em" }}>
+                {loading ? "..." : cta.buttonText}
+              </button>
+            </div>
+            {result?.error && <p style={{ fontFamily: "var(--body)", fontSize: 12, color: "#f87171", marginTop: 10 }}>{result.error}</p>}
+            <p style={{ fontFamily: "var(--body)", fontSize: 11, color: "rgba(255,255,255,0.28)", marginTop: 12 }}>14 jours gratuits · Sans CB · Résiliable en 1 clic</p>
+          </F>
+        )}
+      </div>
+    </section>
+  );
+}
+
+/* ── Footer ─────────────────────────────────────── */
+function FooterBar({ color }: { color: string }) {
+  return (
+    <footer style={{ borderTop: "1px solid var(--line)", padding: "24px 28px", display: "flex", justifyContent: "center", alignItems: "baseline", gap: 4 }}>
+      <span style={{ fontFamily: "var(--serif)", fontSize: 15, color, fontStyle: "italic" }}>mon</span>
+      <span style={{ fontFamily: "var(--serif)", fontSize: 15, color: "var(--ink)" }}>marché</span>
+      <span style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", marginLeft: 12 }}>Marchés publics · IA · PME · 2025</span>
+    </footer>
   );
 }
