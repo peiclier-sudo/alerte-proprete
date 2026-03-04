@@ -85,9 +85,9 @@ Pour chaque AO, retourne un JSON :
 
   // ─── Landing Page ──────────────────────────────────────
   landing: {
-    color: "#16a34a",
-    colorLight: "#f0fdf4",
-    colorDark: "#14532d",
+    color: "#10B981",
+    colorLight: "#ECFDF5",
+    colorDark: "#064E3B",
 
     heroQuestion:
       "Combien d'appels d'offres espaces verts vous passent sous le nez ?",

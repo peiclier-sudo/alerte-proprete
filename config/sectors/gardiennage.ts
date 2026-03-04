@@ -91,9 +91,9 @@ Pour chaque AO, retourne un JSON :
 
   // ─── Landing Page ──────────────────────────────────────
   landing: {
-    color: "#2563eb",
-    colorLight: "#eff6ff",
-    colorDark: "#1e3a8a",
+    color: "#EA580C",
+    colorLight: "#FFF7ED",
+    colorDark: "#7C2D12",
 
     heroQuestion:
       "Combien de marchés de sécurité perdez-vous faute de veille ?",
