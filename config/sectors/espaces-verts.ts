@@ -6,7 +6,7 @@ export const espacesVerts: SectorConfig = {
   name: "Espaces Verts & Paysage",
   shortName: "Espaces Verts",
   tagline: "espaces verts",
-  emoji: "🌿",
+  emoji: "",
 
   // ─── Data Pipeline ──────────────────────────────────────
   cpvPrefixes: ["77310", "77311", "77312", "77313", "77314"],
@@ -237,7 +237,7 @@ Pour chaque AO, retourne un JSON :
   email: {
     fromName: "MonMarché Espaces Verts",
     subjectTemplate:
-      "🌿 {{count}} marchés espaces verts pour vous — {{date}}",
+      "{{count}} marchés espaces verts pour vous — {{date}}",
     digestIntro:
       "Voici les nouveaux marchés d'espaces verts qui correspondent à votre profil.",
   },

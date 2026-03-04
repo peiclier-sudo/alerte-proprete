@@ -5,7 +5,6 @@ import { useState } from "react";
 
 interface SectorCardProps {
   slug: string;
-  emoji: string;
   name: string;
   description: string;
   color: string;
@@ -17,7 +16,7 @@ interface SectorCardProps {
 }
 
 export default function SectorCard({
-  slug, emoji, name, description,
+  slug, name, description,
   color, colorLight, colorDark,
   index, stat, statLabel,
 }: SectorCardProps) {
@@ -71,11 +70,6 @@ export default function SectorCard({
         position: "relative", zIndex: 1,
         flex: 1, display: "flex", flexDirection: "column",
       }}>
-        {/* emoji */}
-        <div style={{ fontSize: 38, marginBottom: 20, lineHeight: 1 }}>
-          {emoji}
-        </div>
-
         {/* name */}
         <h3 style={{
           fontFamily: "'Space Grotesk', sans-serif",

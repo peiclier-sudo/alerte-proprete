@@ -240,7 +240,6 @@ export default function HomePage() {
                 <SectorCard
                   key={sector.slug}
                   slug={sector.slug}
-                  emoji={sector.emoji}
                   name={sector.name}
                   description={`${sector.seo.description.split(".")[0]}.`}
                   color={sector.landing.color}
