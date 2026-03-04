@@ -2,15 +2,15 @@
   "crons": [
     {
       "path": "/api/cron/fetch-boamp",
-      "schedule": "0 4 * * *"
+      "schedule": "0 6 * * *"
     },
     {
       "path": "/api/cron/score",
-      "schedule": "10 4 * * *"
+      "schedule": "30 6 * * *"
     },
     {
       "path": "/api/cron/send-digest",
-      "schedule": "20 4 * * *"
+      "schedule": "0 7 * * *"
     }
   ]
 }

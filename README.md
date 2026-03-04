@@ -1,36 +1,103 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# MonMarché 🏛️
 
-## Getting Started
+Marchés publics qualifiés par IA pour les PME françaises.
 
-First, run the development server:
+## Architecture
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun run dev
+```
+monmarche/
+├── config/sectors/           # 1 fichier par secteur (~120 lignes chacun)
+│   ├── proprete.ts           # ✨ Propreté & Nettoyage
+│   ├── espaces-verts.ts      # 🌿 Espaces Verts & Paysage
+│   └── gardiennage.ts        # 🛡️ Gardiennage & Sécurité
+│
+├── src/app/
+│   ├── page.tsx              # Homepage (sélecteur de secteur)
+│   ├── layout.tsx            # Layout global
+│   ├── [sector]/page.tsx     # Landing page dynamique (1 page par secteur)
+│   └── api/
+│       ├── signup/route.ts   # Inscription (SIRET → API SIRENE → Supabase)
+│       ├── cron/
+│       │   ├── fetch-boamp/  # Cron 6h : fetch BOAMP tous secteurs
+│       │   ├── score/        # Cron 6h30 : score par abonné
+│       │   └── send-digest/  # Cron 7h : envoi emails
+│       └── webhook/
+│           └── stripe/       # Webhook Stripe (paiements)
+│
+├── src/components/
+│   └── LandingTemplate.tsx   # Template landing partagé (reçoit config en props)
+│
+├── src/lib/
+│   ├── types.ts              # Types TypeScript
+│   ├── sectors.ts            # getSector(), getAllSectors(), getSectorByNaf()
+│   ├── prompts.ts            # Prompts LLM dynamiques par secteur
+│   └── supabase.ts           # Client Supabase
+│
+├── supabase/migrations/      # Schema SQL
+└── vercel.json               # Crons Vercel
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Ajouter un nouveau secteur
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+1. Créer `config/sectors/mon-secteur.ts` (~120 lignes)
+2. L'ajouter dans `config/sectors/index.ts`
+3. L'ajouter dans `src/lib/sectors.ts` (registry)
+4. `git push` → Vercel rebuild → nouvelle page live
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+C'est tout. La landing page, le SEO, les crons, les emails, tout est paramétré par le fichier config.
 
-## Learn More
+## Stack
 
-To learn more about Next.js, take a look at the following resources:
+- **Next.js 14** (App Router, SSG)
+- **Supabase** (PostgreSQL, RLS)
+- **Stripe** (paiements)
+- **Resend** (emails transactionnels)
+- **DeepSeek** (qualification LLM — ~0.002€/AO)
+- **Vercel** (hosting + crons)
+- **BOAMP API** (source des AO)
+- **API SIRENE** (lookup SIRET → NAF)
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Setup
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+```bash
+# 1. Clone
+git clone <repo> && cd monmarche
 
-## Deploy on Vercel
+# 2. Install
+npm install
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+# 3. Env
+cp .env.example .env.local
+# Remplir les variables
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+# 4. Supabase
+# Créer projet sur supabase.com
+# Exécuter supabase/migrations/001_initial_schema.sql dans SQL Editor
+
+# 5. Stripe
+# Créer les price_id dans Stripe Dashboard
+# Mettre à jour les stripe.essentialPriceId / proPriceId dans chaque config secteur
+
+# 6. Dev
+npm run dev
+
+# 7. Deploy
+vercel --prod
+```
+
+## URLs
+
+| URL | Page |
+|-----|------|
+| `monmarche.fr` | Homepage (sélecteur secteur) |
+| `monmarche.fr/proprete` | Landing propreté |
+| `monmarche.fr/espaces-verts` | Landing espaces verts |
+| `monmarche.fr/gardiennage` | Landing sécurité |
+
+## Crons (Vercel)
+
+| Heure | Cron | Action |
+|-------|------|--------|
+| 6h00 | `/api/cron/fetch-boamp` | Fetch BOAMP tous secteurs |
+| 6h30 | `/api/cron/score` | Score par abonné |
+| 7h00 | `/api/cron/send-digest` | Envoi emails |
