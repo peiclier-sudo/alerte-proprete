@@ -33,28 +33,28 @@ export default function HomePage() {
         }
       `}</style>
 
-      <main style={{ fontFamily: "'Plus Jakarta Sans', sans-serif" }}>
+      <main style={{ fontFamily: "'Plus Jakarta Sans', sans-serif", color: "#0f0f0f" }}>
 
         {/* ═══════ HERO ═══════ */}
         <section style={{
-          background: "#09090b",
+          background: "#fff",
           minHeight: "100vh",
           display: "flex",
           flexDirection: "column",
           position: "relative",
           overflow: "hidden",
         }}>
-          {/* dot grid */}
+          {/* subtle dot grid */}
           <div style={{
             position: "absolute", inset: 0,
-            backgroundImage: "radial-gradient(circle, rgba(255,255,255,.03) 1px, transparent 1px)",
+            backgroundImage: "radial-gradient(circle, rgba(99,102,241,.03) 1px, transparent 1px)",
             backgroundSize: "32px 32px",
             pointerEvents: "none",
           }} />
 
           {/* top accent */}
           <div style={{
-            height: 2,
+            height: 3,
             background: "linear-gradient(90deg, #6366F1 0%, #A78BFA 40%, transparent 100%)",
             position: "relative", zIndex: 2,
           }} />
@@ -71,24 +71,24 @@ export default function HomePage() {
             <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 24, color: "#818CF8",
+                fontSize: 24, color: "#6366F1",
                 fontWeight: 700, letterSpacing: "-0.02em",
               }}>mon</span>
               <span style={{
                 fontFamily: "'Space Grotesk', sans-serif",
-                fontSize: 24, color: "#fafafa",
+                fontSize: 24, color: "#0f0f0f",
                 fontWeight: 500, letterSpacing: "-0.02em",
               }}>marché</span>
             </div>
             <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
               <span style={{
                 width: 6, height: 6, borderRadius: "50%",
-                background: "#818CF8", display: "inline-block",
+                background: "#6366F1", display: "inline-block",
                 animation: "mmPulse 2.5s ease infinite",
               }} />
               <span style={{
                 fontFamily: "'JetBrains Mono', monospace",
-                fontSize: 10, color: "rgba(255,255,255,.32)",
+                fontSize: 10, color: "#999",
                 letterSpacing: ".06em",
               }}>veille active</span>
             </div>
@@ -110,7 +110,7 @@ export default function HomePage() {
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: "clamp(44px, 7vw, 84px)",
                 lineHeight: 1.02,
-                color: "#fafafa",
+                color: "#0f0f0f",
                 letterSpacing: "-0.04em",
                 fontWeight: 700,
                 maxWidth: 860,
@@ -118,7 +118,7 @@ export default function HomePage() {
                 Les marchés publics<br />
                 qui vous{" "}
                 <span style={{
-                  background: "linear-gradient(135deg, #818CF8, #C084FC)",
+                  background: "linear-gradient(135deg, #6366F1, #A78BFA)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
@@ -136,7 +136,7 @@ export default function HomePage() {
               <p style={{
                 fontSize: "clamp(15px, 1.4vw, 18px)",
                 lineHeight: 1.7,
-                color: "rgba(255,255,255,.42)",
+                color: "#666",
                 maxWidth: 480,
                 marginTop: 20,
                 fontWeight: 400,
@@ -158,11 +158,11 @@ export default function HomePage() {
                   <div style={{
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 24, fontWeight: 500,
-                    color: "#818CF8", letterSpacing: "-0.02em",
+                    color: "#6366F1", letterSpacing: "-0.02em",
                   }}>{n}</div>
                   <div style={{
                     fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 10, color: "rgba(255,255,255,.25)",
+                    fontSize: 10, color: "#b0b0b0",
                     letterSpacing: ".05em", marginTop: 6,
                   }}>{l}</div>
                 </div>
@@ -185,17 +185,17 @@ export default function HomePage() {
             </div>
             <span style={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 9, color: "rgba(255,255,255,.18)",
+              fontSize: 9, color: "#ccc",
               letterSpacing: ".14em", textTransform: "uppercase",
             }}>secteurs</span>
-            <span style={{ color: "rgba(255,255,255,.18)", fontSize: 16 }}>↓</span>
+            <span style={{ color: "#ccc", fontSize: 16 }}>↓</span>
           </div>
 
           {/* ambient glow */}
           <div style={{
-            position: "absolute", top: "12%", right: "-10%",
+            position: "absolute", top: "10%", right: "-10%",
             width: "50vw", height: "50vw", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(99,102,241,.06) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(99,102,241,.04) 0%, transparent 70%)",
             filter: "blur(80px)", pointerEvents: "none",
           }} />
         </section>
@@ -279,21 +279,22 @@ export default function HomePage() {
 
         {/* ═══════ FOOTER ═══════ */}
         <footer className="mm-ft" style={{
-          background: "#09090b", padding: "28px 40px",
+          background: "#fff", padding: "28px 40px",
+          borderTop: "1px solid #e8e5df",
         }}>
           <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
             <span style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 15, color: "#818CF8", fontWeight: 700,
+              fontSize: 15, color: "#6366F1", fontWeight: 700,
             }}>mon</span>
             <span style={{
               fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 15, color: "#fafafa", fontWeight: 500,
+              fontSize: 15, color: "#0f0f0f", fontWeight: 500,
             }}>marché</span>
           </div>
           <span style={{
             fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 10, color: "rgba(255,255,255,.22)",
+            fontSize: 10, color: "#b0b0b0",
             letterSpacing: ".05em",
           }}>
             marchés publics · ia · pme · 2026
