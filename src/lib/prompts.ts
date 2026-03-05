@@ -54,10 +54,6 @@ export function buildScoringPrompt(
   const rules = sector.scoringRules;
   const scores: Record<string, number> = {};
 
-  // Geo match
-  const sameDept = subscriber.department === opportunity.buyer_department;
-  scores.geoMatch = sameDept ? rules.geoMatch : Math.round(rules.geoMatch * 0.3);
-
   // Sector match: check BOAMP descriptor codes against CPV prefixes,
   // OR check if title/descriptors contain sector keywords
   const cpvMatch = opportunity.cpv_codes.some((cpv) =>

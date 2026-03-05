@@ -95,6 +95,12 @@ function buildDigestHtml(
 ): string {
   const color = sector.landing.color;
 
+  const sectorLabels: Record<string, { label: string; color: string }> = {
+    proprete: { label: "Propreté", color: "#0EA5E9" },
+    gardiennage: { label: "Sécurité", color: "#EA580C" },
+    "espaces-verts": { label: "Espaces Verts", color: "#10B981" },
+  };
+
   const opportunityRows = items
     .map((item) => {
       const opp = item.opportunities;
@@ -103,9 +109,12 @@ function buildDigestHtml(
       const amount = opp.estimated_amount
         ? `${Math.round(opp.estimated_amount / 1000)}K€`
         : "N/C";
-      const daysLeft = Math.ceil(
-        (new Date(opp.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-      );
+      const daysLeft = opp.deadline
+        ? Math.ceil(
+            (new Date(opp.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
+          )
+        : null;
+      const sectorInfo = sectorLabels[opp.sector_slug] ?? { label: opp.sector_slug, color: "#94a3b8" };
 
       return `
         <tr>
@@ -115,18 +124,24 @@ function buildDigestHtml(
                 ${score}
               </div>
               <div style="flex:1;">
+                <div style="margin-bottom:6px;">
+                  <span style="display:inline-block;background:${sectorInfo.color};color:#fff;font-size:11px;font-weight:600;padding:2px 8px;border-radius:4px;">
+                    ${sectorInfo.label}
+                  </span>
+                </div>
                 <div style="font-weight:600;color:#111;font-size:15px;margin-bottom:4px;">
                   ${opp.title}
                 </div>
                 <div style="font-size:13px;color:#666;">
-                  ${opp.buyer_name} · ${opp.buyer_department} · ${amount} · ${opp.contract_duration_months ? opp.contract_duration_months + " mois" : ""}
+                  ${opp.buyer_name}${opp.buyer_department ? ` · ${opp.buyer_department}` : ""} · ${amount}${opp.contract_duration_months ? ` · ${opp.contract_duration_months} mois` : ""}
                 </div>
+                ${daysLeft !== null ? `
                 <div style="font-size:12px;color:${daysLeft <= 7 ? "#ef4444" : "#94a3b8"};margin-top:4px;">
                   ${daysLeft > 0 ? `${daysLeft} jours restants` : "Date limite dépassée"}
-                </div>
+                </div>` : ""}
               </div>
               <a href="${opp.source_url}" style="background:${color};color:#fff;padding:8px 16px;border-radius:6px;text-decoration:none;font-size:13px;font-weight:600;white-space:nowrap;">
-                Voir →
+                Voir
               </a>
             </div>
           </td>
