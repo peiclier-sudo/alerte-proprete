@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
-import { getAllSectors, getSectorByCpv } from "@/lib/sectors";
+import { getAllSectors } from "@/lib/sectors";
 import { getServiceSupabase } from "@/lib/supabase";
-import { buildQualificationPrompt } from "@/lib/prompts";
 import { BoampAnnouncement, SectorConfig } from "@/lib/types";
 
 // Allow up to 60s on Vercel (max for hobby plan)
@@ -10,9 +9,6 @@ export const maxDuration = 60;
 // ─── Config ───────────────────────────────────────────────
 
 const BOAMP_API_URL = "https://www.boamp.fr/api/explore/v2.1/catalog/datasets/boamp/records";
-const LLM_API_URL = process.env.LLM_API_URL ?? "https://api.deepseek.com/v1/chat/completions";
-const LLM_API_KEY = process.env.LLM_API_KEY!;
-const LLM_MODEL = process.env.LLM_MODEL ?? "deepseek-chat";
 const CRON_SECRET = process.env.CRON_SECRET;
 
 // ─── Main Handler ─────────────────────────────────────────
@@ -123,46 +119,6 @@ function parseCpv(raw: string | string[]): string[] {
   if (Array.isArray(raw)) return raw;
   if (!raw) return [];
   return raw.split(/[,;]/).map((s) => s.trim()).filter(Boolean);
-}
-
-// ─── LLM Qualification ───────────────────────────────────
-
-async function qualifyWithLLM(
-  sectorSlug: string,
-  announcement: BoampAnnouncement
-): Promise<Record<string, any> | null> {
-  try {
-    const prompt = buildQualificationPrompt(sectorSlug, announcement);
-
-    const response = await fetch(LLM_API_URL, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${LLM_API_KEY}`,
-      },
-      body: JSON.stringify({
-        model: LLM_MODEL,
-        messages: [{ role: "user", content: prompt }],
-        temperature: 0.1,
-        max_tokens: 1000,
-      }),
-    });
-
-    if (!response.ok) {
-      console.error(`LLM API error: ${response.status}`);
-      return null;
-    }
-
-    const data = await response.json();
-    const content = data.choices?.[0]?.message?.content ?? "";
-
-    // Parse JSON from response (handle markdown code blocks)
-    const cleaned = content.replace(/```json\n?/g, "").replace(/```\n?/g, "").trim();
-    return JSON.parse(cleaned);
-  } catch (error) {
-    console.error(`LLM qualification failed for ${announcement.id}:`, error);
-    return null;
-  }
 }
 
 // ─── Helpers ──────────────────────────────────────────────

@@ -5,6 +5,10 @@
       "schedule": "0 6 * * *"
     },
     {
+      "path": "/api/cron/qualify",
+      "schedule": "10 6 * * *"
+    },
+    {
       "path": "/api/cron/score",
       "schedule": "30 6 * * *"
     },
