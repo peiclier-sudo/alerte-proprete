@@ -106,25 +106,59 @@ interface CompanyInfo {
 }
 
 async function lookupSiret(siret: string): Promise<CompanyInfo | null> {
+  // Primary: recherche-entreprises.api.gouv.fr (free, no auth, reliable)
   try {
-    // API SIRENE (open data, no auth required for basic lookup)
+    const response = await fetch(
+      `https://recherche-entreprises.api.gouv.fr/search?q=${siret}&page=1&per_page=1`
+    );
+
+    if (!response.ok) {
+      console.error("Recherche-entreprises API error:", response.status);
+      return await lookupSiretInsee(siret);
+    }
+
+    const data = await response.json();
+    const result = data.results?.[0];
+    if (!result) return await lookupSiretInsee(siret);
+
+    // Match on exact SIRET (siege or matching etablissement)
+    const siege = result.siege;
+    const matchingSiret =
+      siege.siret === siret
+        ? siege
+        : result.matching_etablissements?.find(
+            (e: { siret: string }) => e.siret === siret
+          ) ?? siege;
+
+    return {
+      name: result.nom_complet ?? result.nom_raison_sociale ?? "Entreprise",
+      nafCode: matchingSiret.activite_principale ?? result.activite_principale ?? "",
+      department: matchingSiret.code_postal?.substring(0, 2) ?? "",
+      lat: parseFloat(matchingSiret.latitude ?? "0"),
+      lng: parseFloat(matchingSiret.longitude ?? "0"),
+    };
+  } catch (error) {
+    console.error("Recherche-entreprises lookup failed:", error);
+    return await lookupSiretInsee(siret);
+  }
+}
+
+// Fallback: INSEE SIRENE API (requires token)
+async function lookupSiretInsee(siret: string): Promise<CompanyInfo | null> {
+  if (!process.env.INSEE_API_TOKEN) return null;
+
+  try {
     const response = await fetch(
       `https://api.insee.fr/entreprises/sirene/V3.11/siret/${siret}`,
       {
         headers: {
           Accept: "application/json",
-          // Bearer token for INSEE API — set in env
-          ...(process.env.INSEE_API_TOKEN
-            ? { Authorization: `Bearer ${process.env.INSEE_API_TOKEN}` }
-            : {}),
+          Authorization: `Bearer ${process.env.INSEE_API_TOKEN}`,
         },
       }
     );
 
-    if (!response.ok) {
-      // Fallback: use entreprise.data.gouv.fr (no auth)
-      return await lookupSiretFallback(siret);
-    }
+    if (!response.ok) return null;
 
     const data = await response.json();
     const etab = data.etablissement;
@@ -140,29 +174,7 @@ async function lookupSiret(siret: string): Promise<CompanyInfo | null> {
       lng: parseFloat(etab.adresseEtablissement?.coordonneeLambertOrdonneeEtablissement ?? "0"),
     };
   } catch (error) {
-    console.error("SIRENE lookup failed:", error);
-    return await lookupSiretFallback(siret);
-  }
-}
-
-async function lookupSiretFallback(siret: string): Promise<CompanyInfo | null> {
-  try {
-    const response = await fetch(
-      `https://entreprise.data.gouv.fr/api/sirene/v3/etablissements/${siret}`
-    );
-    if (!response.ok) return null;
-
-    const data = await response.json();
-    const etab = data.etablissement;
-
-    return {
-      name: etab.unite_legale?.denomination ?? etab.unite_legale?.nom_raison_sociale ?? "Entreprise",
-      nafCode: etab.unite_legale?.activite_principale ?? "",
-      department: etab.code_postal?.substring(0, 2) ?? "",
-      lat: parseFloat(etab.latitude ?? "0"),
-      lng: parseFloat(etab.longitude ?? "0"),
-    };
-  } catch {
+    console.error("INSEE SIRENE fallback failed:", error);
     return null;
   }
 }
