@@ -1,11 +1,14 @@
--- Make SIRET-related columns optional since signup now only requires
--- email + sector + department
+-- Ensure subscribers table has all expected columns.
+-- The live table may have been created manually without some columns
+-- from the original migration. This adds any missing columns safely.
 
-ALTER TABLE subscribers ALTER COLUMN siret SET DEFAULT '';
-ALTER TABLE subscribers ALTER COLUMN siret DROP NOT NULL;
+-- Columns that may be missing (originally NOT NULL but no longer required):
+ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS siret TEXT DEFAULT '';
+ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS company_name TEXT DEFAULT '';
+ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS naf_code TEXT DEFAULT '';
 
-ALTER TABLE subscribers ALTER COLUMN company_name SET DEFAULT '';
-ALTER TABLE subscribers ALTER COLUMN company_name DROP NOT NULL;
-
-ALTER TABLE subscribers ALTER COLUMN naf_code SET DEFAULT '';
-ALTER TABLE subscribers ALTER COLUMN naf_code DROP NOT NULL;
+-- Columns needed for department-based signup:
+ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS department TEXT DEFAULT '';
+ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS plan TEXT DEFAULT 'essential';
+ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS geo_radius_km INTEGER DEFAULT 50;
+ALTER TABLE subscribers ADD COLUMN IF NOT EXISTS active BOOLEAN DEFAULT true;
