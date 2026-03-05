@@ -22,7 +22,7 @@ export async function GET(request: Request) {
 
   const supabase = getServiceSupabase();
   const sectors = getAllSectors();
-  const results: Record<string, { fetched: number; qualified: number }> = {};
+  const results: Record<string, { fetched: number; inserted: number; errors: string[] }> = {};
 
   for (const sector of sectors) {
     try {
@@ -34,31 +34,39 @@ export async function GET(request: Request) {
       const newAnnouncements = announcements.filter((a) => !existingIds.has(a.id));
 
       // 3. Store announcements (LLM qualification deferred to /api/cron/qualify)
-      let qualifiedCount = 0;
+      let insertedCount = 0;
+      const errors: string[] = [];
       for (const announcement of newAnnouncements) {
-        await supabase.from("opportunities").insert({
+        const { error } = await supabase.from("opportunities").insert({
           boamp_id: announcement.id,
           sector_slug: sector.slug,
-          title: announcement.objet,
+          title: announcement.objet || "(sans objet)",
           buyer_name: announcement.organisme,
           buyer_department: announcement.departement,
           cpv_codes: announcement.cpv,
-          deadline: announcement.date_limite_reponse,
-          publication_date: announcement.date_publication,
+          deadline: parseDate(announcement.date_limite_reponse),
+          publication_date: parseDate(announcement.date_publication),
           source_url: announcement.url,
           qualified: false,
           confidence: 0,
           qualification_reason: "pending",
         });
+        if (error) {
+          console.error(`[BOAMP] Insert error for ${announcement.id}:`, error.message);
+          errors.push(`${announcement.id}: ${error.message}`);
+        } else {
+          insertedCount++;
+        }
       }
 
       results[sector.slug] = {
         fetched: newAnnouncements.length,
-        qualified: qualifiedCount,
+        inserted: insertedCount,
+        errors,
       };
     } catch (error) {
       console.error(`Error processing sector ${sector.slug}:`, error);
-      results[sector.slug] = { fetched: 0, qualified: 0 };
+      results[sector.slug] = { fetched: 0, inserted: 0, errors: [String(error)] };
     }
   }
 
@@ -119,6 +127,14 @@ function parseCpv(raw: string | string[]): string[] {
   if (Array.isArray(raw)) return raw;
   if (!raw) return [];
   return raw.split(/[,;]/).map((s) => s.trim()).filter(Boolean);
+}
+
+// ─── Date Parsing ────────────────────────────────────────
+
+function parseDate(raw: string): string | null {
+  if (!raw) return null;
+  const d = new Date(raw);
+  return isNaN(d.getTime()) ? null : d.toISOString();
 }
 
 // ─── Helpers ──────────────────────────────────────────────
