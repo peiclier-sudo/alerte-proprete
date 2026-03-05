@@ -23,13 +23,15 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: true, message: "No active subscribers" });
   }
 
-  // 2. Get today's qualified opportunities
-  const today = new Date().toISOString().split("T")[0];
+  // 2. Get recent qualified opportunities (last 7 days, matching fetch window)
+  const since = new Date();
+  since.setDate(since.getDate() - 7);
+  const sinceDate = since.toISOString().split("T")[0];
   const { data: opportunities } = await supabase
     .from("opportunities")
     .select("*")
     .eq("qualified", true)
-    .gte("publication_date", today);
+    .gte("publication_date", sinceDate);
 
   if (!opportunities?.length) {
     return NextResponse.json({ success: true, message: "No new opportunities today" });
@@ -63,8 +65,20 @@ export async function GET(request: Request) {
 
     if (relevant.length === 0) continue;
 
-    // 4. Insert digest items
-    const digestItems = relevant.map((item) => ({
+    // 4. Check which opportunities already have digest items for this subscriber
+    const oppIds = relevant.map((r) => r.opportunity.id);
+    const { data: existingDigests } = await supabase
+      .from("digest_items")
+      .select("opportunity_id")
+      .eq("subscriber_id", sub.id)
+      .in("opportunity_id", oppIds);
+    const existingOppIds = new Set((existingDigests ?? []).map((d) => d.opportunity_id));
+
+    const newRelevant = relevant.filter((r) => !existingOppIds.has(r.opportunity.id));
+    if (newRelevant.length === 0) continue;
+
+    // 5. Insert digest items
+    const digestItems = newRelevant.map((item) => ({
       subscriber_id: sub.id,
       opportunity_id: item.opportunity.id,
       score: item.score,

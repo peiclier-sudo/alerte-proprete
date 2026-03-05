@@ -13,8 +13,8 @@ const LLM_API_KEY = process.env.LLM_API_KEY!;
 const LLM_MODEL = process.env.LLM_MODEL ?? "deepseek-chat";
 const CRON_SECRET = process.env.CRON_SECRET;
 
-// Process a small batch to stay within 60s timeout
-const BATCH_SIZE = 5;
+// Process up to 15 records per invocation (~3-4s per LLM call = ~50s)
+const BATCH_SIZE = 15;
 
 // ─── Main Handler ─────────────────────────────────────────
 
