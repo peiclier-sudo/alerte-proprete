@@ -90,28 +90,28 @@ Pour chaque AO, retourne un JSON :
     colorDark: "#064E3B",
 
     heroQuestion:
-      "Combien d'appels d'offres espaces verts vous passent sous le nez ?",
+      "La mairie d'à côté vient d'attribuer un marché d'espaces verts. Vous ne l'avez jamais vu passer.",
     heroSubtitle:
-      "Chaque semaine, des dizaines de marchés d'entretien de parcs, élagage et aménagement paysager sont publiés par les collectivités. MonMarché les détecte, les qualifie par IA, et vous envoie ceux qui matchent votre entreprise.",
+      "Chaque semaine, des dizaines de marchés de tonte, élagage et aménagement sont publiés. MonMarché les détecte en temps réel, les score pour votre profil, et vous les livre chaque matin.",
 
     painPoints: [
       {
         before:
-          "Vous apprenez qu'une mairie a lancé un marché d'espaces verts... après la date limite",
+          "Vous l'apprenez par un confrère : « Tu as vu le marché de la mairie ? » Non. C'est trop tard.",
         after:
-          "Alerte dès la publication, avec score de pertinence et temps restant",
+          "Alerte dès J+0, score de pertinence et deadline. Vous répondez en premier.",
       },
       {
         before:
-          "Impossible de savoir si le CCTP exige du zéro-phyto sans lire 40 pages",
+          "40 pages de CCTP à lire pour découvrir les exigences zéro-phyto. Quand vous avez le temps ?",
         after:
-          "Détection automatique des clauses Loi Labbé, gestion différenciée, certifications requises",
+          "Clauses Loi Labbé, gestion différenciée, certifications — détectées automatiquement.",
       },
       {
         before:
-          "Vous répondez à des marchés trop gros ou trop loin — perte de temps",
+          "3 réponses ce mois : un marché trop gros, un trop loin, un pas dans votre spécialité.",
         after:
-          "Filtrage intelligent par taille, zone géographique et type de prestation",
+          "On filtre par taille, zone et spécialité. Chaque marché reçu est un marché jouable.",
       },
     ],
 
@@ -146,7 +146,7 @@ Pour chaque AO, retourne un JSON :
           "Filtrage géographique intelligent",
           "Alertes reconduction de marchés existants",
         ],
-        cta: "Commencer — 49€/mois",
+        cta: "Démarrer à 49€/mois →",
         popular: false,
       },
       {
@@ -161,7 +161,7 @@ Pour chaque AO, retourne un JSON :
           "Rapport de préparation à la réponse",
           "Trame de mémoire technique personnalisée",
         ],
-        cta: "Essai gratuit 14 jours",
+        cta: "Essayer 14 jours — gratuit, sans CB →",
         popular: true,
       },
     ],
@@ -200,10 +200,10 @@ Pour chaque AO, retourne un JSON :
 
     ctaFinal: {
       title:
-        "Demain matin, les marchés espaces verts de votre zone dans votre boîte mail.",
+        "Le prochain marché d'espaces verts de votre zone est peut-être publié aujourd'hui.",
       subtitle:
-        "Entrez votre SIRET. Premier digest gratuit sous 24h.",
-      buttonText: "Recevoir mon premier digest gratuit",
+        "Entrez votre SIRET. Demain à 7h, vos marchés scorés dans votre boîte mail. Gratuit, sans engagement.",
+      buttonText: "Recevoir mes marchés demain matin →",
     },
 
     socialProof: {
