@@ -44,6 +44,100 @@ export function LandingTemplate({ config }: { config: SectorConfig }) {
           outline-offset: 2px;
         }
 
+        /* ── Hover states ──────────────────────────── */
+        .lp-btn-primary {
+          transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;
+        }
+        .lp-btn-primary:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px ${c}35;
+        }
+        .lp-btn-outline {
+          transition: transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease, color 0.2s ease;
+        }
+        .lp-btn-outline:hover {
+          background: ${c} !important;
+          color: #fff !important;
+          border-color: ${c} !important;
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px ${c}35;
+        }
+        .lp-nav-cta {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        .lp-nav-cta:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 4px 12px ${c}30;
+        }
+        .lp-nav-links:hover {
+          color: var(--ink) !important;
+        }
+        .lp-card-link:hover {
+          border-color: ${c}40 !important;
+          box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+        }
+
+        /* ── CTA pulse ────────────────────────────── */
+        @keyframes cta-glow {
+          0%, 100% { box-shadow: 0 0 0 0 ${c}40; }
+          50% { box-shadow: 0 0 0 8px ${c}00; }
+        }
+        .lp-btn-submit {
+          transition: transform 0.2s ease, box-shadow 0.2s ease;
+          animation: cta-glow 2.5s ease infinite 1s;
+        }
+        .lp-btn-submit:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 6px 20px ${c}40;
+          animation: none;
+        }
+        .lp-btn-submit:disabled {
+          animation: none;
+          opacity: 0.5;
+        }
+
+        /* ── Pricing badge ────────────────────────── */
+        .lp-badge-popular {
+          display: inline-flex;
+          align-items: center;
+          gap: 4px;
+          padding: 4px 10px;
+          border-radius: 100px;
+          background: ${c}15;
+          font-family: var(--mono);
+          font-size: 9px;
+          font-weight: 600;
+          text-transform: uppercase;
+          letter-spacing: 0.08em;
+          color: ${c};
+        }
+
+        /* ── Digest tilt ──────────────────────────── */
+        .lp-digest-mockup {
+          transform: perspective(900px) rotateY(-2deg) rotateX(1deg);
+          transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .lp-digest-mockup:hover {
+          transform: perspective(900px) rotateY(0deg) rotateX(0deg);
+        }
+
+        /* ── Success checkmark ────────────────────── */
+        @keyframes check-pop {
+          0% { transform: scale(0); opacity: 0; }
+          50% { transform: scale(1.15); }
+          100% { transform: scale(1); opacity: 1; }
+        }
+        .lp-check {
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+          width: 48px; height: 48px;
+          border-radius: 50%;
+          background: ${c}15;
+          margin: 0 auto 16px;
+          animation: check-pop 0.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+        }
+
         /* ── Responsive ──────────────────────────── */
         @media (max-width: 860px) {
           .lp-hero-grid { grid-template-columns: 1fr !important; gap: 40px !important; }
@@ -170,7 +264,7 @@ function HeroSection({ landing, sharedSiret, setSharedSiret }: { landing: Sector
               onFocus={(e) => e.currentTarget.style.borderColor = c}
               onBlur={(e) => e.currentTarget.style.borderColor = "var(--line)"}
               />
-              <a href="#start" style={{
+              <a href="#start" className="lp-btn-primary" style={{
                 padding: "13px 22px", borderRadius: 6, background: c, color: "#fff",
                 fontFamily: "var(--body)", fontSize: 14, fontWeight: 700, textDecoration: "none",
                 whiteSpace: "nowrap",
@@ -347,9 +441,9 @@ function DigestPreview({ color, shortName }: { color: string; shortName: string 
         </F>
 
         <F delay={100}>
-          <div style={{
+          <div className="lp-digest-mockup" style={{
             marginTop: 36, background: "#fff", borderRadius: 14, overflow: "hidden",
-            boxShadow: "0 12px 48px rgba(0,0,0,0.07), 0 1px 4px rgba(0,0,0,0.03)",
+            boxShadow: "0 20px 60px rgba(0,0,0,0.10), 0 1px 4px rgba(0,0,0,0.04)",
             border: "1px solid var(--line)",
           }}>
             {/* Email header */}
@@ -418,10 +512,13 @@ function PricingSection({ pricing, color }: { pricing: SectorConfig["landing"]["
                 position: "relative", height: "100%", display: "flex", flexDirection: "column",
               }}>
                 {t.popular && <div style={{ position: "absolute", top: 0, left: 28, right: 28, height: 2, background: color, borderRadius: "0 0 2px 2px" }} />}
-                <span style={{
-                  fontFamily: "var(--mono)", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em",
-                  color: t.popular ? color : "var(--ink4)",
-                }}>{t.name}{t.popular ? " · recommandé" : ""}</span>
+                <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
+                  <span style={{
+                    fontFamily: "var(--mono)", fontSize: 10, fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.1em",
+                    color: t.popular ? color : "var(--ink4)",
+                  }}>{t.name}</span>
+                  {t.popular && <span className="lp-badge-popular">★ recommandé</span>}
+                </div>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 3, margin: "18px 0 28px" }}>
                   <span style={{ fontFamily: "var(--serif)", fontSize: 44, color: "var(--ink)", letterSpacing: "-0.03em" }}>{t.price}€</span>
                   <span style={{ fontFamily: "var(--body)", fontSize: 13, color: "var(--ink4)" }}>/{t.period}</span>
@@ -433,7 +530,7 @@ function PricingSection({ pricing, color }: { pricing: SectorConfig["landing"]["
                     </div>
                   ))}
                 </div>
-                <a href="#start" style={{
+                <a href="#start" className={t.popular ? "lp-btn-primary" : "lp-btn-outline"} style={{
                   display: "block", textAlign: "center", padding: "13px 20px", borderRadius: 8,
                   fontFamily: "var(--body)", fontSize: 14, fontWeight: 700, textDecoration: "none", marginTop: 20,
                   ...(t.popular ? { background: color, color: "#fff" } : { background: "transparent", color, border: `1.5px solid ${color}` }),
@@ -507,8 +604,12 @@ function CtaSection({ cta, slug, color, colorDark, sharedSiret }: { cta: SectorC
           <p style={{ fontFamily: "var(--body)", fontSize: 15, color: "var(--ink3)", marginTop: 14, fontWeight: 400 }}>{cta.subtitle}</p>
         </F>
         {result?.success ? (
-          <F><div style={{ marginTop: 32, background: "#fff", borderRadius: 10, padding: 24, border: "1px solid var(--line)" }}>
-            <p style={{ fontFamily: "var(--body)", fontSize: 15, fontWeight: 700, color: "var(--ink)" }}>{result.message}</p>
+          <F><div style={{ marginTop: 32, background: "#fff", borderRadius: 14, padding: "32px 28px", border: "1px solid var(--line)", boxShadow: "0 4px 20px rgba(0,0,0,0.04)" }}>
+            <div className="lp-check">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><path d="M5 13l4 4L19 7" stroke={color} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/></svg>
+            </div>
+            <p style={{ fontFamily: "var(--body)", fontSize: 16, fontWeight: 700, color: "var(--ink)" }}>{result.message}</p>
+            <p style={{ fontFamily: "var(--body)", fontSize: 13, color: "var(--ink3)", marginTop: 8 }}>Vérifiez votre boîte mail demain à 7h.</p>
           </div></F>
         ) : (
           <F delay={80}>
@@ -517,13 +618,18 @@ function CtaSection({ cta, slug, color, colorDark, sharedSiret }: { cta: SectorC
                 style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--mono)", fontSize: 13, color: "var(--ink)", outline: "none" }} />
               <input type="email" placeholder="Email professionnel" value={email} onChange={e => setEmail(e.target.value)}
                 style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", outline: "none" }} />
-              <button onClick={submit} disabled={loading || !email || !siret}
+              <button onClick={submit} disabled={loading || !email || !siret} className="lp-btn-submit"
                 style={{ padding: "14px", borderRadius: 8, background: color, color: "#fff", fontFamily: "var(--body)", fontSize: 14, fontWeight: 900, border: "none", cursor: "pointer", opacity: loading ? 0.5 : 1, letterSpacing: "-0.01em" }}>
                 {loading ? "..." : cta.buttonText}
               </button>
             </div>
             {result?.error && <p style={{ fontFamily: "var(--body)", fontSize: 12, color: "#f87171", marginTop: 10 }}>{result.error}</p>}
-            <p style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", marginTop: 12 }}>14 jours gratuits · Sans CB · Résiliable en 1 clic</p>
+            <p style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", marginTop: 12 }}>
+              <span style={{ display: "inline-flex", alignItems: "center", gap: 4 }}>
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" style={{ flexShrink: 0 }}><path d="M12 7H4V5a4 4 0 118 0v2zM3 8a1 1 0 00-1 1v5a1 1 0 001 1h10a1 1 0 001-1V9a1 1 0 00-1-1H3z" fill="var(--ink4)"/></svg>
+                Données sécurisées · 14 jours gratuits · Sans carte bancaire · Résiliable en 1 clic
+              </span>
+            </p>
           </F>
         )}
       </div>
@@ -534,10 +640,22 @@ function CtaSection({ cta, slug, color, colorDark, sharedSiret }: { cta: SectorC
 /* ── Footer ─────────────────────────────────────── */
 function FooterBar({ color }: { color: string }) {
   return (
-    <footer style={{ borderTop: "1px solid var(--line)", padding: "24px 28px", display: "flex", justifyContent: "center", alignItems: "baseline", gap: 4 }}>
-      <span style={{ fontFamily: "var(--serif)", fontSize: 15, color, fontWeight: 700 }}>mon</span>
-      <span style={{ fontFamily: "var(--serif)", fontSize: 15, color: "var(--ink)" }}>marché</span>
-      <span style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", marginLeft: 12 }}>Marchés publics · IA · PME · 2026</span>
+    <footer style={{ borderTop: "1px solid var(--line)", padding: "28px 28px 24px" }}>
+      <div style={{ maxWidth: 920, margin: "0 auto", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 12 }}>
+        <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+          <span style={{ fontFamily: "var(--serif)", fontSize: 15, color, fontWeight: 700 }}>mon</span>
+          <span style={{ fontFamily: "var(--serif)", fontSize: 15, color: "var(--ink)" }}>marché</span>
+          <span style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", marginLeft: 8 }}>© 2026</span>
+        </div>
+        <nav style={{ display: "flex", gap: 20, alignItems: "center" }}>
+          {["Mentions légales", "CGV", "Politique de confidentialité"].map(label => (
+            <a key={label} href="#" style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", textDecoration: "none", transition: "color 0.2s" }}
+              onMouseEnter={e => (e.currentTarget.style.color = "var(--ink2)")}
+              onMouseLeave={e => (e.currentTarget.style.color = "var(--ink4)")}
+            >{label}</a>
+          ))}
+        </nav>
+      </div>
     </footer>
   );
 }

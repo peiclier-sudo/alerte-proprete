@@ -6,6 +6,21 @@ export const metadata: Metadata = {
   description:
     "Recevez chaque matin les appels d'offres qui correspondent à votre entreprise. Qualifiés par IA, scorés, prêts à analyser.",
   metadataBase: new URL("https://monmarche.fr"),
+  icons: {
+    icon: "/favicon.svg",
+  },
+  openGraph: {
+    title: "MonMarché — Les marchés publics qui vous échappent",
+    description: "900+ opportunités détectées par mois. 2 min au lieu de 2h de veille. Essai gratuit 14 jours.",
+    siteName: "MonMarché",
+    locale: "fr_FR",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "MonMarché — Les marchés publics qui vous échappent",
+    description: "900+ opportunités détectées par mois. 2 min au lieu de 2h de veille. Essai gratuit 14 jours.",
+  },
 };
 
 export default function RootLayout({
