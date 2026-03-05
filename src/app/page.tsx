@@ -22,6 +22,7 @@ export default function HomePage() {
         .mm-sh{display:flex;justify-content:space-between;align-items:flex-end}
         .mm-wl{display:flex;justify-content:space-between;align-items:center}
         .mm-ft{display:flex;justify-content:space-between;align-items:center}
+        a:focus-visible{outline:2px solid #6366F1;outline-offset:2px}
         @media(max-width:860px){
           .mm-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}
           .mm-stats{flex-wrap:wrap;gap:28px 40px}
@@ -274,27 +275,35 @@ export default function HomePage() {
         </section>
 
         {/* ═══════ FOOTER ═══════ */}
-        <footer className="mm-ft" style={{
+        <footer style={{
           background: "#fff", padding: "28px 40px",
           borderTop: "1px solid #e8e5df",
         }}>
-          <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
-            <span style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 15, color: "#6366F1", fontWeight: 700,
-            }}>mon</span>
-            <span style={{
-              fontFamily: "'Space Grotesk', sans-serif",
-              fontSize: 15, color: "#0f0f0f", fontWeight: 500,
-            }}>marché</span>
+          <div className="mm-ft" style={{ maxWidth: 1100, margin: "0 auto" }}>
+            <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
+              <span style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 15, color: "#6366F1", fontWeight: 700,
+              }}>mon</span>
+              <span style={{
+                fontFamily: "'Space Grotesk', sans-serif",
+                fontSize: 15, color: "#0f0f0f", fontWeight: 500,
+              }}>marché</span>
+              <span style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 10, color: "#b0b0b0",
+                letterSpacing: ".05em", marginLeft: 8,
+              }}>© 2026</span>
+            </div>
+            <nav style={{ display: "flex", gap: 20, alignItems: "center" }}>
+              {["Mentions légales", "CGV", "Politique de confidentialité"].map(label => (
+                <a key={label} href="#" style={{
+                  fontFamily: "'Plus Jakarta Sans', sans-serif",
+                  fontSize: 11, color: "#b0b0b0", textDecoration: "none",
+                }}>{label}</a>
+              ))}
+            </nav>
           </div>
-          <span style={{
-            fontFamily: "'JetBrains Mono', monospace",
-            fontSize: 10, color: "#b0b0b0",
-            letterSpacing: ".05em",
-          }}>
-            marchés publics · ia · pme · 2026
-          </span>
         </footer>
       </main>
     </>
