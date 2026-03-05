@@ -86,9 +86,9 @@ async function fetchBoampBySector(sector: SectorConfig): Promise<BoampAnnounceme
     .map((prefix) => `cpv LIKE '${prefix}%'`)
     .join(" OR ");
 
-  const yesterday = new Date();
-  yesterday.setDate(yesterday.getDate() - 1);
-  const dateFilter = yesterday.toISOString().split("T")[0];
+  const since = new Date();
+  since.setDate(since.getDate() - 7);
+  const dateFilter = since.toISOString().split("T")[0];
 
   const params = new URLSearchParams({
     where: `(${cpvFilter}) AND date_publication >= '${dateFilter}'`,
@@ -96,12 +96,17 @@ async function fetchBoampBySector(sector: SectorConfig): Promise<BoampAnnounceme
     order_by: "date_publication DESC",
   });
 
-  const response = await fetch(`${BOAMP_API_URL}?${params}`);
+  const url = `${BOAMP_API_URL}?${params}`;
+  console.log(`[BOAMP] Fetching sector ${sector.slug}: ${url}`);
+
+  const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`BOAMP API error: ${response.status}`);
+    const body = await response.text();
+    throw new Error(`BOAMP API error: ${response.status} - ${body}`);
   }
 
   const data = await response.json();
+  console.log(`[BOAMP] Sector ${sector.slug}: ${data.total_count ?? 0} total, ${(data.results ?? []).length} returned`);
 
   return (data.results ?? []).map((r: any) => ({
     id: r.idweb ?? r.id,
