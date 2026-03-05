@@ -174,6 +174,7 @@ export interface BoampAnnouncement {
   date_publication: string;
   date_limite_reponse: string;
   cpv: string[];
+  descripteur_libelle?: string[];
   montant?: number;
   url: string;
   type_marche: string;
