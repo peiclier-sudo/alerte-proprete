@@ -64,7 +64,7 @@ export async function POST(request: Request) {
   if (error) {
     console.error("Subscriber creation failed:", error);
     return NextResponse.json(
-      { error: "Erreur lors de l'inscription." },
+      { error: "Erreur lors de l'inscription.", details: error.message },
       { status: 500 }
     );
   }
