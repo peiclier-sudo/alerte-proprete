@@ -6,7 +6,7 @@ import { BoampAnnouncement, SectorConfig } from "@/lib/types";
 
 // ─── Config ───────────────────────────────────────────────
 
-const BOAMP_API_URL = "https://boamp-datadila.opendatasoft.com/api/explore/v2.1/catalog/datasets/boamp/records";
+const BOAMP_API_URL = "https://www.boamp.fr/api/explore/v2.1/catalog/datasets/boamp/records";
 const LLM_API_URL = process.env.LLM_API_URL ?? "https://api.deepseek.com/v1/chat/completions";
 const LLM_API_KEY = process.env.LLM_API_KEY!;
 const LLM_MODEL = process.env.LLM_MODEL ?? "deepseek-chat";
@@ -81,19 +81,19 @@ export async function GET(request: Request) {
 // ─── BOAMP Fetch ──────────────────────────────────────────
 
 async function fetchBoampBySector(sector: SectorConfig): Promise<BoampAnnouncement[]> {
-  // Build CPV filter: cpv LIKE '90910%' OR cpv LIKE '90911%' ...
-  const cpvFilter = sector.cpvPrefixes
-    .map((prefix) => `cpv LIKE '${prefix}%'`)
-    .join(" OR ");
+  // Use full-text keyword search (BOAMP uses its own descriptor system, not CPV codes)
+  const searchTerms = sector.keywordsInclude.slice(0, 5).join(" OR ");
 
   const since = new Date();
   since.setDate(since.getDate() - 7);
   const dateFilter = since.toISOString().split("T")[0];
 
   const params = new URLSearchParams({
-    where: `(${cpvFilter}) AND date_publication >= '${dateFilter}'`,
+    q: searchTerms,
+    where: `dateparution >= '${dateFilter}'`,
     limit: "100",
-    order_by: "date_publication DESC",
+    order_by: "dateparution DESC",
+    timezone: "Europe/Paris",
   });
 
   const url = `${BOAMP_API_URL}?${params}`;
@@ -111,14 +111,14 @@ async function fetchBoampBySector(sector: SectorConfig): Promise<BoampAnnounceme
   return (data.results ?? []).map((r: any) => ({
     id: r.idweb ?? r.id,
     objet: r.objet ?? "",
-    organisme: r.nomacheteur ?? r.organisme ?? "",
-    departement: r.codedepartement ?? "",
-    date_publication: r.datepublication ?? r.date_publication ?? "",
-    date_limite_reponse: r.datelimiteremiseoffres ?? "",
-    cpv: parseCpv(r.codecpv ?? r.cpv ?? ""),
+    organisme: r.nomacheteur ?? "",
+    departement: r.code_departement ?? "",
+    date_publication: r.dateparution ?? "",
+    date_limite_reponse: r.datelimitereponse ?? "",
+    cpv: parseCpv(r.descripteur_code ?? ""),
     montant: r.montant ? parseFloat(r.montant) : undefined,
-    url: `https://www.boamp.fr/avis/detail/${r.idweb ?? r.id}`,
-    type_marche: r.typemarche ?? "",
+    url: r.url_avis ?? `https://www.boamp.fr/avis/detail/${r.idweb ?? r.id}`,
+    type_marche: r.type_marche ?? "",
     nature: r.nature ?? "",
     lots: r.lots ?? undefined,
   }));
