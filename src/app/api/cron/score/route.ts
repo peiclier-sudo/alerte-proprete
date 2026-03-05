@@ -52,6 +52,7 @@ export async function GET(request: Request) {
         deadline: opp.deadline,
         renewal_possible: opp.renewal_possible,
         cpv_codes: opp.cpv_codes,
+        title: opp.title,
       });
       const total = computeTotalScore(breakdown);
       return { opportunity: opp, score: total, breakdown };

@@ -37,13 +37,21 @@ export const proprete: SectorConfig = {
   qualificationPrompt: `Tu es un expert en marchés publics de propreté et nettoyage en France.
 Ton rôle : analyser un avis de marché public et déterminer s'il concerne une PME de nettoyage (NAF 81.21Z, 81.22Z, 81.29A, 81.29B).
 
-Critères de qualification :
-- L'objet porte sur le nettoyage, la propreté, l'entretien de locaux, la vitrerie, la remise en état
-- Les codes CPV commencent par 909xx (services de nettoyage)
-- Le montant estimé est compatible avec une PME (< 2M€)
-- Le marché n'est PAS du nettoyage urbain, voirie, assainissement, curage
+IMPORTANT : Le BOAMP utilise ses propres codes descripteurs (pas les codes CPV standard). Analyse principalement le champ "Objet" et les "Descripteurs BOAMP" pour qualifier le marché.
 
-Pour chaque AO, retourne un JSON :
+Critères de qualification (qualifier = true si AU MOINS UN critère est rempli) :
+- L'objet mentionne : nettoyage, propreté, entretien de locaux, entretien ménager, vitrerie, remise en état, décapage, lustrage, désinfection, hygiène
+- Les descripteurs BOAMP mentionnent des termes liés au nettoyage ou à l'entretien de bâtiments
+- Le marché concerne clairement des prestations de nettoyage même si le titre est générique (ex: "entretien des bâtiments communaux")
+
+Critères d'EXCLUSION (qualifier = false) :
+- Nettoyage urbain, voirie, assainissement, curage, déneigement
+- Travaux de construction ou rénovation (pas de l'entretien/nettoyage)
+- Montant > 2M€ (hors portée PME)
+
+En cas de doute sur un marché qui POURRAIT être du nettoyage, qualifie-le avec une confidence plus basse (40-60) plutôt que de le rejeter.
+
+Retourne un JSON :
 {
   "qualified": true/false,
   "confidence": 0-100,

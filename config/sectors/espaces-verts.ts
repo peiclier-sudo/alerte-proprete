@@ -41,11 +41,17 @@ export const espacesVerts: SectorConfig = {
   qualificationPrompt: `Tu es un expert en marchés publics d'espaces verts et de paysage en France.
 Ton rôle : analyser un avis de marché public et déterminer s'il concerne une PME paysagiste (NAF 81.30Z).
 
-Critères de qualification :
-- L'objet porte sur l'entretien d'espaces verts, le paysage, l'élagage, la tonte, le désherbage, la plantation, l'aménagement paysager
-- Les codes CPV commencent par 773xx (services de plantation et d'entretien d'espaces verts)
+IMPORTANT : Le BOAMP utilise ses propres codes descripteurs (pas les codes CPV standard). Analyse principalement le champ "Objet" et les "Descripteurs BOAMP" pour qualifier le marché.
+
+Critères de qualification (qualifier = true si AU MOINS UN critère est rempli) :
+- L'objet mentionne : espaces verts, entretien paysager, élagage, tonte, désherbage, plantation, arrosage, aménagement paysager, fauchage, taille, fleurissement
+- Les descripteurs BOAMP mentionnent des termes liés aux espaces verts ou au paysage
 - Le montant estimé est compatible avec une PME (< 1M€)
-- Le marché n'est PAS de l'agriculture, de la sylviculture, ou de l'exploitation forestière
+
+Critères d'EXCLUSION (qualifier = false) :
+- Agriculture, sylviculture, exploitation forestière, plantes d'intérieur, décoration florale
+
+En cas de doute, qualifie avec une confidence plus basse (40-60) plutôt que de rejeter.
 
 Points d'attention spécifiques :
 - Loi Labbé / Zéro-phyto : détecter les clauses de gestion différenciée, interdiction des produits phytosanitaires

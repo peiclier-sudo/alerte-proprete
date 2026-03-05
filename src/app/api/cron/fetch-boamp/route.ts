@@ -37,10 +37,18 @@ export async function GET(request: Request) {
       let insertedCount = 0;
       const errors: string[] = [];
       for (const announcement of newAnnouncements) {
+        // Build a rich title: RESUME_OBJET + descriptor labels for LLM context
+        let title = announcement.objet || "";
+        if (announcement.descripteur_libelle?.length && title) {
+          title += ` [${announcement.descripteur_libelle.join(", ")}]`;
+        } else if (announcement.descripteur_libelle?.length) {
+          title = announcement.descripteur_libelle.join(", ");
+        }
+
         const { error } = await supabase.from("opportunities").insert({
           boamp_id: announcement.id,
           sector_slug: sector.slug,
-          title: announcement.objet || "(sans objet)",
+          title: title || "(sans objet)",
           buyer_name: announcement.organisme,
           buyer_department: announcement.departement,
           cpv_codes: announcement.cpv,
@@ -107,20 +115,91 @@ async function fetchBoampBySector(sector: SectorConfig): Promise<BoampAnnounceme
   const data = await response.json();
   console.log(`[BOAMP] Sector ${sector.slug}: ${data.total_count ?? 0} total, ${(data.results ?? []).length} returned`);
 
-  return (data.results ?? []).map((r: any) => ({
-    id: r.idweb ?? r.id,
-    objet: r.objet ?? "",
-    organisme: r.nomacheteur ?? "",
-    departement: r.code_departement ?? "",
-    date_publication: r.dateparution ?? "",
-    date_limite_reponse: r.datelimitereponse ?? "",
-    cpv: parseCpv(r.descripteur_code ?? ""),
-    montant: r.montant ? parseFloat(r.montant) : undefined,
-    url: r.url_avis ?? `https://www.boamp.fr/avis/detail/${r.idweb ?? r.id}`,
-    type_marche: r.type_marche ?? "",
-    nature: r.nature ?? "",
-    lots: r.lots ?? undefined,
-  }));
+  // Log first raw record for debugging field mapping
+  if (data.results?.length > 0) {
+    const first = data.results[0];
+    console.log(`[BOAMP] Sample record keys: ${Object.keys(first).join(", ")}`);
+    console.log(`[BOAMP] Sample objet: ${first.objet ?? "(missing)"}`);
+    console.log(`[BOAMP] Sample gestion type: ${typeof first.gestion}`);
+  }
+
+  return (data.results ?? []).map((r: any) => {
+    // Parse the nested `gestion` JSON blob which contains key fields
+    const gestion = parseGestion(r.gestion);
+    const indexation = gestion?.INDEXATION ?? {};
+    const reference = gestion?.REFERENCE ?? {};
+
+    // Extract IDWEB: try flat field, then gestion
+    const idweb = r.idweb ?? reference.IDWEB ?? r.id;
+
+    // Extract title: try flat `objet`, then gestion RESUME_OBJET
+    const objet = r.objet || indexation.RESUME_OBJET || "";
+
+    // Extract buyer: try flat `nomacheteur`, then gestion NOMORGANISME
+    const organisme = r.nomacheteur || indexation.NOMORGANISME || "";
+
+    // Extract department: try flat `code_departement`, then gestion DEP_PUBLICATION
+    const departement = r.code_departement || indexation.DEP_PUBLICATION || "";
+
+    // Extract dates: flat fields exist for dateparution
+    const datePublication = r.dateparution || indexation.DATE_PUBLICATION || "";
+    const dateLimite = r.datelimitereponse || "";
+
+    // Extract descriptors (BOAMP uses its own codes, not standard CPV)
+    const descripteurCodes = parseCpv(r.descripteur_code ?? "");
+    const descripteurLabels = parseDescriptorLabels(
+      r.descripteur_libelle,
+      indexation.DESCRIPTEURS
+    );
+
+    // Build URL
+    const avisUrl = r.url_avis || r.url || `https://www.boamp.fr/avis/detail/${idweb}`;
+
+    return {
+      id: idweb,
+      objet,
+      organisme,
+      departement,
+      date_publication: datePublication,
+      date_limite_reponse: dateLimite,
+      cpv: descripteurCodes,
+      descripteur_libelle: descripteurLabels,
+      montant: r.montant ? parseFloat(r.montant) : undefined,
+      url: avisUrl,
+      type_marche: r.type_marche || indexation.NATURE_MARCHE || "",
+      nature: r.nature ?? "",
+      lots: r.lots ?? undefined,
+    };
+  });
+}
+
+// ─── Gestion Parsing ─────────────────────────────────────
+
+function parseGestion(raw: any): any {
+  if (!raw) return null;
+  if (typeof raw === "object") return raw;
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+function parseDescriptorLabels(flatLabels: any, gestionDescripteurs: any): string[] {
+  // Try flat field first (array of strings)
+  if (Array.isArray(flatLabels) && flatLabels.length > 0) {
+    return flatLabels;
+  }
+  if (typeof flatLabels === "string" && flatLabels) {
+    return flatLabels.split(/[,;]/).map((s: string) => s.trim()).filter(Boolean);
+  }
+
+  // Fall back to gestion DESCRIPTEURS
+  if (!gestionDescripteurs) return [];
+  const desc = gestionDescripteurs.DESCRIPTEUR;
+  if (!desc) return [];
+  const items = Array.isArray(desc) ? desc : [desc];
+  return items.map((d: any) => d.LIBELLE ?? "").filter(Boolean);
 }
 
 function parseCpv(raw: string | string[]): string[] {

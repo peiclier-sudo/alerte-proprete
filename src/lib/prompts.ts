@@ -9,6 +9,10 @@ export function buildQualificationPrompt(
 ): string {
   const sector = getSector(sectorSlug);
 
+  const descripteurs = announcement.descripteur_libelle?.length
+    ? `Descripteurs BOAMP : ${announcement.descripteur_libelle.join(", ")}`
+    : "Descripteurs : non renseignés";
+
   return `${sector.qualificationPrompt}
 
 ---
@@ -20,7 +24,8 @@ Organisme : ${announcement.organisme}
 Département : ${announcement.departement}
 Date de publication : ${announcement.date_publication}
 Date limite de réponse : ${announcement.date_limite_reponse}
-CPV : ${announcement.cpv.join(", ")}
+${descripteurs}
+${announcement.cpv.length > 0 ? `Codes descripteurs : ${announcement.cpv.join(", ")}` : ""}
 ${announcement.montant ? `Montant estimé : ${announcement.montant}€` : "Montant non communiqué"}
 Type de marché : ${announcement.type_marche}
 ${
@@ -43,6 +48,7 @@ export function buildScoringPrompt(
     deadline: string;
     renewal_possible: boolean;
     cpv_codes: string[];
+    title?: string;
   }
 ): Record<string, number> {
   const rules = sector.scoringRules;
@@ -52,11 +58,20 @@ export function buildScoringPrompt(
   const sameDept = subscriber.department === opportunity.buyer_department;
   scores.geoMatch = sameDept ? rules.geoMatch : Math.round(rules.geoMatch * 0.3);
 
-  // CPV match
+  // Sector match: check BOAMP descriptor codes against CPV prefixes,
+  // OR check if title/descriptors contain sector keywords
   const cpvMatch = opportunity.cpv_codes.some((cpv) =>
     sector.cpvPrefixes.some((prefix) => cpv.startsWith(prefix))
   );
-  scores.cpvMatch = cpvMatch ? rules.cpvMatch : 0;
+  const titleLower = (opportunity.title ?? "").toLowerCase();
+  const keywordMatch = sector.keywordsInclude.some((kw) =>
+    titleLower.includes(kw.toLowerCase())
+  );
+  // Opportunities are already LLM-qualified for this sector, so give
+  // full points if CPV or keyword matches, otherwise 60% (LLM already approved)
+  scores.cpvMatch = cpvMatch || keywordMatch
+    ? rules.cpvMatch
+    : Math.round(rules.cpvMatch * 0.6);
 
   // Size match
   const amount = opportunity.estimated_amount;
