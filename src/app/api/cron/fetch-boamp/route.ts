@@ -4,6 +4,9 @@ import { getServiceSupabase } from "@/lib/supabase";
 import { buildQualificationPrompt } from "@/lib/prompts";
 import { BoampAnnouncement, SectorConfig } from "@/lib/types";
 
+// Allow up to 60s on Vercel (max for hobby plan)
+export const maxDuration = 60;
+
 // ─── Config ───────────────────────────────────────────────
 
 const BOAMP_API_URL = "https://www.boamp.fr/api/explore/v2.1/catalog/datasets/boamp/records";
@@ -34,30 +37,37 @@ export async function GET(request: Request) {
       const existingIds = await getExistingBoampIds(supabase, announcements.map((a) => a.id));
       const newAnnouncements = announcements.filter((a) => !existingIds.has(a.id));
 
-      // 3. Qualify each with LLM
+      // 3. Qualify in parallel batches of 5 to stay within Vercel timeout
       let qualifiedCount = 0;
-      for (const announcement of newAnnouncements) {
-        const qualification = await qualifyWithLLM(sector.slug, announcement);
-        if (qualification) {
-          await supabase.from("opportunities").insert({
-            boamp_id: announcement.id,
-            sector_slug: sector.slug,
-            title: announcement.objet,
-            buyer_name: announcement.organisme,
-            buyer_department: announcement.departement,
-            cpv_codes: announcement.cpv,
-            estimated_amount: qualification.estimated_amount,
-            contract_duration_months: qualification.contract_duration_months,
-            deadline: announcement.date_limite_reponse,
-            publication_date: announcement.date_publication,
-            source_url: announcement.url,
-            renewal_possible: qualification.renewal_possible ?? false,
-            qualified: qualification.qualified,
-            confidence: qualification.confidence,
-            qualification_reason: qualification.reason,
-            raw_llm_response: qualification,
-          });
-          if (qualification.qualified) qualifiedCount++;
+      const BATCH_SIZE = 5;
+      for (let i = 0; i < newAnnouncements.length; i += BATCH_SIZE) {
+        const batch = newAnnouncements.slice(i, i + BATCH_SIZE);
+        const qualifications = await Promise.all(
+          batch.map((a) => qualifyWithLLM(sector.slug, a).then((q) => ({ announcement: a, qualification: q })))
+        );
+
+        for (const { announcement, qualification } of qualifications) {
+          if (qualification) {
+            await supabase.from("opportunities").insert({
+              boamp_id: announcement.id,
+              sector_slug: sector.slug,
+              title: announcement.objet,
+              buyer_name: announcement.organisme,
+              buyer_department: announcement.departement,
+              cpv_codes: announcement.cpv,
+              estimated_amount: qualification.estimated_amount,
+              contract_duration_months: qualification.contract_duration_months,
+              deadline: announcement.date_limite_reponse,
+              publication_date: announcement.date_publication,
+              source_url: announcement.url,
+              renewal_possible: qualification.renewal_possible ?? false,
+              qualified: qualification.qualified,
+              confidence: qualification.confidence,
+              qualification_reason: qualification.reason,
+              raw_llm_response: qualification,
+            });
+            if (qualification.qualified) qualifiedCount++;
+          }
         }
       }
 
@@ -91,7 +101,7 @@ async function fetchBoampBySector(sector: SectorConfig): Promise<BoampAnnounceme
   const params = new URLSearchParams({
     q: searchTerms,
     where: `dateparution >= '${dateFilter}'`,
-    limit: "100",
+    limit: "20",
     order_by: "dateparution DESC",
     timezone: "Europe/Paris",
   });
