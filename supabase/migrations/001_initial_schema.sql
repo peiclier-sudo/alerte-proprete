@@ -95,8 +95,27 @@ ALTER TABLE opportunities ENABLE ROW LEVEL SECURITY;
 ALTER TABLE digest_items ENABLE ROW LEVEL SECURITY;
 ALTER TABLE waitlist ENABLE ROW LEVEL SECURITY;
 
--- Service role can do everything (used by API routes)
--- No public access — all writes go through API routes with service role
+-- Service role (used by API routes) gets full access
+-- These policies allow the service_role key to perform all operations
+CREATE POLICY "Service role full access on subscribers"
+  ON subscribers FOR ALL
+  USING (auth.role() = 'service_role')
+  WITH CHECK (auth.role() = 'service_role');
+
+CREATE POLICY "Service role full access on opportunities"
+  ON opportunities FOR ALL
+  USING (auth.role() = 'service_role')
+  WITH CHECK (auth.role() = 'service_role');
+
+CREATE POLICY "Service role full access on digest_items"
+  ON digest_items FOR ALL
+  USING (auth.role() = 'service_role')
+  WITH CHECK (auth.role() = 'service_role');
+
+CREATE POLICY "Service role full access on waitlist"
+  ON waitlist FOR ALL
+  USING (auth.role() = 'service_role')
+  WITH CHECK (auth.role() = 'service_role');
 
 -- ─── Updated_at trigger ───────────────────────────────────────
 
