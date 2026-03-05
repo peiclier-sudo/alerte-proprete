@@ -4,7 +4,13 @@ import { getServiceSupabase } from "@/lib/supabase";
 import { Resend } from "resend";
 
 const CRON_SECRET = process.env.CRON_SECRET;
-const resend = new Resend(process.env.RESEND_API_KEY);
+
+function getResend() {
+  if (!process.env.RESEND_API_KEY) {
+    throw new Error("Missing RESEND_API_KEY");
+  }
+  return new Resend(process.env.RESEND_API_KEY);
+}
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -52,7 +58,7 @@ export async function GET(request: Request) {
     const html = buildDigestHtml(sector, subscriber, items, today);
 
     try {
-      await resend.emails.send({
+      await getResend().emails.send({
         from: `${sector.email.fromName} <digest@monmarche.fr>`,
         to: subscriber.email,
         subject,
