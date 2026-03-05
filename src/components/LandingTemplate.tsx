@@ -388,8 +388,8 @@ function PricingSection({ pricing, color }: { pricing: SectorConfig["landing"]["
             <F key={t.name} delay={i * 80}>
               <div style={{
                 padding: "36px 32px", borderRadius: i === 0 ? "12px 0 0 12px" : "0 12px 12px 0",
-                background: t.popular ? "var(--ink)" : "#fff",
-                border: t.popular ? "none" : "1px solid var(--line)",
+                background: t.popular ? "var(--cl)" : "#fff",
+                border: t.popular ? `1.5px solid ${color}40` : "1px solid var(--line)",
                 position: "relative", height: "100%", display: "flex", flexDirection: "column",
               }}>
                 {t.popular && <div style={{ position: "absolute", top: 0, left: 28, right: 28, height: 2, background: color, borderRadius: "0 0 2px 2px" }} />}
@@ -398,12 +398,12 @@ function PricingSection({ pricing, color }: { pricing: SectorConfig["landing"]["
                   color: t.popular ? color : "var(--ink4)",
                 }}>{t.name}{t.popular ? " · recommandé" : ""}</span>
                 <div style={{ display: "flex", alignItems: "baseline", gap: 3, margin: "18px 0 28px" }}>
-                  <span style={{ fontFamily: "var(--serif)", fontSize: 44, color: t.popular ? "#fff" : "var(--ink)", letterSpacing: "-0.03em" }}>{t.price}€</span>
-                  <span style={{ fontFamily: "var(--body)", fontSize: 13, color: t.popular ? "rgba(255,255,255,0.35)" : "var(--ink4)" }}>/{t.period}</span>
+                  <span style={{ fontFamily: "var(--serif)", fontSize: 44, color: "var(--ink)", letterSpacing: "-0.03em" }}>{t.price}€</span>
+                  <span style={{ fontFamily: "var(--body)", fontSize: 13, color: "var(--ink4)" }}>/{t.period}</span>
                 </div>
                 <div style={{ flex: 1 }}>
                   {t.features.map((f, j) => (
-                    <div key={j} style={{ display: "flex", gap: 8, marginBottom: 12, fontFamily: "var(--body)", fontSize: 13, lineHeight: 1.5, color: t.popular ? "rgba(255,255,255,0.6)" : "var(--ink2)" }}>
+                    <div key={j} style={{ display: "flex", gap: 8, marginBottom: 12, fontFamily: "var(--body)", fontSize: 13, lineHeight: 1.5, color: "var(--ink2)" }}>
                       <span style={{ color, flexShrink: 0 }}>✓</span><span>{f}</span>
                     </div>
                   ))}
