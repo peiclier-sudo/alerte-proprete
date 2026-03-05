@@ -96,28 +96,28 @@ Pour chaque AO, retourne un JSON :
     colorDark: "#7C2D12",
 
     heroQuestion:
-      "Combien de marchés de sécurité perdez-vous faute de veille ?",
+      "10 entreprises ont répondu à ce marché de gardiennage. Vous ne l'avez pas vu.",
     heroSubtitle:
-      "Les marchés de gardiennage sont ultra-compétitifs : 10+ réponses par AO. MonMarché vous donne un avantage décisif : détection instantanée, analyse des clauses de reprise du personnel, et rapport de préparation aligné sur les critères de notation.",
+      "En sécurité privée, arriver en retard = perdre. MonMarché détecte chaque AO dès publication, analyse les clauses de reprise du personnel, et vous donne une longueur d'avance.",
 
     painPoints: [
       {
         before:
-          "Vous découvrez un marché de gardiennage quand un concurrent vous en parle",
+          "Vous apprenez l'existence d'un marché quand un concurrent vous en parle. Il a déjà 2 semaines d'avance.",
         after:
-          "Alerte dès publication avec score de pertinence, montant estimé et deadline",
+          "Alerte dès J+0. Score, montant estimé, deadline — vous partez au même moment que tout le monde.",
       },
       {
         before:
-          "La clause de reprise du personnel est noyée dans 80 pages de DCE",
+          "80 pages de DCE. La clause de reprise du personnel est à la page 64. Vous l'avez ratée.",
         after:
-          "Détection automatique des clauses de transfert (art. 7 CCN), effectifs à reprendre, ancienneté",
+          "Art. 7 CCN détecté automatiquement : effectifs, ancienneté, qualifications. En 10 secondes.",
       },
       {
         before:
-          "Votre mémoire technique est générique, pas aligné sur les critères du RC",
+          "Mémoire technique copié-collé du dernier dossier. L'acheteur le voit — et vous élimine.",
         after:
-          "Trame de mémoire technique personnalisée selon les critères de notation identifiés dans le RC",
+          "Trame personnalisée, alignée sur les critères de notation du RC. Vous répondez à ce qu'on vous demande.",
       },
     ],
 
@@ -152,7 +152,7 @@ Pour chaque AO, retourne un JSON :
           "Identification jour/nuit/weekend/férié",
           "Alertes reconduction de marchés existants",
         ],
-        cta: "Commencer — 49€/mois",
+        cta: "Démarrer à 49€/mois →",
         popular: false,
       },
       {
@@ -167,7 +167,7 @@ Pour chaque AO, retourne un JSON :
           "Rapport de préparation avec structure du mémoire technique",
           "Estimation du coût agent par poste (jour/nuit/WE)",
         ],
-        cta: "Essai gratuit 14 jours",
+        cta: "Essayer 14 jours — gratuit, sans CB →",
         popular: true,
       },
     ],
@@ -206,10 +206,10 @@ Pour chaque AO, retourne un JSON :
 
     ctaFinal: {
       title:
-        "Demain matin, les marchés de sécurité de votre zone dans votre boîte mail.",
+        "Demain matin, vos concurrents verront les mêmes marchés. La question : qui les verra en premier ?",
       subtitle:
-        "Entrez votre SIRET. Premier digest gratuit sous 24h.",
-      buttonText: "Recevoir mon premier digest gratuit",
+        "Entrez votre SIRET. Demain à 7h, vos marchés de sécurité scorés et analysés. Gratuit, sans engagement.",
+      buttonText: "Prendre l'avantage — c'est gratuit →",
     },
 
     socialProof: {

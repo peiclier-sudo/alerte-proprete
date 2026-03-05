@@ -120,7 +120,7 @@ function TopBar({ shortName, color }: { shortName: string; color: string }) {
             fontFamily: "var(--body)", fontSize: 13, fontWeight: 700, color: "#fff",
             background: color, padding: "9px 20px", borderRadius: 6, textDecoration: "none",
             letterSpacing: "0.01em",
-          }}>Essai gratuit</a>
+          }}>Essai gratuit — 14 jours</a>
         </nav>
       </div>
     </header>
@@ -174,10 +174,10 @@ function HeroSection({ landing, sharedSiret, setSharedSiret }: { landing: Sector
                 padding: "13px 22px", borderRadius: 6, background: c, color: "#fff",
                 fontFamily: "var(--body)", fontSize: 14, fontWeight: 700, textDecoration: "none",
                 whiteSpace: "nowrap",
-              }}>Démarrer →</a>
+              }}>Voir mes marchés →</a>
             </div>
             <p style={{ fontFamily: "var(--body)", fontSize: 12, color: "var(--ink4)", marginTop: 10 }}>
-              14 jours gratuits · Sans CB · Résiliable en 1 clic
+              Gratuit 14 jours · Sans carte bancaire · Résiliable en 1 clic
             </p>
           </F>
         </div>
@@ -241,10 +241,10 @@ function HeroSection({ landing, sharedSiret, setSharedSiret }: { landing: Sector
 /* ── Metrics Ribbon ─────────────────────────────── */
 function MetricsRibbon() {
   const items = [
-    { val: "7h00", lbl: "envoi quotidien" },
-    { val: "< 2 min", lbl: "temps de lecture" },
-    { val: "100%", lbl: "AO qualifiés IA" },
-    { val: "0,002€", lbl: "coût par analyse" },
+    { val: "7h00", lbl: "dans votre boîte mail" },
+    { val: "2 min", lbl: "au lieu de 2h de veille" },
+    { val: "0", lbl: "marché raté" },
+    { val: "588€/an", lbl: "pour des marchés à 50-400K€" },
   ];
   return (
     <div style={{
@@ -268,7 +268,7 @@ function ProblemSection({ painPoints, color }: { painPoints: SectorConfig["landi
       <F>
         <p style={{ fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.14em" }}>Le problème</p>
         <h2 style={{ fontFamily: "var(--serif)", fontSize: "clamp(30px, 4vw, 44px)", color: "var(--ink)", marginTop: 10, lineHeight: 1.1, letterSpacing: "-0.025em", maxWidth: 500 }}>
-          Vous perdez des marchés.<br /><span style={{ color: "var(--ink3)", fontStyle: "italic" }}>Pas par incompétence.</span>
+          Vous perdez des marchés.<br /><span style={{ color: "var(--ink3)", fontStyle: "italic" }}>Par manque de temps.</span>
         </h2>
       </F>
 
@@ -281,12 +281,13 @@ function ProblemSection({ painPoints, color }: { painPoints: SectorConfig["landi
               border: "1px solid var(--line)", borderTop: i > 0 ? "none" : undefined,
             }}>
               <div style={{ padding: "24px 28px" }}>
-                <span style={{ fontFamily: "var(--mono)", fontSize: 9, fontWeight: 600, color: "#c0392b", textTransform: "uppercase", letterSpacing: "0.1em" }}>Sans MonMarché</span>
+                <span style={{ fontFamily: "var(--mono)", fontSize: 9, fontWeight: 600, color: "#c0392b", textTransform: "uppercase", letterSpacing: "0.1em" }}>Aujourd&apos;hui</span>
                 <p style={{ fontFamily: "var(--body)", fontSize: 14, lineHeight: 1.65, color: "var(--ink2)", marginTop: 8 }}>{pp.before}</p>
               </div>
               <div className="lp-pain-divider" style={{ background: `linear-gradient(to bottom, var(--line), ${color}40, var(--line))` }} />
               <div style={{ padding: "24px 28px" }}>
                 <span style={{ fontFamily: "var(--mono)", fontSize: 9, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.1em" }}>Avec MonMarché</span>
+
                 <p style={{ fontFamily: "var(--body)", fontSize: 14, lineHeight: 1.65, color: "var(--ink)", marginTop: 8, fontWeight: 500 }}>{pp.after}</p>
               </div>
             </div>
@@ -400,10 +401,10 @@ function PricingSection({ pricing, color }: { pricing: SectorConfig["landing"]["
         <F>
           <p style={{ fontFamily: "var(--mono)", fontSize: 11, fontWeight: 600, color, textTransform: "uppercase", letterSpacing: "0.14em" }}>Tarifs</p>
           <h2 style={{ fontFamily: "var(--serif)", fontSize: 36, color: "var(--ink)", marginTop: 10, lineHeight: 1.1, letterSpacing: "-0.025em" }}>
-            Simple. Sans engagement.
+            49€/mois. Un marché gagné = 50 à 400K€.
           </h2>
           <p style={{ fontFamily: "var(--body)", fontSize: 14, color: "var(--ink3)", marginTop: 10 }}>
-            Un seul marché gagné rembourse des années d&apos;abonnement.
+            Sans engagement. Résiliable en 1 clic. Le ROI est atteint dès le premier marché remporté.
           </p>
         </F>
 

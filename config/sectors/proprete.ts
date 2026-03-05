@@ -72,27 +72,27 @@ Pour chaque AO, retourne un JSON :
     colorDark: "#0C4A6E",
 
     heroQuestion:
-      "Combien de marchés de nettoyage avez-vous raté ce mois-ci ?",
+      "Ce matin, 12 marchés de nettoyage ont été publiés. Vous en avez vu combien ?",
     heroSubtitle:
-      "Chaque semaine, des centaines d'appels d'offres en propreté sont publiés. Vous en voyez combien ? MonMarché les détecte, les qualifie par IA, et vous envoie uniquement ceux qui matchent votre entreprise.",
+      "Vos concurrents répondent pendant que vous cherchez. MonMarché scanne chaque AO en propreté, le score de 0 à 100 pour votre profil, et vous l'envoie avant le café.",
 
     painPoints: [
       {
-        before: "Vous passez 2h par jour sur BOAMP, PLACE, marches-publics.gouv",
+        before: "2h par jour à fouiller BOAMP, PLACE, marches-publics.gouv — pour 3 résultats utiles",
         after:
-          "Un email chaque matin avec vos marchés qualifiés, scorés, prêts à analyser",
+          "Un email, 2 minutes de lecture. Vos marchés sont scorés, triés, prêts.",
       },
       {
         before:
-          "Vous découvrez un marché intéressant... 3 jours avant la date limite",
+          "Vous trouvez le marché parfait... 72h avant la deadline. Trop tard pour bien répondre.",
         after:
-          "Alerte dès la publication, avec le temps restant et le score d'urgence",
+          "Alerte dès J+0 de publication. Vous avez le temps de préparer une vraie réponse.",
       },
       {
         before:
-          "Impossible de savoir si un marché est à votre taille sans lire tout le DCE",
+          "Lire 40 pages de DCE pour découvrir que le marché fait 2M€. Hors de votre portée.",
         after:
-          "Montant estimé, durée, possibilité de reconduction — visible en 10 secondes",
+          "Montant estimé, durée, taille du lot — visible en 10 secondes. Vous ne perdez plus de temps.",
       },
     ],
 
@@ -127,7 +127,7 @@ Pour chaque AO, retourne un JSON :
           "Filtrage géographique intelligent",
           "Alertes reconduction de marchés existants",
         ],
-        cta: "Commencer — 49€/mois",
+        cta: "Démarrer à 49€/mois →",
         popular: false,
       },
       {
@@ -142,7 +142,7 @@ Pour chaque AO, retourne un JSON :
           "Détection des clauses clés (pénalités, reconduction)",
           "Trame de mémoire technique personnalisée",
         ],
-        cta: "Essai gratuit 14 jours",
+        cta: "Essayer 14 jours — gratuit, sans CB →",
         popular: true,
       },
     ],
@@ -177,10 +177,10 @@ Pour chaque AO, retourne un JSON :
     ],
 
     ctaFinal: {
-      title: "Demain matin, vos marchés dans votre boîte mail.",
+      title: "Pendant que vous lisez ceci, des marchés sont publiés.",
       subtitle:
-        "Entrez votre SIRET maintenant. Premier digest gratuit sous 24h.",
-      buttonText: "Recevoir mon premier digest gratuit",
+        "Entrez votre SIRET. Demain à 7h, vos premiers marchés scorés dans votre boîte mail. Gratuit, sans engagement.",
+      buttonText: "Recevoir mes marchés demain matin →",
     },
 
     socialProof: {

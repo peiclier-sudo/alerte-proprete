@@ -121,7 +121,7 @@ export default function HomePage() {
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
-                }}>correspondent</span>.
+                }}>échappent</span>.
               </h1>
             </div>
 
@@ -140,18 +140,16 @@ export default function HomePage() {
                 marginTop: 20,
                 fontWeight: 400,
               }}>
-                Chaque matin, un email avec les appels d&apos;offres scorés
-                par IA pour votre activité. De 0 à 100. Vous décidez en
-                2&nbsp;minutes.
+                Pendant que vous travaillez, des marchés à votre taille sont publiés — et attribués à d&apos;autres. MonMarché les détecte, les score, et vous les livre chaque matin. Vous décidez en 2&nbsp;minutes.
               </p>
             </div>
 
             {/* stats */}
             <div className="mm-stats" style={{ animation: "mmUp .7s ease .3s both", marginTop: 48 }}>
               {[
-                { n: "900+", l: "marchés analysés / mois" },
-                { n: "<2 min", l: "pour décider" },
-                { n: "100 %", l: "des sources couvertes" },
+                { n: "900+", l: "opportunités détectées / mois" },
+                { n: "2 min", l: "au lieu de 2h de veille" },
+                { n: "1 marché", l: "gagné rembourse 10 ans" },
               ].map(({ n, l }) => (
                 <div key={l}>
                   <div style={{
@@ -218,9 +216,9 @@ export default function HomePage() {
                   letterSpacing: "-0.03em", fontWeight: 700,
                   marginTop: 8, color: "#0f0f0f", lineHeight: 1.1,
                 }}>
-                  Trois verticales,<br />
+                  Votre secteur.{" "}<br />
                   <span style={{ color: "#6366F1" }}>
-                    une obsession.
+                    Votre avantage.
                   </span>
                 </h2>
               </div>
@@ -228,8 +226,8 @@ export default function HomePage() {
                 fontSize: 13.5, color: "#999",
                 maxWidth: 280, textAlign: "right", lineHeight: 1.65,
               }}>
-                Chaque secteur a son IA dédiée, ses critères
-                de scoring, ses certifications.
+                Une IA entraînée sur votre métier,
+                pas un moteur de recherche généraliste.
               </p>
             </div>
 
