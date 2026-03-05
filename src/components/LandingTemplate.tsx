@@ -7,7 +7,7 @@ import type { SectorConfig } from "@/lib/types";
 export function LandingTemplate({ config }: { config: SectorConfig }) {
   const { landing, slug, shortName } = config;
   const c = landing.color;
-  const [sharedSiret, setSharedSiret] = useState("");
+  const [sharedDept, setSharedDept] = useState("");
 
   return (
     <>
@@ -159,14 +159,14 @@ export function LandingTemplate({ config }: { config: SectorConfig }) {
 
       <main>
         <TopBar shortName={shortName} color={c} />
-        <HeroSection landing={landing} sharedSiret={sharedSiret} setSharedSiret={setSharedSiret} />
+        <HeroSection landing={landing} sharedDept={sharedDept} setSharedDept={setSharedDept} />
         <MetricsRibbon />
         <ProblemSection painPoints={landing.painPoints} color={c} />
         <ProcessSection steps={landing.steps} color={c} />
         <DigestPreview color={c} shortName={shortName} />
         <PricingSection pricing={landing.pricing} color={c} />
         <FaqSection faq={landing.faq} color={c} />
-        <CtaSection cta={landing.ctaFinal} slug={slug} color={c} colorDark={landing.colorDark} sharedSiret={sharedSiret} />
+        <CtaSection cta={landing.ctaFinal} slug={slug} color={c} colorDark={landing.colorDark} sharedDept={sharedDept} />
         <FooterBar color={c} />
       </main>
     </>
@@ -222,7 +222,7 @@ function TopBar({ shortName, color }: { shortName: string; color: string }) {
 }
 
 /* ── Hero ───────────────────────────────────────── */
-function HeroSection({ landing, sharedSiret, setSharedSiret }: { landing: SectorConfig["landing"]; sharedSiret: string; setSharedSiret: (v: string) => void }) {
+function HeroSection({ landing, sharedDept, setSharedDept }: { landing: SectorConfig["landing"]; sharedDept: string; setSharedDept: (v: string) => void }) {
   const c = landing.color;
   return (
     <section style={{ borderBottom: "1px solid var(--line)" }}>
@@ -256,7 +256,7 @@ function HeroSection({ landing, sharedSiret, setSharedSiret }: { landing: Sector
           </F>
           <F delay={200}>
             <div className="lp-hero-input" style={{ marginTop: 36, display: "flex", gap: 10, maxWidth: 440 }}>
-              <input type="text" placeholder="Votre SIRET" value={sharedSiret} onChange={e => setSharedSiret(e.target.value)} style={{
+              <input type="text" placeholder="Département (ex: 75)" value={sharedDept} onChange={e => setSharedDept(e.target.value)} style={{
                 flex: 1, padding: "13px 14px", borderRadius: 6, border: "1.5px solid var(--line)",
                 fontFamily: "var(--mono)", fontSize: 13, background: "#fff", color: "var(--ink)", outline: "none",
                 transition: "border 0.2s",
@@ -580,16 +580,16 @@ function Accordion({ q, a, color }: { q: string; a: string; color: string }) {
 }
 
 /* ── Final CTA ──────────────────────────────────── */
-function CtaSection({ cta, slug, color, colorDark, sharedSiret }: { cta: SectorConfig["landing"]["ctaFinal"]; slug: string; color: string; colorDark: string; sharedSiret: string }) {
-  const [email, setEmail] = useState(""); const [siret, setSiret] = useState(sharedSiret);
-  useEffect(() => { if (sharedSiret) setSiret(sharedSiret); }, [sharedSiret]);
+function CtaSection({ cta, slug, color, colorDark, sharedDept }: { cta: SectorConfig["landing"]["ctaFinal"]; slug: string; color: string; colorDark: string; sharedDept: string }) {
+  const [email, setEmail] = useState(""); const [dept, setDept] = useState(sharedDept);
+  useEffect(() => { if (sharedDept) setDept(sharedDept); }, [sharedDept]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ success?: boolean; message?: string; error?: string } | null>(null);
 
   async function submit() {
-    if (!email || !siret) return; setLoading(true); setResult(null);
+    if (!email || !dept) return; setLoading(true); setResult(null);
     try {
-      const r = await fetch("/api/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, siret, sector_slug: slug }) });
+      const r = await fetch("/api/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, department: dept, sector_slug: slug }) });
       const d = await r.json();
       r.ok ? setResult({ success: true, message: d.message }) : setResult({ error: d.error });
     } catch { setResult({ error: "Erreur réseau." }); } finally { setLoading(false); }
@@ -614,11 +614,11 @@ function CtaSection({ cta, slug, color, colorDark, sharedSiret }: { cta: SectorC
         ) : (
           <F delay={80}>
             <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 8 }}>
-              <input type="text" placeholder="SIRET (ex: 123 456 789 00012)" value={siret} onChange={e => setSiret(e.target.value)}
+              <input type="text" placeholder="Département (ex: 75, 2A, 971)" value={dept} onChange={e => setDept(e.target.value)}
                 style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--mono)", fontSize: 13, color: "var(--ink)", outline: "none" }} />
               <input type="email" placeholder="Email professionnel" value={email} onChange={e => setEmail(e.target.value)}
                 style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", outline: "none" }} />
-              <button onClick={submit} disabled={loading || !email || !siret} className="lp-btn-submit"
+              <button onClick={submit} disabled={loading || !email || !dept} className="lp-btn-submit"
                 style={{ padding: "14px", borderRadius: 8, background: color, color: "#fff", fontFamily: "var(--body)", fontSize: 14, fontWeight: 900, border: "none", cursor: "pointer", opacity: loading ? 0.5 : 1, letterSpacing: "-0.01em" }}>
                 {loading ? "..." : cta.buttonText}
               </button>
