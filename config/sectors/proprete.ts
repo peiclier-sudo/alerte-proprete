@@ -12,8 +12,11 @@ export const proprete: SectorConfig = {
   cpvPrefixes: ["90910", "90911", "90914", "90919"],
   nafCodes: ["81.21Z", "81.22Z", "81.29A", "81.29B"],
   keywordsInclude: [
+    // BOAMP exact descriptor labels (highest priority - used in search)
+    "nettoyage de locaux",
     "nettoyage",
     "propreté",
+    // Broader matching terms
     "entretien locaux",
     "entretien ménager",
     "vitrerie",
@@ -21,7 +24,8 @@ export const proprete: SectorConfig = {
     "décapage",
     "lustrage",
     "désinfection",
-    "hygiène des locaux",
+    "hygiène locaux",
+    "produits entretien",
   ],
   keywordsExclude: [
     "nettoyage urbain",
@@ -29,6 +33,8 @@ export const proprete: SectorConfig = {
     "assainissement",
     "déneigement",
     "curage",
+    "travaux neufs",
+    "construction",
   ],
   typicalContractMonths: 36,
   typicalContractRange: { min: 40_000, max: 400_000 },
