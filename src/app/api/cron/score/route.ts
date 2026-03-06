@@ -5,6 +5,12 @@ import { buildScoringPrompt, computeTotalScore } from "@/lib/prompts";
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
+// Normalize department codes: "075" → "75", "2A" → "2A"
+function normalizeDept(dept: string | null): string {
+  if (!dept) return "";
+  return dept.replace(/^0+/, "") || dept;
+}
+
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
   if (CRON_SECRET && authHeader !== `Bearer ${CRON_SECRET}`) {
@@ -43,7 +49,12 @@ export async function GET(request: Request) {
   // 3. Score each opportunity for each subscriber
   for (const sub of subscribers) {
     const sector = getSector(sub.sector_slug);
-    const sectorOpps = opportunities.filter((o) => o.sector_slug === sub.sector_slug);
+    // Filter by sector AND subscriber's department
+    const subDept = normalizeDept(sub.department);
+    const sectorOpps = opportunities.filter((o) =>
+      o.sector_slug === sub.sector_slug &&
+      normalizeDept(o.buyer_department) === subDept
+    );
 
     const scored = sectorOpps.map((opp) => {
       const breakdown = buildScoringPrompt(sector, sub, {
