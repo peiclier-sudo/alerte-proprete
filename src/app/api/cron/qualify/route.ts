@@ -15,7 +15,7 @@ const CRON_SECRET = process.env.CRON_SECRET;
 
 // Process up to 5 records per invocation to stay within 60s timeout
 // (~4-8s per LLM call = ~40s max)
-const BATCH_SIZE = 5;
+const BATCH_SIZE = 20;
 
 // Timeout per LLM call (10s)
 const LLM_TIMEOUT_MS = 10_000;
