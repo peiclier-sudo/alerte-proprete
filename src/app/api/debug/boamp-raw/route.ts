@@ -10,47 +10,71 @@ export async function GET(request: Request) {
   }
 
   const { searchParams } = new URL(request.url);
-  const idweb = searchParams.get("id") || "26-22856";
+  const query = searchParams.get("q") || "propreté nettoyage";
+  const id = searchParams.get("id");
 
-  // Fetch a single record by IDWEB
-  const params = new URLSearchParams({
-    where: `search(id, "${idweb}")`,
-    limit: "1",
-  });
+  let params: URLSearchParams;
+
+  if (id) {
+    // Search by specific ID field
+    params = new URLSearchParams({
+      where: `idweb = '${id}'`,
+      limit: "1",
+    });
+  } else {
+    // Full-text search for recent records
+    const thirtyDaysAgo = new Date(Date.now() - 30 * 86400000).toISOString().split("T")[0];
+    params = new URLSearchParams({
+      q: query,
+      where: `dateparution >= '${thirtyDaysAgo}'`,
+      limit: "3",
+      order_by: "dateparution DESC",
+      timezone: "Europe/Paris",
+    });
+  }
 
   const url = `${BOAMP_API_URL}?${params}`;
   const response = await fetch(url);
 
   if (!response.ok) {
-    return NextResponse.json({ error: "BOAMP API error", status: response.status }, { status: 502 });
+    const text = await response.text();
+    return NextResponse.json({ error: "BOAMP API error", status: response.status, body: text }, { status: 502 });
   }
 
   const data = await response.json();
-  const record = data.results?.[0];
+  const records = data.results ?? [];
 
-  if (!record) {
-    return NextResponse.json({ error: "Record not found", id: idweb }, { status: 404 });
+  if (records.length === 0) {
+    return NextResponse.json({ error: "No records found", query, url }, { status: 404 });
   }
 
-  // Parse gestion if it's a string
-  let gestion = record.gestion;
-  if (typeof gestion === "string") {
-    try { gestion = JSON.parse(gestion); } catch { /* keep as string */ }
-  }
+  // Parse and return all records with full detail
+  const parsed = records.map((record: any) => {
+    let gestion = record.gestion;
+    if (typeof gestion === "string") {
+      try { gestion = JSON.parse(gestion); } catch { /* keep as string */ }
+    }
 
-  // Parse donnees if it's a string
-  let donnees = record.donnees;
-  if (typeof donnees === "string") {
-    try { donnees = JSON.parse(donnees); } catch { /* keep as string */ }
-  }
+    let donnees = record.donnees;
+    if (typeof donnees === "string") {
+      try { donnees = JSON.parse(donnees); } catch { /* keep as string */ }
+    }
+
+    return {
+      top_level_keys: Object.keys(record),
+      record_raw: record,
+      gestion_parsed: gestion,
+      gestion_keys: gestion && typeof gestion === "object" ? Object.keys(gestion) : null,
+      donnees_parsed: donnees,
+      donnees_type: typeof record.donnees,
+      donnees_keys: donnees && typeof donnees === "object" ? Object.keys(donnees) : null,
+    };
+  });
 
   return NextResponse.json({
-    id: idweb,
-    all_top_level_keys: Object.keys(record),
-    record_raw: record,
-    gestion_parsed: gestion,
-    donnees_parsed: donnees,
-    donnees_type: typeof record.donnees,
-    donnees_keys: donnees && typeof donnees === "object" ? Object.keys(donnees) : null,
+    total_count: data.total_count,
+    returned: records.length,
+    api_url: url,
+    records: parsed,
   });
 }
