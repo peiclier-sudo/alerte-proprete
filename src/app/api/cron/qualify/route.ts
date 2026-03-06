@@ -13,9 +13,9 @@ const LLM_API_KEY = process.env.LLM_API_KEY;
 const LLM_MODEL = process.env.LLM_MODEL ?? "deepseek-chat";
 const CRON_SECRET = process.env.CRON_SECRET;
 
-// Process up to 5 records per invocation to stay within 60s timeout
-// (~4-8s per LLM call = ~40s max)
+// Process up to 20 records per invocation, 5 concurrent LLM calls
 const BATCH_SIZE = 20;
+const CONCURRENCY = 5;
 
 // Timeout per LLM call (10s)
 const LLM_TIMEOUT_MS = 10_000;
@@ -61,59 +61,65 @@ export async function GET(request: Request) {
     let qualified = 0;
     let failed = 0;
 
-    for (const opp of pending) {
-      try {
-        const announcement: BoampAnnouncement = {
-          id: opp.boamp_id,
-          objet: opp.title ?? "",
-          organisme: opp.buyer_name ?? "",
-          departement: opp.buyer_department ?? "",
-          date_publication: opp.publication_date ?? "",
-          date_limite_reponse: opp.deadline ?? "",
-          cpv: opp.cpv_codes ?? [],
-          montant: opp.estimated_amount ?? undefined,
-          url: opp.source_url ?? "",
-          type_marche: "",
-          nature: "",
-        };
+    // Process in parallel chunks of CONCURRENCY
+    for (let i = 0; i < pending.length; i += CONCURRENCY) {
+      const chunk = pending.slice(i, i + CONCURRENCY);
 
-        console.log(`[Qualify] Processing ${opp.boamp_id}: "${announcement.objet?.substring(0, 80)}"`);
+      const results = await Promise.allSettled(
+        chunk.map(async (opp) => {
+          const announcement: BoampAnnouncement = {
+            id: opp.boamp_id,
+            objet: opp.title ?? "",
+            organisme: opp.buyer_name ?? "",
+            departement: opp.buyer_department ?? "",
+            date_publication: opp.publication_date ?? "",
+            date_limite_reponse: opp.deadline ?? "",
+            cpv: opp.cpv_codes ?? [],
+            montant: opp.estimated_amount ?? undefined,
+            url: opp.source_url ?? "",
+            type_marche: "",
+            nature: "",
+          };
 
-        const result = await qualifyWithLLM(opp.sector_slug, announcement);
+          console.log(`[Qualify] Processing ${opp.boamp_id}: "${announcement.objet?.substring(0, 80)}"`);
 
-        if (result) {
-          const { error: updateError } = await supabase
-            .from("opportunities")
-            .update({
-              qualified: result.qualified,
-              confidence: result.confidence,
-              qualification_reason: result.reason,
-              estimated_amount: result.estimated_amount ?? opp.estimated_amount,
-              contract_duration_months: result.contract_duration_months ?? null,
-              renewal_possible: result.renewal_possible ?? false,
-              prestations: result.prestations ?? [],
-              raw_llm_response: result,
-            })
-            .eq("id", opp.id);
+          const result = await qualifyWithLLM(opp.sector_slug, announcement);
 
-          if (updateError) {
-            console.error(`[Qualify] DB update error for ${opp.boamp_id}:`, updateError.message);
+          if (result) {
+            const { error: updateError } = await supabase
+              .from("opportunities")
+              .update({
+                qualified: result.qualified,
+                confidence: result.confidence,
+                qualification_reason: result.reason,
+                estimated_amount: result.estimated_amount ?? opp.estimated_amount,
+                contract_duration_months: result.contract_duration_months ?? null,
+                renewal_possible: result.renewal_possible ?? false,
+                prestations: result.prestations ?? [],
+                raw_llm_response: result,
+              })
+              .eq("id", opp.id);
+
+            if (updateError) {
+              console.error(`[Qualify] DB update error for ${opp.boamp_id}:`, updateError.message);
+            }
+
+            console.log(`[Qualify] ${opp.boamp_id}: qualified=${result.qualified}, confidence=${result.confidence}, reason=${result.reason}`);
+            return result.qualified;
+          } else {
+            await supabase
+              .from("opportunities")
+              .update({ qualification_reason: "llm_error" })
+              .eq("id", opp.id);
+            console.log(`[Qualify] ${opp.boamp_id}: LLM call failed`);
+            throw new Error("llm_error");
           }
+        })
+      );
 
-          if (result.qualified) qualified++;
-          console.log(`[Qualify] ${opp.boamp_id}: qualified=${result.qualified}, confidence=${result.confidence}, reason=${result.reason}`);
-        } else {
-          // Mark as failed so we don't retry indefinitely
-          await supabase
-            .from("opportunities")
-            .update({ qualification_reason: "llm_error" })
-            .eq("id", opp.id);
-          failed++;
-          console.log(`[Qualify] ${opp.boamp_id}: LLM call failed`);
-        }
-      } catch (err) {
-        console.error(`[Qualify] Error processing ${opp.boamp_id}:`, err);
-        failed++;
+      for (const r of results) {
+        if (r.status === "fulfilled" && r.value) qualified++;
+        if (r.status === "rejected") failed++;
       }
     }
 
