@@ -49,6 +49,15 @@ export async function GET(request: Request) {
   const debug: Record<string, any> = {
     subscribers_count: subscribers.length,
     qualified_opportunities: opportunities.length,
+    opp_departments: [...new Set(opportunities.map((o) => o.buyer_department ?? "(null)"))],
+    opp_sectors: [...new Set(opportunities.map((o) => o.sector_slug))],
+    sample_opps: opportunities.slice(0, 3).map((o) => ({
+      title: o.title?.substring(0, 80),
+      buyer_department: o.buyer_department,
+      sector_slug: o.sector_slug,
+      qualified: o.qualified,
+      publication_date: o.publication_date,
+    })),
     per_subscriber: [] as any[],
   };
 
