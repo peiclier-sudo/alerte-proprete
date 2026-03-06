@@ -17,6 +17,45 @@ export function buildQualificationPrompt(
     ? `\n\nIdentifie aussi les types de prestations concernées parmi cette liste UNIQUEMENT : [${sector.prestations.join(", ")}]. Retourne-les dans le champ "prestations" du JSON.`
     : "";
 
+  // Build CPV info: prefer real eForms CPV codes over BOAMP descriptors
+  const cpvInfo = announcement.eforms_cpv_codes?.length
+    ? `Codes CPV : ${announcement.eforms_cpv_codes.join(", ")}`
+    : announcement.cpv.length > 0
+      ? `Codes descripteurs BOAMP : ${announcement.cpv.join(", ")}`
+      : "";
+
+  // Build amount info from eForms-extracted data
+  const amountInfo = announcement.estimated_amount
+    ? `Montant estimé : ${announcement.estimated_amount.toLocaleString("fr-FR")}€`
+    : announcement.montant
+      ? `Montant estimé : ${announcement.montant.toLocaleString("fr-FR")}€`
+      : "Montant non communiqué";
+
+  // Build duration info
+  const durationInfo = announcement.contract_duration_months
+    ? `Durée du marché : ${announcement.contract_duration_months} mois`
+    : "";
+
+  // Build lots info from eForms (much richer than flat lots)
+  let lotsInfo = "Pas d'allotissement";
+  if (announcement.eforms_lots?.length) {
+    lotsInfo = `Lots (${announcement.eforms_lots.length}) :\n` + announcement.eforms_lots.map((l) => {
+      const parts = [`  - ${l.id}: ${l.title}`];
+      if (l.description && l.description !== l.title) parts.push(`    Description : ${l.description.substring(0, 300)}`);
+      if (l.cpv_codes.length) parts.push(`    CPV : ${l.cpv_codes.join(", ")}`);
+      if (l.estimated_amount) parts.push(`    Montant : ${l.estimated_amount.toLocaleString("fr-FR")}€`);
+      if (l.duration_months) parts.push(`    Durée : ${l.duration_months} mois`);
+      return parts.join("\n");
+    }).join("\n");
+  } else if (announcement.lots) {
+    lotsInfo = `Lots :\n${announcement.lots.map((l) => `  - Lot ${l.numero}: ${l.intitule} (CPV: ${l.cpv?.join(", ") ?? "non précisé"})`).join("\n")}`;
+  }
+
+  // Build description section from eForms (the key enrichment)
+  const descriptionInfo = announcement.description
+    ? `Description complète :\n${announcement.description.substring(0, 1000)}`
+    : "";
+
   return `${sector.qualificationPrompt}${prestationsList}
 
 ---
@@ -24,19 +63,18 @@ export function buildQualificationPrompt(
 Voici l'avis de marché à analyser :
 
 Objet : ${announcement.objet}
+${descriptionInfo ? `\n${descriptionInfo}\n` : ""}
 Organisme : ${announcement.organisme}
 Département : ${announcement.departement}
 Date de publication : ${announcement.date_publication}
 Date limite de réponse : ${announcement.date_limite_reponse}
 ${descripteurs}
-${announcement.cpv.length > 0 ? `Codes descripteurs : ${announcement.cpv.join(", ")}` : ""}
-${announcement.montant ? `Montant estimé : ${announcement.montant}€` : "Montant non communiqué"}
+${cpvInfo}
+${amountInfo}
+${durationInfo}
 Type de marché : ${announcement.type_marche}
-${
-  announcement.lots
-    ? `Lots :\n${announcement.lots.map((l) => `  - Lot ${l.numero}: ${l.intitule} (CPV: ${l.cpv?.join(", ") ?? "non précisé"})`).join("\n")}`
-    : "Pas d'allotissement"
-}
+${announcement.notice_type ? `Type d'avis : ${announcement.notice_type}` : ""}
+${lotsInfo}
 
 Réponds UNIQUEMENT en JSON valide, sans aucun texte avant ou après.`;
 }
