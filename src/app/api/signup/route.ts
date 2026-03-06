@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { isSectorSlug } from "@/lib/sectors";
+import { getSector, isSectorSlug } from "@/lib/sectors";
 import { getServiceSupabase } from "@/lib/supabase";
 
 const DEPT_REGEX = /^(\d{2,3}|2[AB])$/;
@@ -8,7 +8,7 @@ const DEPT_REGEX = /^(\d{2,3}|2[AB])$/;
 
 export async function POST(request: Request) {
   const body = await request.json();
-  const { email, sector_slug, department } = body;
+  const { email, sector_slug, department, prestations } = body;
 
   if (!email || !sector_slug || !department) {
     return NextResponse.json(
@@ -40,6 +40,21 @@ export async function POST(request: Request) {
     );
   }
 
+  // Validate prestations (optional)
+  let validPrestations: string[] = [];
+  if (prestations && Array.isArray(prestations) && prestations.length > 0) {
+    const sector = getSector(sector_slug);
+    const allowed = new Set(sector.prestations);
+    const invalid = prestations.filter((p: string) => !allowed.has(p));
+    if (invalid.length > 0) {
+      return NextResponse.json(
+        { error: `Prestation(s) invalide(s) : ${invalid.join(", ")}` },
+        { status: 400 }
+      );
+    }
+    validPrestations = prestations;
+  }
+
   // Deduplicate
   const uniqueDepts = [...new Set(depts)];
 
@@ -68,6 +83,7 @@ export async function POST(request: Request) {
     email,
     sector_slug,
     department: dept,
+    prestations: validPrestations,
     plan: "essential",
     geo_radius_km: 50,
     active: true,

@@ -44,6 +44,16 @@ export const gardiennage: SectorConfig = {
   typicalContractMonths: 36,
   typicalContractRange: { min: 80_000, max: 500_000 },
 
+  // ─── Prestations (user-facing specialties) ────────────
+  prestations: [
+    "Gardiennage",
+    "Surveillance & rondes",
+    "Sécurité incendie (SSIAP)",
+    "Contrôle d'accès",
+    "Télésurveillance",
+    "Intervention sur alarme",
+  ],
+
   // ─── LLM Prompts ───────────────────────────────────────
   qualificationPrompt: `Tu es un expert en marchés publics de gardiennage et sécurité privée en France.
 Ton rôle : analyser un avis de marché public et déterminer s'il concerne une PME de sécurité (NAF 80.10Z).
@@ -85,11 +95,12 @@ Pour chaque AO, retourne un JSON :
 }`,
 
   scoringRules: {
-    geoMatch: 25,
-    cpvMatch: 25,
-    sizeMatch: 20,
+    geoMatch: 20,
+    cpvMatch: 20,
+    sizeMatch: 15,
     renewalBonus: 15,
     deadlineUrgency: 15,
+    prestationMatch: 15,
   },
 
   certifications: [

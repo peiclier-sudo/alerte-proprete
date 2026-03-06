@@ -16,6 +16,9 @@ export interface SectorConfig {
   typicalContractMonths: number;
   typicalContractRange: { min: number; max: number };
 
+  // Service types (user-facing specialties)
+  prestations: string[];
+
   // LLM
   qualificationPrompt: string;
   scoringRules: ScoringRules;
@@ -40,6 +43,7 @@ export interface ScoringRules {
   sizeMatch: number;
   renewalBonus: number;
   deadlineUrgency: number;
+  prestationMatch: number;
 }
 
 export interface LandingConfig {
@@ -122,6 +126,7 @@ export interface Subscriber {
   geo_lng: number;
   geo_radius_km: number;
   department: string;
+  prestations: string[];
   stripe_customer_id: string | null;
   stripe_subscription_id: string | null;
   active: boolean;

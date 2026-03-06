@@ -39,6 +39,16 @@ export const proprete: SectorConfig = {
   typicalContractMonths: 36,
   typicalContractRange: { min: 40_000, max: 400_000 },
 
+  // ─── Prestations (user-facing specialties) ────────────
+  prestations: [
+    "Nettoyage de locaux",
+    "Vitrerie",
+    "Remise en état",
+    "Désinfection",
+    "Entretien ménager",
+    "Décapage & lustrage",
+  ],
+
   // ─── LLM Prompts ───────────────────────────────────────
   qualificationPrompt: `Tu es un expert en marchés publics de propreté et nettoyage en France.
 Ton rôle : analyser un avis de marché public et déterminer s'il concerne une PME de nettoyage (NAF 81.21Z, 81.22Z, 81.29A, 81.29B).
@@ -70,11 +80,12 @@ Retourne un JSON :
 }`,
 
   scoringRules: {
-    geoMatch: 30,
-    cpvMatch: 25,
-    sizeMatch: 20,
+    geoMatch: 25,
+    cpvMatch: 20,
+    sizeMatch: 15,
     renewalBonus: 15,
     deadlineUrgency: 10,
+    prestationMatch: 15,
   },
 
   certifications: ["Qualipropre", "MASE", "ISO 14001", "Ecolabel Européen"],

@@ -166,7 +166,7 @@ export function LandingTemplate({ config }: { config: SectorConfig }) {
         <DigestPreview color={c} shortName={shortName} />
         <PricingSection pricing={landing.pricing} color={c} />
         <FaqSection faq={landing.faq} color={c} />
-        <CtaSection cta={landing.ctaFinal} slug={slug} color={c} colorDark={landing.colorDark} sharedDept={sharedDept} />
+        <CtaSection cta={landing.ctaFinal} slug={slug} color={c} colorDark={landing.colorDark} sharedDept={sharedDept} prestationOptions={config.prestations} />
         <FooterBar color={c} />
       </main>
     </>
@@ -580,16 +580,23 @@ function Accordion({ q, a, color }: { q: string; a: string; color: string }) {
 }
 
 /* ── Final CTA ──────────────────────────────────── */
-function CtaSection({ cta, slug, color, colorDark, sharedDept }: { cta: SectorConfig["landing"]["ctaFinal"]; slug: string; color: string; colorDark: string; sharedDept: string }) {
+function CtaSection({ cta, slug, color, colorDark, sharedDept, prestationOptions }: { cta: SectorConfig["landing"]["ctaFinal"]; slug: string; color: string; colorDark: string; sharedDept: string; prestationOptions: string[] }) {
   const [email, setEmail] = useState(""); const [dept, setDept] = useState(sharedDept);
   useEffect(() => { if (sharedDept) setDept(sharedDept); }, [sharedDept]);
+  const [selectedPrestations, setSelectedPrestations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [result, setResult] = useState<{ success?: boolean; message?: string; error?: string } | null>(null);
+
+  function togglePrestation(p: string) {
+    setSelectedPrestations((prev) =>
+      prev.includes(p) ? prev.filter((x) => x !== p) : [...prev, p]
+    );
+  }
 
   async function submit() {
     if (!email || !dept) return; setLoading(true); setResult(null);
     try {
-      const r = await fetch("/api/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, department: dept, sector_slug: slug }) });
+      const r = await fetch("/api/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, department: dept, sector_slug: slug, prestations: selectedPrestations }) });
       const d = await r.json();
       r.ok ? setResult({ success: true, message: d.message }) : setResult({ error: d.error });
     } catch { setResult({ error: "Erreur réseau." }); } finally { setLoading(false); }
@@ -618,6 +625,27 @@ function CtaSection({ cta, slug, color, colorDark, sharedDept }: { cta: SectorCo
                 style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--mono)", fontSize: 13, color: "var(--ink)", outline: "none" }} />
               <input type="email" placeholder="Email professionnel" value={email} onChange={e => setEmail(e.target.value)}
                 style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", outline: "none" }} />
+              {/* Prestations chip selector */}
+              <div>
+                <p style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--ink3)", marginBottom: 8, textAlign: "left" }}>
+                  Vos spécialités <span style={{ color: "var(--ink4)" }}>(optionnel)</span>
+                </p>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+                  {prestationOptions.map((p) => {
+                    const active = selectedPrestations.includes(p);
+                    return (
+                      <button key={p} type="button" onClick={() => togglePrestation(p)} style={{
+                        padding: "7px 14px", borderRadius: 100,
+                        border: `1.5px solid ${active ? color : "var(--line)"}`,
+                        background: active ? `${color}12` : "#fff",
+                        color: active ? color : "var(--ink2)",
+                        fontFamily: "var(--body)", fontSize: 12, fontWeight: active ? 600 : 400,
+                        cursor: "pointer", transition: "all 0.15s ease",
+                      }}>{p}</button>
+                    );
+                  })}
+                </div>
+              </div>
               <button onClick={submit} disabled={loading || !email || !dept} className="lp-btn-submit"
                 style={{ padding: "14px", borderRadius: 8, background: color, color: "#fff", fontFamily: "var(--body)", fontSize: 14, fontWeight: 900, border: "none", cursor: "pointer", opacity: loading ? 0.5 : 1, letterSpacing: "-0.01em" }}>
                 {loading ? "..." : cta.buttonText}
