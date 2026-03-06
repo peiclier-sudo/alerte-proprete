@@ -5,10 +5,26 @@ import { buildScoringPrompt, computeTotalScore } from "@/lib/prompts";
 
 const CRON_SECRET = process.env.CRON_SECRET;
 
-// Normalize department codes: "075" → "75", "2A" → "2A"
-function normalizeDept(dept: string | null): string {
-  if (!dept) return "";
-  return dept.replace(/^0+/, "") || dept;
+// Normalize a single department code: "075" → "75", "2A" → "2A"
+function normalizeSingleDept(dept: string): string {
+  return dept.trim().replace(/^0+/, "") || dept.trim();
+}
+
+// Parse buyer_department which can be a JSON array string like '["71"]'
+// or '["64","75","78"]', or a plain string like "75"
+function parseOppDepartments(raw: any): string[] {
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw.map((d: string) => normalizeSingleDept(d));
+  const str = String(raw).trim();
+  if (!str) return [];
+  // Try to parse as JSON array
+  if (str.startsWith("[")) {
+    try {
+      const arr = JSON.parse(str);
+      if (Array.isArray(arr)) return arr.map((d: string) => normalizeSingleDept(String(d)));
+    } catch { /* fall through */ }
+  }
+  return [normalizeSingleDept(str)];
 }
 
 export async function GET(request: Request) {
@@ -67,11 +83,11 @@ export async function GET(request: Request) {
     // Filter by department only — scoring rules (keywords, prestations, CPV)
     // handle sector relevance. This allows cross-sector matches (e.g. a
     // "proprete" opportunity that also covers espaces-verts).
-    const subDept = normalizeDept(sub.department);
+    const subDept = normalizeSingleDept(sub.department ?? "");
     const matchingOpps = opportunities.filter((o) => {
-      const oppDept = normalizeDept(o.buyer_department);
-      // Include if department matches OR if opportunity has no department set
-      return !oppDept || oppDept === subDept;
+      const oppDepts = parseOppDepartments(o.buyer_department);
+      // Include if no department set OR if any opp department matches subscriber's
+      return oppDepts.length === 0 || oppDepts.includes(subDept);
     });
 
     const scored = matchingOpps.map((opp) => {
