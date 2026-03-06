@@ -17,6 +17,7 @@ CREATE TABLE IF NOT EXISTS subscribers (
   geo_lng DOUBLE PRECISION DEFAULT 0,
   geo_radius_km INTEGER DEFAULT 50,
   department TEXT DEFAULT '',
+  prestations TEXT[] DEFAULT '{}',
   stripe_customer_id TEXT,
   stripe_subscription_id TEXT,
   active BOOLEAN DEFAULT true,

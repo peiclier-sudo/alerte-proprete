@@ -41,7 +41,7 @@ Réponds UNIQUEMENT en JSON valide, sans aucun texte avant ou après.`;
 
 export function buildScoringPrompt(
   sector: SectorConfig,
-  subscriber: { department: string; geo_radius_km: number },
+  subscriber: { department: string; geo_radius_km: number; prestations?: string[] },
   opportunity: {
     buyer_department: string;
     estimated_amount: number | null;
@@ -97,6 +97,18 @@ export function buildScoringPrompt(
     scores.deadlineUrgency = Math.round(rules.deadlineUrgency * 0.6);
   } else {
     scores.deadlineUrgency = 0; // too late, don't recommend
+  }
+
+  // Prestation match: boost if opportunity title matches subscriber's specialties
+  const subPrestations = subscriber.prestations ?? [];
+  if (subPrestations.length > 0) {
+    const prestationHit = subPrestations.some((p) =>
+      titleLower.includes(p.toLowerCase())
+    );
+    scores.prestationMatch = prestationHit ? rules.prestationMatch : 0;
+  } else {
+    // No prestations selected = all specialties, give full points
+    scores.prestationMatch = rules.prestationMatch;
   }
 
   return scores;

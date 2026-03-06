@@ -43,6 +43,20 @@ export const espacesVerts: SectorConfig = {
   typicalContractMonths: 48,
   typicalContractRange: { min: 40_000, max: 250_000 },
 
+  // ─── Prestations (user-facing specialties) ────────────
+  prestations: [
+    "Élagage",
+    "Tonte",
+    "Plantation",
+    "Fleurissement",
+    "Aménagement paysager",
+    "Fauchage",
+    "Taille de haies",
+    "Désherbage",
+    "Arrosage",
+    "Entretien parcs & jardins",
+  ],
+
   // ─── LLM Prompts ───────────────────────────────────────
   qualificationPrompt: `Tu es un expert en marchés publics d'espaces verts et de paysage en France.
 Ton rôle : analyser un avis de marché public et déterminer s'il concerne une PME paysagiste (NAF 81.30Z).
@@ -80,11 +94,12 @@ Pour chaque AO, retourne un JSON :
 }`,
 
   scoringRules: {
-    geoMatch: 30,
-    cpvMatch: 25,
-    sizeMatch: 20,
+    geoMatch: 25,
+    cpvMatch: 20,
+    sizeMatch: 15,
     renewalBonus: 15,
     deadlineUrgency: 10,
+    prestationMatch: 15,
   },
 
   certifications: [
