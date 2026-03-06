@@ -51,10 +51,12 @@ export async function GET(request: Request) {
     const sector = getSector(sub.sector_slug);
     // Filter by sector AND subscriber's department
     const subDept = normalizeDept(sub.department);
-    const sectorOpps = opportunities.filter((o) =>
-      o.sector_slug === sub.sector_slug &&
-      normalizeDept(o.buyer_department) === subDept
-    );
+    const sectorOpps = opportunities.filter((o) => {
+      if (o.sector_slug !== sub.sector_slug) return false;
+      const oppDept = normalizeDept(o.buyer_department);
+      // Include if department matches OR if opportunity has no department set
+      return !oppDept || oppDept === subDept;
+    });
 
     const scored = sectorOpps.map((opp) => {
       const breakdown = buildScoringPrompt(sector, sub, {
