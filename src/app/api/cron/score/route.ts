@@ -46,6 +46,11 @@ export async function GET(request: Request) {
 
   let totalDigests = 0;
   let totalItems = 0;
+  const debug: Record<string, any> = {
+    subscribers_count: subscribers.length,
+    qualified_opportunities: opportunities.length,
+    per_subscriber: [] as any[],
+  };
 
   // 3. Score each opportunity for each subscriber
   for (const sub of subscribers) {
@@ -79,7 +84,26 @@ export async function GET(request: Request) {
       .sort((a, b) => b.score - a.score)
       .slice(0, 10); // max 10 per digest
 
-    if (relevant.length === 0) continue;
+    const subDebug: any = {
+      email: sub.email,
+      sector: sub.sector_slug,
+      department: sub.department,
+      prestations: sub.prestations,
+      sector_opps_count: sectorOpps.length,
+      all_scores: scored.map((s) => ({
+        title: s.opportunity.title?.substring(0, 60),
+        score: s.score,
+        breakdown: s.breakdown,
+        opp_dept: s.opportunity.buyer_department,
+        opp_prestations: s.opportunity.prestations,
+      })),
+      above_threshold: relevant.length,
+    };
+
+    if (relevant.length === 0) {
+      debug.per_subscriber.push(subDebug);
+      continue;
+    }
 
     // 4. Check which opportunities already have digest items for this subscriber
     const oppIds = relevant.map((r) => r.opportunity.id);
@@ -91,6 +115,10 @@ export async function GET(request: Request) {
     const existingOppIds = new Set((existingDigests ?? []).map((d) => d.opportunity_id));
 
     const newRelevant = relevant.filter((r) => !existingOppIds.has(r.opportunity.id));
+    subDebug.already_digested = existingOppIds.size;
+    subDebug.new_relevant = newRelevant.length;
+    debug.per_subscriber.push(subDebug);
+
     if (newRelevant.length === 0) continue;
 
     // 5. Insert digest items
@@ -111,5 +139,6 @@ export async function GET(request: Request) {
     timestamp: new Date().toISOString(),
     digests_created: totalDigests,
     total_items: totalItems,
+    debug,
   });
 }

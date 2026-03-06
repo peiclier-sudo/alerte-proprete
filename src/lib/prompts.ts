@@ -93,15 +93,19 @@ export function buildScoringPrompt(
   scores.renewalBonus = opportunity.renewal_possible ? rules.renewalBonus : 0;
 
   // Deadline urgency (bonus if > 15 days, penalty if < 5 days)
-  const daysLeft = Math.ceil(
-    (new Date(opportunity.deadline).getTime() - Date.now()) / (1000 * 60 * 60 * 24)
-  );
-  if (daysLeft > 15) {
-    scores.deadlineUrgency = rules.deadlineUrgency;
-  } else if (daysLeft > 5) {
+  const deadlineMs = opportunity.deadline ? new Date(opportunity.deadline).getTime() : NaN;
+  if (isNaN(deadlineMs)) {
+    // Unknown deadline — give neutral score so it doesn't penalize
     scores.deadlineUrgency = Math.round(rules.deadlineUrgency * 0.6);
   } else {
-    scores.deadlineUrgency = 0; // too late, don't recommend
+    const daysLeft = Math.ceil((deadlineMs - Date.now()) / (1000 * 60 * 60 * 24));
+    if (daysLeft > 15) {
+      scores.deadlineUrgency = rules.deadlineUrgency;
+    } else if (daysLeft > 5) {
+      scores.deadlineUrgency = Math.round(rules.deadlineUrgency * 0.6);
+    } else {
+      scores.deadlineUrgency = 0; // too late, don't recommend
+    }
   }
 
   // Prestation match: boost if opportunity prestations overlap with subscriber's specialties
