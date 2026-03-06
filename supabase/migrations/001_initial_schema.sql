@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS subscribers (
   active BOOLEAN DEFAULT true,
   created_at TIMESTAMPTZ DEFAULT now(),
   updated_at TIMESTAMPTZ DEFAULT now(),
-  UNIQUE (email, sector_slug)
+  UNIQUE (email, sector_slug, department)
 );
 
 -- Index for cron jobs (get active subscribers per sector)
