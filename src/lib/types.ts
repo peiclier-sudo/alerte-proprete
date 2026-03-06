@@ -186,6 +186,15 @@ export interface BoampAnnouncement {
   type_marche: string;
   nature: string;
   lots?: BoampLot[];
+  // eForms enriched fields (from donnees)
+  description?: string;
+  notice_type?: "contract" | "award" | "prior-info" | "unknown";
+  eforms_cpv_codes?: string[];
+  estimated_amount?: number;
+  contract_duration_months?: number;
+  nuts_code?: string;
+  procurement_type?: string;
+  eforms_lots?: EformsLotInfo[];
 }
 
 export interface BoampLot {
@@ -193,4 +202,13 @@ export interface BoampLot {
   intitule: string;
   cpv?: string[];
   montant?: number;
+}
+
+export interface EformsLotInfo {
+  id: string;
+  title: string;
+  description: string;
+  cpv_codes: string[];
+  estimated_amount: number | null;
+  duration_months: number | null;
 }

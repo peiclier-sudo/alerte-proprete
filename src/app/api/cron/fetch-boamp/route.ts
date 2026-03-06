@@ -2,6 +2,7 @@ import { NextResponse } from "next/server";
 import { getAllSectors } from "@/lib/sectors";
 import { getServiceSupabase } from "@/lib/supabase";
 import { BoampAnnouncement, SectorConfig } from "@/lib/types";
+import { parseEforms } from "@/lib/eforms-parser";
 
 // Allow up to 60s on Vercel (max for hobby plan)
 export const maxDuration = 60;
@@ -29,17 +30,24 @@ export async function GET(request: Request) {
       // 1. Fetch from BOAMP API
       const announcements = await fetchBoampBySector(sector);
 
-      // 2. Pre-filter: keep only announcements whose title or descriptors
-      //    match at least one sector keyword (eliminates false positives from
-      //    broad full-text search)
+      // 2. Pre-filter: keep only announcements whose title, descriptors,
+      //    eForms description, or CPV codes match sector criteria
       const relevantAnnouncements = announcements.filter((a) => {
+        // Build searchable text from all available fields
         const text = [
           a.objet,
+          a.description ?? "",
           ...(a.descripteur_libelle ?? []),
+          ...(a.eforms_lots?.map((l) => `${l.title} ${l.description}`) ?? []),
         ].join(" ").toLowerCase();
-        // Check if ALL words of a keyword appear in the text
-        // (handles "entretien locaux" matching "entretien des locaux")
-        const hasInclude = sector.keywordsInclude.some((kw) => {
+
+        // CPV-based match: real eForms CPV codes match sector prefixes
+        const hasCpvMatch = (a.eforms_cpv_codes ?? []).some((cpv) =>
+          sector.cpvPrefixes.some((prefix) => cpv.startsWith(prefix))
+        );
+
+        // Keyword match: ALL words of at least one keyword appear in text
+        const hasKeywordInclude = sector.keywordsInclude.some((kw) => {
           const words = kw.toLowerCase().split(/\s+/);
           return words.every((w) => text.includes(w));
         });
@@ -47,9 +55,14 @@ export async function GET(request: Request) {
           const words = kw.toLowerCase().split(/\s+/);
           return words.every((w) => text.includes(w));
         });
-        return hasInclude && !hasExclude;
+
+        return (hasCpvMatch || hasKeywordInclude) && !hasExclude;
       });
-      console.log(`[BOAMP] Sector ${sector.slug}: ${announcements.length} raw → ${relevantAnnouncements.length} after keyword filter`);
+      // Log eForms enrichment stats
+      const withEforms = announcements.filter((a) => a.eforms_cpv_codes?.length).length;
+      const withDescription = announcements.filter((a) => a.description).length;
+      const withAmount = announcements.filter((a) => a.estimated_amount).length;
+      console.log(`[BOAMP] Sector ${sector.slug}: ${announcements.length} raw → ${relevantAnnouncements.length} after filter (eForms: ${withEforms} CPV, ${withDescription} desc, ${withAmount} amounts)`);
 
       // 3. Filter already-processed
       const existingIds = await getExistingBoampIds(supabase, relevantAnnouncements.map((a) => a.id));
@@ -67,19 +80,35 @@ export async function GET(request: Request) {
           title = announcement.descripteur_libelle.join(", ");
         }
 
+        // Use real CPV codes from eForms if available, otherwise fall back to BOAMP descriptors
+        const cpvCodes = announcement.eforms_cpv_codes?.length
+          ? announcement.eforms_cpv_codes
+          : announcement.cpv;
+
+        // Build raw_llm_response with eForms-extracted data for later use
+        const eformsContext: Record<string, unknown> = {};
+        if (announcement.description) eformsContext.eforms_description = announcement.description;
+        if (announcement.notice_type) eformsContext.eforms_notice_type = announcement.notice_type;
+        if (announcement.nuts_code) eformsContext.eforms_nuts_code = announcement.nuts_code;
+        if (announcement.procurement_type) eformsContext.eforms_procurement_type = announcement.procurement_type;
+        if (announcement.eforms_lots?.length) eformsContext.eforms_lots = announcement.eforms_lots;
+
         const { error } = await supabase.from("opportunities").insert({
           boamp_id: announcement.id,
           sector_slug: sector.slug,
           title: title || "(sans objet)",
           buyer_name: announcement.organisme,
           buyer_department: announcement.departement,
-          cpv_codes: announcement.cpv,
+          cpv_codes: cpvCodes,
+          estimated_amount: announcement.estimated_amount ?? (announcement.montant || null),
+          contract_duration_months: announcement.contract_duration_months ?? null,
           deadline: parseDate(announcement.date_limite_reponse),
           publication_date: parseDate(announcement.date_publication),
           source_url: announcement.url,
           qualified: false,
           confidence: 0,
           qualification_reason: "pending",
+          raw_llm_response: Object.keys(eformsContext).length > 0 ? eformsContext : {},
         });
         if (error) {
           console.error(`[BOAMP] Insert error for ${announcement.id}:`, error.message);
@@ -220,6 +249,19 @@ async function fetchBoampBySector(sector: SectorConfig): Promise<BoampAnnounceme
     // Build URL
     const avisUrl = r.url_avis || r.url || `https://www.boamp.fr/avis/detail/${idweb}`;
 
+    // Parse eForms data from `donnees` field for deeper qualification
+    const eforms = parseEforms(r.donnees);
+
+    // Build eForms lot info
+    const eformsLots = eforms?.lots?.map((l) => ({
+      id: l.id,
+      title: l.title,
+      description: l.description,
+      cpv_codes: l.cpvCodes,
+      estimated_amount: l.estimatedAmount,
+      duration_months: l.durationMonths,
+    }));
+
     return {
       id: idweb,
       objet,
@@ -234,6 +276,15 @@ async function fetchBoampBySector(sector: SectorConfig): Promise<BoampAnnounceme
       type_marche: r.type_marche || indexation.NATURE_MARCHE || "",
       nature: r.nature ?? "",
       lots: r.lots ?? undefined,
+      // eForms enriched fields
+      description: eforms?.description,
+      notice_type: eforms?.noticeType,
+      eforms_cpv_codes: eforms?.cpvCodes,
+      estimated_amount: eforms?.estimatedAmount ?? undefined,
+      contract_duration_months: eforms?.contractDurationMonths ?? undefined,
+      nuts_code: eforms?.nutsCode,
+      procurement_type: eforms?.procurementTypeCode,
+      eforms_lots: eformsLots,
     };
   });
 }

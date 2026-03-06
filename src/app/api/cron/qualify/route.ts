@@ -67,6 +67,8 @@ export async function GET(request: Request) {
 
       const results = await Promise.allSettled(
         chunk.map(async (opp) => {
+          // Reconstruct announcement with eForms data stored in raw_llm_response
+          const eformsCtx = (opp.raw_llm_response as Record<string, any>) ?? {};
           const announcement: BoampAnnouncement = {
             id: opp.boamp_id,
             objet: opp.title ?? "",
@@ -79,6 +81,15 @@ export async function GET(request: Request) {
             url: opp.source_url ?? "",
             type_marche: "",
             nature: "",
+            // eForms enriched fields (stored during fetch)
+            description: eformsCtx.eforms_description,
+            notice_type: eformsCtx.eforms_notice_type,
+            eforms_cpv_codes: opp.cpv_codes ?? [],
+            estimated_amount: opp.estimated_amount ?? undefined,
+            contract_duration_months: opp.contract_duration_months ?? undefined,
+            nuts_code: eformsCtx.eforms_nuts_code,
+            procurement_type: eformsCtx.eforms_procurement_type,
+            eforms_lots: eformsCtx.eforms_lots,
           };
 
           console.log(`[Qualify] Processing ${opp.boamp_id}: "${announcement.objet?.substring(0, 80)}"`);
