@@ -154,6 +154,7 @@ export interface MarketOpportunity {
   confidence: number;
   qualification_reason: string;
   raw_llm_response: Record<string, unknown>;
+  prestations: string[];
   // Metadata
   created_at: string;
 }
