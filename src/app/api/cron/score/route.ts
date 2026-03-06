@@ -49,22 +49,32 @@ export async function GET(request: Request) {
   const debug: Record<string, any> = {
     subscribers_count: subscribers.length,
     qualified_opportunities: opportunities.length,
+    opp_departments: [...new Set(opportunities.map((o) => o.buyer_department ?? "(null)"))],
+    opp_sectors: [...new Set(opportunities.map((o) => o.sector_slug))],
+    sample_opps: opportunities.slice(0, 3).map((o) => ({
+      title: o.title?.substring(0, 80),
+      buyer_department: o.buyer_department,
+      sector_slug: o.sector_slug,
+      qualified: o.qualified,
+      publication_date: o.publication_date,
+    })),
     per_subscriber: [] as any[],
   };
 
   // 3. Score each opportunity for each subscriber
   for (const sub of subscribers) {
     const sector = getSector(sub.sector_slug);
-    // Filter by sector AND subscriber's department
+    // Filter by department only — scoring rules (keywords, prestations, CPV)
+    // handle sector relevance. This allows cross-sector matches (e.g. a
+    // "proprete" opportunity that also covers espaces-verts).
     const subDept = normalizeDept(sub.department);
-    const sectorOpps = opportunities.filter((o) => {
-      if (o.sector_slug !== sub.sector_slug) return false;
+    const matchingOpps = opportunities.filter((o) => {
       const oppDept = normalizeDept(o.buyer_department);
       // Include if department matches OR if opportunity has no department set
       return !oppDept || oppDept === subDept;
     });
 
-    const scored = sectorOpps.map((opp) => {
+    const scored = matchingOpps.map((opp) => {
       const breakdown = buildScoringPrompt(sector, sub, {
         buyer_department: opp.buyer_department,
         estimated_amount: opp.estimated_amount,
@@ -89,7 +99,7 @@ export async function GET(request: Request) {
       sector: sub.sector_slug,
       department: sub.department,
       prestations: sub.prestations,
-      sector_opps_count: sectorOpps.length,
+      sector_opps_count: matchingOpps.length,
       all_scores: scored.map((s) => ({
         title: s.opportunity.title?.substring(0, 60),
         score: s.score,
