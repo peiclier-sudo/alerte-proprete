@@ -29,7 +29,8 @@ export async function GET(request: Request) {
     return NextResponse.json({ success: true, message: "No active subscribers" });
   }
 
-  // 2. Get recent qualified opportunities (last 7 days, matching fetch window)
+  // 2. Get all qualified opportunities not yet scored for any subscriber
+  //    (include null publication_date so nothing slips through)
   const since = new Date();
   since.setDate(since.getDate() - 7);
   const sinceDate = since.toISOString().split("T")[0];
@@ -37,7 +38,7 @@ export async function GET(request: Request) {
     .from("opportunities")
     .select("*")
     .eq("qualified", true)
-    .gte("publication_date", sinceDate);
+    .or(`publication_date.gte.${sinceDate},publication_date.is.null`);
 
   if (!opportunities?.length) {
     return NextResponse.json({ success: true, message: "No new opportunities today" });
