@@ -91,6 +91,7 @@ export async function GET(request: Request) {
               estimated_amount: result.estimated_amount ?? opp.estimated_amount,
               contract_duration_months: result.contract_duration_months ?? null,
               renewal_possible: result.renewal_possible ?? false,
+              prestations: result.prestations ?? [],
               raw_llm_response: result,
             })
             .eq("id", opp.id);

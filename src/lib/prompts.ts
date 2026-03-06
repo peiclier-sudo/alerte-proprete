@@ -13,7 +13,11 @@ export function buildQualificationPrompt(
     ? `Descripteurs BOAMP : ${announcement.descripteur_libelle.join(", ")}`
     : "Descripteurs : non renseignés";
 
-  return `${sector.qualificationPrompt}
+  const prestationsList = sector.prestations.length
+    ? `\n\nIdentifie aussi les types de prestations concernées parmi cette liste UNIQUEMENT : [${sector.prestations.join(", ")}]. Retourne-les dans le champ "prestations" du JSON.`
+    : "";
+
+  return `${sector.qualificationPrompt}${prestationsList}
 
 ---
 
@@ -49,6 +53,7 @@ export function buildScoringPrompt(
     renewal_possible: boolean;
     cpv_codes: string[];
     title?: string;
+    prestations?: string[];
   }
 ): Record<string, number> {
   const rules = sector.scoringRules;
@@ -99,12 +104,21 @@ export function buildScoringPrompt(
     scores.deadlineUrgency = 0; // too late, don't recommend
   }
 
-  // Prestation match: boost if opportunity title matches subscriber's specialties
+  // Prestation match: boost if opportunity prestations overlap with subscriber's specialties
   const subPrestations = subscriber.prestations ?? [];
+  const oppPrestations = opportunity.prestations ?? [];
   if (subPrestations.length > 0) {
-    const prestationHit = subPrestations.some((p) =>
-      titleLower.includes(p.toLowerCase())
-    );
+    let prestationHit: boolean;
+    if (oppPrestations.length > 0) {
+      // Use LLM-extracted prestations from opportunity (precise matching)
+      const oppSet = new Set(oppPrestations.map((p) => p.toLowerCase()));
+      prestationHit = subPrestations.some((p) => oppSet.has(p.toLowerCase()));
+    } else {
+      // Fallback: match against title for old opportunities without prestations
+      prestationHit = subPrestations.some((p) =>
+        titleLower.includes(p.toLowerCase())
+      );
+    }
     scores.prestationMatch = prestationHit ? rules.prestationMatch : 0;
   } else {
     // No prestations selected = all specialties, give full points

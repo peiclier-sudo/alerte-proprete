@@ -76,6 +76,7 @@ Retourne un JSON :
   "estimated_amount": number|null,
   "contract_duration_months": number|null,
   "renewal_possible": true/false,
+  "prestations": ["Nettoyage de locaux", "Vitrerie"],
   "lots": [{ "number": 1, "description": "...", "relevant": true/false }]
 }`,
 

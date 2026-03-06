@@ -52,6 +52,7 @@ CREATE TABLE IF NOT EXISTS opportunities (
   confidence INTEGER DEFAULT 0,
   qualification_reason TEXT DEFAULT '',
   raw_llm_response JSONB DEFAULT '{}',
+  prestations TEXT[] DEFAULT '{}',
   -- Metadata
   created_at TIMESTAMPTZ DEFAULT now()
 );
