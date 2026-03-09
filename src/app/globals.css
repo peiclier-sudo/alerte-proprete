@@ -1,3 +1,20 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* ── @property for animated gradients (2026 technique) ── */
+@property --grad-a {
+  syntax: '<color>';
+  initial-value: #6366F1;
+  inherits: false;
+}
+@property --grad-b {
+  syntax: '<color>';
+  initial-value: #A78BFA;
+  inherits: false;
+}
+@property --border-angle {
+  syntax: '<angle>';
+  initial-value: 0deg;
+  inherits: false;
+}
