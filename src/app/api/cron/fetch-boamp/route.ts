@@ -148,7 +148,7 @@ async function fetchBoampBySector(sector: SectorConfig): Promise<BoampAnnounceme
   const searchTerms = quotedTerms.join(" OR ");
 
   const since = new Date();
-  since.setDate(since.getDate() - 7);
+  since.setDate(since.getDate() - 2);
   const dateFilter = since.toISOString().split("T")[0];
 
   // Use `where` with search() on descripteur_libelle for precise filtering,
