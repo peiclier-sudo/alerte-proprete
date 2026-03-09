@@ -676,8 +676,12 @@ function FooterBar({ color }: { color: string }) {
           <span style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", marginLeft: 8 }}>© 2026</span>
         </div>
         <nav style={{ display: "flex", gap: 20, alignItems: "center" }}>
-          {["Mentions légales", "CGV", "Politique de confidentialité"].map(label => (
-            <a key={label} href="#" style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", textDecoration: "none", transition: "color 0.2s" }}
+          {[
+            { label: "Mentions légales", href: "/mentions-legales" },
+            { label: "CGV", href: "/cgv" },
+            { label: "Politique de confidentialité", href: "/confidentialite" },
+          ].map(({ label, href }) => (
+            <a key={label} href={href} style={{ fontFamily: "var(--body)", fontSize: 11, color: "var(--ink4)", textDecoration: "none", transition: "color 0.2s" }}
               onMouseEnter={e => (e.currentTarget.style.color = "var(--ink2)")}
               onMouseLeave={e => (e.currentTarget.style.color = "var(--ink4)")}
             >{label}</a>
