@@ -1,12 +1,21 @@
 import { NextResponse } from "next/server";
 import { getSector, isSectorSlug } from "@/lib/sectors";
 import { getServiceSupabase } from "@/lib/supabase";
+import { rateLimit } from "@/lib/rate-limit";
 
 const DEPT_REGEX = /^(\d{2,3}|2[AB])$/;
 
 // ─── POST /api/signup ─────────────────────────────────────
 
 export async function POST(request: Request) {
+  const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ?? "unknown";
+  if (rateLimit(ip).limited) {
+    return NextResponse.json(
+      { error: "Trop de requêtes. Veuillez réessayer dans quelques minutes." },
+      { status: 429 }
+    );
+  }
+
   const body = await request.json();
   const { email, sector_slug, department, prestations } = body;
 

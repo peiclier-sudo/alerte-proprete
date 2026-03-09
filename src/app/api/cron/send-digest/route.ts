@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSector } from "@/lib/sectors";
 import { getServiceSupabase } from "@/lib/supabase";
+import { generateUnsubscribeToken } from "@/lib/unsubscribe-token";
 import { Resend } from "resend";
 
 const CRON_SECRET = process.env.CRON_SECRET;
@@ -185,7 +186,7 @@ function buildDigestHtml(
     <!-- Footer -->
     <div style="text-align:center;padding:16px;font-size:12px;color:#999;">
       MonMarché · Marchés publics qualifiés par IA<br>
-      <a href="https://monmarche.fr/unsubscribe?id=${subscriber.id}" style="color:#999;">Se désinscrire</a>
+      <a href="https://monmarche.fr/unsubscribe?id=${subscriber.id}&token=${generateUnsubscribeToken(subscriber.id)}" style="color:#999;">Se désinscrire</a>
     </div>
   </div>
 </body>

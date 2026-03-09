@@ -296,8 +296,12 @@ export default function HomePage() {
               }}>© 2026</span>
             </div>
             <nav style={{ display: "flex", gap: 20, alignItems: "center" }}>
-              {["Mentions légales", "CGV", "Politique de confidentialité"].map(label => (
-                <a key={label} href="#" style={{
+              {[
+                { label: "Mentions légales", href: "/mentions-legales" },
+                { label: "CGV", href: "/cgv" },
+                { label: "Politique de confidentialité", href: "/confidentialite" },
+              ].map(({ label, href }) => (
+                <a key={label} href={href} style={{
                   fontFamily: "'Plus Jakarta Sans', sans-serif",
                   fontSize: 11, color: "#b0b0b0", textDecoration: "none",
                 }}>{label}</a>
