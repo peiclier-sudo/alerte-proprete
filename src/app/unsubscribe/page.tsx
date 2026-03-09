@@ -1,4 +1,5 @@
 import { getServiceSupabase } from "@/lib/supabase";
+import { verifyUnsubscribeToken } from "@/lib/unsubscribe-token";
 
 export const metadata = {
   title: "Désinscription – monmarché",
@@ -8,23 +9,23 @@ export const metadata = {
 export default async function UnsubscribePage({
   searchParams,
 }: {
-  searchParams: { id?: string };
+  searchParams: { id?: string; token?: string };
 }) {
   const id = searchParams.id;
+  const token = searchParams.token;
   let success = false;
   let error = false;
 
-  if (!id) {
+  if (!id || !token || !verifyUnsubscribeToken(id, token)) {
     error = true;
   } else {
     const supabase = getServiceSupabase();
-    const { error: dbError, count } = await supabase
+    const { error: dbError } = await supabase
       .from("subscribers")
       .update({ active: false })
-      .eq("id", id)
-      .select("id", { count: "exact", head: true });
+      .eq("id", id);
 
-    if (dbError || count === 0) {
+    if (dbError) {
       error = true;
     } else {
       success = true;
