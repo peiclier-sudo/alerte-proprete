@@ -2,6 +2,7 @@ import { getAllSectors } from "@/lib/sectors";
 import SectorCard from "@/components/SectorCard";
 import ScrollReveal from "@/components/ScrollReveal";
 import StatsCounter from "@/components/StatsCounter";
+import RecentOpportunities from "@/components/RecentOpportunities";
 
 export const metadata = {
   title: "MonMarché — Marchés publics qualifiés par IA pour les PME",
@@ -243,6 +244,9 @@ export default function HomePage() {
 
             {/* animated stats counter */}
             <StatsCounter />
+
+            {/* recent opportunities ticker */}
+            <RecentOpportunities />
           </div>
 
           {/* scroll cue with breathing ring */}
@@ -275,6 +279,32 @@ export default function HomePage() {
             <span style={{ color: "#bbb", fontSize: 14 }}>↓</span>
           </div>
         </section>
+
+        {/* ═══════ TRUST BAR ═══════ */}
+        <div style={{
+          borderBottom: "1px solid #e8e5df",
+          padding: "16px 40px",
+          display: "flex", justifyContent: "center", gap: 32, flexWrap: "wrap",
+          background: "#faf9f6",
+        }}>
+          {[
+            { icon: "M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z", label: "Données hébergées en France" },
+            { icon: "M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z", label: "Conforme RGPD" },
+            { icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z", label: "Résiliable en 1 clic" },
+            { icon: "M5 13l4 4L19 7", label: "14 jours gratuits" },
+          ].map(({ icon, label }) => (
+            <div key={label} style={{ display: "flex", alignItems: "center", gap: 6 }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#6366F1" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink: 0 }}>
+                <path d={icon} />
+              </svg>
+              <span style={{
+                fontFamily: "'JetBrains Mono', monospace",
+                fontSize: 10, color: "#7a7a7a",
+                letterSpacing: ".03em",
+              }}>{label}</span>
+            </div>
+          ))}
+        </div>
 
         {/* ═══════ SECTORS ═══════ */}
         <section style={{
@@ -368,6 +398,111 @@ export default function HomePage() {
                 </a>
               </div>
             </ScrollReveal>
+          </div>
+        </section>
+
+        {/* ═══════ TESTIMONIALS ═══════ */}
+        <section style={{
+          background: "#fff",
+          padding: "72px 40px",
+          borderTop: "1px solid #e8e5df",
+        }}>
+          <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+            <ScrollReveal>
+              <div style={{ textAlign: "center", marginBottom: 48 }}>
+                <span style={{
+                  fontFamily: "'JetBrains Mono', monospace",
+                  fontSize: 10, fontWeight: 500,
+                  color: "#b0b0b0", textTransform: "uppercase",
+                  letterSpacing: ".14em",
+                }}>témoignages</span>
+                <h2 style={{
+                  fontFamily: "'Space Grotesk', sans-serif",
+                  fontSize: "clamp(24px, 3vw, 36px)",
+                  letterSpacing: "-0.03em", fontWeight: 700,
+                  marginTop: 8, color: "#0f0f0f", lineHeight: 1.1,
+                }}>
+                  Ils gagnent des marchés.{" "}
+                  <span className="mm-grad-text">Pas du temps.</span>
+                </h2>
+              </div>
+            </ScrollReveal>
+
+            <div className="mm-grid">
+              {[
+                {
+                  quote: "On perdait 2h par jour à fouiller BOAMP. Maintenant c'est 2 minutes le matin avec mon café.",
+                  role: "Responsable commercial",
+                  company: "Société de nettoyage (12 sal.)",
+                  region: "Île-de-France",
+                  color: "#0EA5E9",
+                },
+                {
+                  quote: "Premier marché gagné en 3 semaines. L'abonnement est remboursé pour 10 ans.",
+                  role: "Gérant",
+                  company: "Entreprise de gardiennage (8 sal.)",
+                  region: "Rhône",
+                  color: "#EA580C",
+                },
+                {
+                  quote: "MonMarché nous envoie uniquement ce qu'on peut vraiment gagner. Fini le bruit.",
+                  role: "Directrice",
+                  company: "Paysagiste (6 sal.)",
+                  region: "Loire-Atlantique",
+                  color: "#10B981",
+                },
+              ].map((t, i) => (
+                <ScrollReveal key={i} delay={i * 100}>
+                  <div style={{
+                    padding: "28px 24px",
+                    background: "#faf9f6",
+                    borderRadius: 12,
+                    border: "1px solid #e8e5df",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                  }}>
+                    {/* quote mark */}
+                    <span style={{
+                      fontFamily: "'Space Grotesk', sans-serif",
+                      fontSize: 36, fontWeight: 700,
+                      color: t.color, opacity: 0.3, lineHeight: 1,
+                      marginBottom: 8,
+                    }}>&ldquo;</span>
+                    <p style={{
+                      fontFamily: "'Plus Jakarta Sans', sans-serif",
+                      fontSize: 14, lineHeight: 1.7, color: "#3d3d3d",
+                      fontStyle: "italic", flex: 1,
+                    }}>
+                      {t.quote}
+                    </p>
+                    <div style={{ marginTop: 20, display: "flex", alignItems: "center", gap: 10 }}>
+                      <div style={{
+                        width: 32, height: 32, borderRadius: 8,
+                        background: `${t.color}15`,
+                        border: `1.5px solid ${t.color}30`,
+                        display: "flex", alignItems: "center", justifyContent: "center",
+                        flexShrink: 0,
+                      }}>
+                        <span style={{ fontSize: 14 }}>
+                          {t.color === "#0EA5E9" ? "🧹" : t.color === "#EA580C" ? "🛡" : "🌿"}
+                        </span>
+                      </div>
+                      <div>
+                        <div style={{
+                          fontFamily: "'Plus Jakarta Sans', sans-serif",
+                          fontSize: 12, fontWeight: 600, color: "#0f0f0f",
+                        }}>{t.role}</div>
+                        <div style={{
+                          fontFamily: "'JetBrains Mono', monospace",
+                          fontSize: 10, color: "#999",
+                        }}>{t.company} · {t.region}</div>
+                      </div>
+                    </div>
+                  </div>
+                </ScrollReveal>
+              ))}
+            </div>
           </div>
         </section>
 

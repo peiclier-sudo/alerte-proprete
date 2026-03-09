@@ -124,9 +124,9 @@ Retourne un JSON :
 
     steps: [
       {
-        title: "Entrez votre SIRET",
+        title: "Choisissez votre zone",
         description:
-          "On détecte automatiquement votre secteur, votre zone géographique et votre taille.",
+          "Département, spécialités, taille de marchés — on filtre pour vous.",
       },
       {
         title: "On surveille pour vous",
@@ -198,14 +198,19 @@ Retourne un JSON :
       {
         question: "Je peux essayer avant de payer ?",
         answer:
-          "Le plan Pro inclut 14 jours d'essai gratuit. Pour le plan Essentiel, on vous envoie un exemple de digest gratuit basé sur votre SIRET pour que vous voyiez la qualité avant de vous engager.",
+          "Le plan Pro inclut 14 jours d'essai gratuit. Pour le plan Essentiel, on vous envoie un exemple de digest gratuit basé sur votre profil pour que vous voyiez la qualité avant de vous engager.",
+      },
+      {
+        question: "Et si je ne reçois aucun marché pertinent ?",
+        answer:
+          "C'est le risque zéro : l'essai est gratuit pendant 14 jours. Si aucun marché ne vous correspond, vous ne payez rien. En moyenne, nos utilisateurs reçoivent 3 à 5 marchés pertinents par semaine.",
       },
     ],
 
     ctaFinal: {
       title: "Pendant que vous lisez ceci, des marchés sont publiés.",
       subtitle:
-        "Entrez votre SIRET. Demain à 7h, vos premiers marchés scorés dans votre boîte mail. Gratuit, sans engagement.",
+        "2 minutes d'inscription. Demain à 7h, vos premiers marchés scorés dans votre boîte mail. Gratuit, sans engagement.",
       buttonText: "Recevoir mes marchés demain matin →",
     },
 

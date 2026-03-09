@@ -17,7 +17,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { email, sector_slug, department, prestations } = body;
+  const { email, sector_slug, department, prestations, company_name } = body;
 
   if (!email || !sector_slug || !department) {
     return NextResponse.json(
@@ -96,6 +96,7 @@ export async function POST(request: Request) {
     plan: "essential",
     geo_radius_km: 50,
     active: true,
+    ...(company_name && typeof company_name === "string" ? { company_name: company_name.trim() } : {}),
   }));
 
   const { data: subscribers, error } = await supabase
