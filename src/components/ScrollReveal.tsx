@@ -24,7 +24,7 @@ export default function ScrollReveal({
           observer.disconnect();
         }
       },
-      { threshold: 0.15 }
+      { threshold: 0.05 }
     );
     observer.observe(el);
     return () => observer.disconnect();
@@ -37,8 +37,7 @@ export default function ScrollReveal({
       style={{
         opacity: visible ? 1 : 0,
         transform: visible ? "translateY(0)" : "translateY(32px)",
-        clipPath: visible ? "inset(0 0 0 0)" : "inset(100% 0 0 0)",
-        transition: `opacity 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}ms, clip-path 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
+        transition: `opacity 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}ms, transform 0.8s cubic-bezier(0.16,1,0.3,1) ${delay}ms`,
       }}
     >
       {children}
