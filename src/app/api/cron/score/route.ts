@@ -48,7 +48,7 @@ export async function GET(request: Request) {
   // 2. Get all qualified opportunities not yet scored for any subscriber
   //    (include null publication_date so nothing slips through)
   const since = new Date();
-  since.setDate(since.getDate() - 7);
+  since.setDate(since.getDate() - 1);
   const sinceDate = since.toISOString().split("T")[0];
   const { data: opportunities } = await supabase
     .from("opportunities")
