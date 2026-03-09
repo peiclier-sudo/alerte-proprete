@@ -582,6 +582,7 @@ function Accordion({ q, a, color }: { q: string; a: string; color: string }) {
 /* ── Final CTA ──────────────────────────────────── */
 function CtaSection({ cta, slug, color, colorDark, sharedDept, prestationOptions }: { cta: SectorConfig["landing"]["ctaFinal"]; slug: string; color: string; colorDark: string; sharedDept: string; prestationOptions: string[] }) {
   const [email, setEmail] = useState(""); const [dept, setDept] = useState(sharedDept);
+  const [companyName, setCompanyName] = useState("");
   useEffect(() => { if (sharedDept) setDept(sharedDept); }, [sharedDept]);
   const [selectedPrestations, setSelectedPrestations] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
@@ -596,7 +597,7 @@ function CtaSection({ cta, slug, color, colorDark, sharedDept, prestationOptions
   async function submit() {
     if (!email || !dept) return; setLoading(true); setResult(null);
     try {
-      const r = await fetch("/api/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, department: dept, sector_slug: slug, prestations: selectedPrestations }) });
+      const r = await fetch("/api/signup", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ email, department: dept, sector_slug: slug, prestations: selectedPrestations, ...(companyName.trim() ? { company_name: companyName.trim() } : {}) }) });
       const d = await r.json();
       r.ok ? setResult({ success: true, message: d.message }) : setResult({ error: d.error });
     } catch { setResult({ error: "Erreur réseau." }); } finally { setLoading(false); }
@@ -620,9 +621,14 @@ function CtaSection({ cta, slug, color, colorDark, sharedDept, prestationOptions
           </div></F>
         ) : (
           <F delay={80}>
-            <div style={{ marginTop: 32, display: "flex", flexDirection: "column", gap: 8 }}>
+            <p style={{ fontFamily: "var(--mono)", fontSize: 11, color: "var(--ink3)", marginTop: 24, marginBottom: 8, letterSpacing: "0.02em" }}>
+              Rejoignez les PME qui reçoivent leurs marchés chaque matin à 7h.
+            </p>
+            <div style={{ marginTop: 8, display: "flex", flexDirection: "column", gap: 8 }}>
               <input type="text" placeholder="Département (ex: 75, 2A, 971)" value={dept} onChange={e => setDept(e.target.value)}
                 style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--mono)", fontSize: 13, color: "var(--ink)", outline: "none" }} />
+              <input type="text" placeholder="Nom de l'entreprise (optionnel)" value={companyName} onChange={e => setCompanyName(e.target.value)}
+                style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", outline: "none" }} />
               <input type="email" placeholder="Email professionnel" value={email} onChange={e => setEmail(e.target.value)}
                 style={{ padding: "13px 14px", borderRadius: 8, border: "1.5px solid var(--line)", background: "#fff", fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", outline: "none" }} />
               {/* Prestations chip selector */}

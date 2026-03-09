@@ -144,9 +144,9 @@ Pour chaque AO, retourne un JSON :
 
     steps: [
       {
-        title: "Entrez votre SIRET",
+        title: "Choisissez votre zone",
         description:
-          "On détecte votre zone d'intervention, vos certifications, et votre taille d'entreprise.",
+          "Département, spécialités, certifications — on filtre pour vous.",
       },
       {
         title: "On surveille pour vous",
@@ -221,7 +221,12 @@ Pour chaque AO, retourne un JSON :
       {
         question: "Comment vous détectez les marchés de ma zone ?",
         answer:
-          "Via votre SIRET, on connaît votre siège social. Vous définissez ensuite votre rayon d'intervention (30km, 50km, département, région). On score les marchés en fonction de la distance : un marché à 10km score plus haut qu'un marché à 80km.",
+          "Vous choisissez votre département à l'inscription. Vous définissez ensuite votre rayon d'intervention (30km, 50km, département, région). On score les marchés en fonction de la distance : un marché à 10km score plus haut qu'un marché à 80km.",
+      },
+      {
+        question: "Et si je ne reçois aucun marché pertinent ?",
+        answer:
+          "C'est le risque zéro : l'essai est gratuit pendant 14 jours. Si aucun marché ne vous correspond, vous ne payez rien. En moyenne, nos utilisateurs reçoivent 3 à 5 marchés pertinents par semaine.",
       },
     ],
 
@@ -229,7 +234,7 @@ Pour chaque AO, retourne un JSON :
       title:
         "Le prochain marché d'espaces verts de votre zone est peut-être publié aujourd'hui.",
       subtitle:
-        "Entrez votre SIRET. Demain à 7h, vos marchés scorés dans votre boîte mail. Gratuit, sans engagement.",
+        "2 minutes d'inscription. Demain à 7h, vos marchés scorés dans votre boîte mail. Gratuit, sans engagement.",
       buttonText: "Recevoir mes marchés demain matin →",
     },
 

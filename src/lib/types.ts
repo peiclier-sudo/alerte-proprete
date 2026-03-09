@@ -117,8 +117,8 @@ export interface EmailConfig {
 export interface Subscriber {
   id: string;
   email: string;
-  siret: string;
-  company_name: string;
+  siret?: string;
+  company_name?: string;
   sector_slug: string;
   naf_code: string;
   plan: "essential" | "pro";

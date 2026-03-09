@@ -146,9 +146,9 @@ Pour chaque AO, retourne un JSON :
 
     steps: [
       {
-        title: "Entrez votre SIRET",
+        title: "Choisissez votre zone",
         description:
-          "On détecte votre zone, vos autorisations CNAPS, et vos spécialités (gardiennage, SSIAP, rondes...).",
+          "Département, spécialités CNAPS, types de missions — on filtre pour vous.",
       },
       {
         title: "On surveille pour vous",
@@ -225,13 +225,18 @@ Pour chaque AO, retourne un JSON :
         answer:
           "On croise le nombre de postes, les horaires (jour/nuit/24h), le coefficient de charges de la CCN sécurité, et les données DECP de marchés passés similaires. L'estimation vous permet de décider en 10 secondes si le marché est à votre taille.",
       },
+      {
+        question: "Et si je ne reçois aucun marché pertinent ?",
+        answer:
+          "C'est le risque zéro : l'essai est gratuit pendant 14 jours. Si aucun marché ne vous correspond, vous ne payez rien. En moyenne, nos utilisateurs reçoivent 3 à 5 marchés pertinents par semaine.",
+      },
     ],
 
     ctaFinal: {
       title:
         "Demain matin, vos concurrents verront les mêmes marchés. La question : qui les verra en premier ?",
       subtitle:
-        "Entrez votre SIRET. Demain à 7h, vos marchés de sécurité scorés et analysés. Gratuit, sans engagement.",
+        "2 minutes d'inscription. Demain à 7h, vos marchés de sécurité scorés et analysés. Gratuit, sans engagement.",
       buttonText: "Prendre l'avantage — c'est gratuit →",
     },
 
