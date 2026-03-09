@@ -17,7 +17,10 @@ export default function HomePage() {
         @keyframes mmUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
         @keyframes mmPulse{0%,100%{opacity:1}50%{opacity:.35}}
         @keyframes mmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
-        .mm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+        @keyframes mmDrift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,15px) scale(0.95)}}
+        @keyframes mmShimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+        @keyframes mmSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+        .mm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
         .mm-stats{display:flex;gap:56px}
         .mm-sh{display:flex;justify-content:space-between;align-items:flex-end}
         .mm-wl{display:flex;justify-content:space-between;align-items:center}
@@ -44,19 +47,59 @@ export default function HomePage() {
           position: "relative",
           overflow: "hidden",
         }}>
-          {/* subtle dot grid */}
+          {/* refined cross-hatch grid */}
           <div style={{
             position: "absolute", inset: 0,
-            backgroundImage: "radial-gradient(circle, rgba(99,102,241,.03) 1px, transparent 1px)",
-            backgroundSize: "32px 32px",
+            backgroundImage:
+              "linear-gradient(rgba(99,102,241,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,.035) 1px, transparent 1px)",
+            backgroundSize: "48px 48px",
             pointerEvents: "none",
           }} />
 
-          {/* top accent */}
+          {/* animated gradient blob — top right */}
+          <div style={{
+            position: "absolute", top: "-5%", right: "-8%",
+            width: "45vw", height: "45vw", borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(99,102,241,.06) 0%, transparent 70%)",
+            filter: "blur(120px)", pointerEvents: "none",
+            animation: "mmDrift 20s ease-in-out infinite",
+          }} />
+
+          {/* animated gradient blob — bottom left */}
+          <div style={{
+            position: "absolute", bottom: "5%", left: "-12%",
+            width: "40vw", height: "40vw", borderRadius: "50%",
+            background: "radial-gradient(circle, rgba(167,139,250,.05) 0%, transparent 70%)",
+            filter: "blur(100px)", pointerEvents: "none",
+            animation: "mmDrift 25s ease-in-out infinite",
+            animationDelay: "-8s",
+          }} />
+
+          {/* decorative concentric rings */}
+          <div style={{
+            position: "absolute", top: "8%", right: "5%",
+            width: 280, height: 280,
+            pointerEvents: "none",
+            animation: "mmSpin 60s linear infinite",
+          }}>
+            {[280, 200, 120].map((size, i) => (
+              <div key={size} style={{
+                position: "absolute",
+                top: "50%", left: "50%",
+                width: size, height: size,
+                marginTop: -size / 2, marginLeft: -size / 2,
+                borderRadius: "50%",
+                border: `1px solid rgba(99,102,241,${0.08 - i * 0.02})`,
+              }} />
+            ))}
+          </div>
+
+          {/* top accent bar with glow */}
           <div style={{
             height: 3,
             background: "linear-gradient(90deg, #6366F1 0%, #A78BFA 40%, transparent 100%)",
             position: "relative", zIndex: 2,
+            boxShadow: "0 0 20px rgba(99,102,241,0.25)",
           }} />
 
           {/* nav */}
@@ -118,10 +161,12 @@ export default function HomePage() {
                 Les marchés publics<br />
                 qui vous{" "}
                 <span style={{
-                  background: "linear-gradient(135deg, #6366F1, #A78BFA)",
+                  background: "linear-gradient(90deg, #6366F1, #A78BFA, #6366F1)",
+                  backgroundSize: "200% auto",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
+                  animation: "mmShimmer 4s ease infinite",
                 }}>échappent</span>.
               </h1>
             </div>
@@ -129,7 +174,7 @@ export default function HomePage() {
             {/* rule + subtitle */}
             <div style={{ animation: "mmUp .7s ease .15s both" }}>
               <div style={{
-                width: 40, height: 2,
+                width: 60, height: 2,
                 background: "linear-gradient(90deg, #6366F1, #A78BFA)",
                 marginTop: 32, borderRadius: 1,
               }} />
@@ -145,7 +190,7 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* stats */}
+            {/* stats with gradient numbers */}
             <div className="mm-stats" style={{ animation: "mmUp .7s ease .3s both", marginTop: 48 }}>
               {[
                 { n: "900+", l: "opportunités détectées / mois" },
@@ -156,7 +201,11 @@ export default function HomePage() {
                   <div style={{
                     fontFamily: "'JetBrains Mono', monospace",
                     fontSize: 24, fontWeight: 500,
-                    color: "#6366F1", letterSpacing: "-0.02em",
+                    background: "linear-gradient(135deg, #6366F1, #A78BFA)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    letterSpacing: "-0.02em",
                   }}>{n}</div>
                   <div style={{
                     fontFamily: "'JetBrains Mono', monospace",
@@ -188,19 +237,24 @@ export default function HomePage() {
             }}>secteurs</span>
             <span style={{ color: "#ccc", fontSize: 16 }}>↓</span>
           </div>
-
-          {/* ambient glow */}
-          <div style={{
-            position: "absolute", top: "10%", right: "-10%",
-            width: "50vw", height: "50vw", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(99,102,241,.04) 0%, transparent 70%)",
-            filter: "blur(80px)", pointerEvents: "none",
-          }} />
         </section>
 
         {/* ═══════ SECTORS ═══════ */}
-        <section style={{ background: "#faf9f6", padding: "88px 40px 72px" }}>
-          <div style={{ maxWidth: 1100, margin: "0 auto" }}>
+        <section style={{
+          background: "linear-gradient(180deg, #faf9f6 0%, #f0eee8 100%)",
+          padding: "88px 40px 72px",
+          position: "relative",
+          overflow: "hidden",
+        }}>
+          {/* faint indigo glow at top for continuity */}
+          <div style={{
+            position: "absolute", top: -100, left: "50%", transform: "translateX(-50%)",
+            width: "60vw", height: 200, borderRadius: "50%",
+            background: "radial-gradient(ellipse, rgba(99,102,241,0.03) 0%, transparent 70%)",
+            pointerEvents: "none",
+          }} />
+
+          <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative" }}>
 
             {/* section header */}
             <div className="mm-sh" style={{ marginBottom: 52 }}>
@@ -213,12 +267,17 @@ export default function HomePage() {
                 }}>secteurs</span>
                 <h2 style={{
                   fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "clamp(26px, 3.5vw, 42px)",
+                  fontSize: "clamp(28px, 4vw, 48px)",
                   letterSpacing: "-0.03em", fontWeight: 700,
                   marginTop: 8, color: "#0f0f0f", lineHeight: 1.1,
                 }}>
                   Votre secteur.{" "}<br />
-                  <span style={{ color: "#6366F1" }}>
+                  <span style={{
+                    background: "linear-gradient(135deg, #6366F1, #A78BFA)",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                  }}>
                     Votre avantage.
                   </span>
                 </h2>
@@ -254,7 +313,8 @@ export default function HomePage() {
             <div className="mm-wl" style={{
               marginTop: 48, padding: "18px 28px",
               borderRadius: 10, border: "1px solid #e8e5df",
-              background: "#fff",
+              background: "rgba(255,255,255,0.7)",
+              backdropFilter: "blur(8px)",
             }}>
               <p style={{ fontSize: 13.5, color: "#999" }}>
                 Votre secteur n&apos;est pas encore disponible&nbsp;?
@@ -276,9 +336,15 @@ export default function HomePage() {
 
         {/* ═══════ FOOTER ═══════ */}
         <footer style={{
-          background: "#fff", padding: "28px 40px",
-          borderTop: "1px solid #e8e5df",
+          background: "#faf9f6", padding: "28px 40px",
+          position: "relative",
         }}>
+          {/* gradient accent line */}
+          <div style={{
+            position: "absolute", top: 0, left: 0, right: 0, height: 1,
+            background: "linear-gradient(90deg, transparent, #6366F1, #A78BFA, transparent)",
+            opacity: 0.2,
+          }} />
           <div className="mm-ft" style={{ maxWidth: 1100, margin: "0 auto" }}>
             <div style={{ display: "flex", alignItems: "baseline", gap: 4 }}>
               <span style={{

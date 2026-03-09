@@ -34,29 +34,43 @@ export default function SectorCard({
         display: "flex",
         flexDirection: "column",
         padding: "36px 30px 32px",
-        background: hovered ? colorLight : "#fff",
+        background: hovered ? "rgba(255,255,255,0.95)" : "rgba(255,255,255,0.7)",
+        backdropFilter: "blur(12px)",
         borderRadius: 14,
-        border: `1px solid ${hovered ? color : "#e8e5df"}`,
-        borderTop: `3px solid ${color}`,
+        border: `1px solid ${hovered ? `${color}50` : "rgba(228,225,219,0.6)"}`,
         transition: "all .4s cubic-bezier(.16,1,.3,1)",
         position: "relative",
         overflow: "hidden",
-        transform: hovered ? "translateY(-4px)" : "translateY(0)",
+        transform: hovered ? "translateY(-6px)" : "translateY(0)",
         boxShadow: hovered
-          ? `0 24px 48px -16px ${color}22, 0 0 0 1px ${color}18`
-          : "0 1px 3px rgba(0,0,0,.04)",
+          ? `0 24px 48px -12px ${color}20, 0 0 0 1px ${color}15, inset 0 0 60px -20px ${color}08`
+          : "inset 0 1px 0 0 rgba(255,255,255,0.8), 0 1px 3px rgba(0,0,0,0.04)",
         minHeight: 360,
       }}
     >
+      {/* gradient accent line at top */}
+      <span
+        aria-hidden="true"
+        style={{
+          position: "absolute",
+          top: 0, left: 0,
+          width: hovered ? "70%" : "50%",
+          height: 2,
+          background: `linear-gradient(90deg, ${color}, transparent)`,
+          borderRadius: "0 1px 1px 0",
+          transition: "width .4s cubic-bezier(.16,1,.3,1)",
+        }}
+      />
+
       {/* background number */}
       <span
         aria-hidden="true"
         style={{
           position: "absolute",
-          top: -16, right: -6,
+          top: -24, right: -12,
           fontFamily: "'Space Grotesk', sans-serif",
-          fontSize: 150, fontWeight: 700,
-          color: hovered ? `${color}14` : "rgba(0,0,0,.025)",
+          fontSize: 180, fontWeight: 700,
+          color: hovered ? `${color}10` : "rgba(0,0,0,.02)",
           lineHeight: 1,
           transition: "color .4s ease",
           pointerEvents: "none",
@@ -113,6 +127,14 @@ export default function SectorCard({
           color: hovered ? color : "#0f0f0f",
           transition: "color .3s ease",
         }}>
+          {/* colored dot that appears on hover */}
+          <span style={{
+            width: 4, height: 4, borderRadius: "50%",
+            background: color,
+            opacity: hovered ? 1 : 0,
+            transition: "opacity .3s ease",
+            flexShrink: 0,
+          }} />
           Découvrir
           <span style={{
             display: "inline-block",
