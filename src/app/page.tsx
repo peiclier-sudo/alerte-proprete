@@ -1,5 +1,7 @@
 import { getAllSectors } from "@/lib/sectors";
 import SectorCard from "@/components/SectorCard";
+import ScrollReveal from "@/components/ScrollReveal";
+import StatsCounter from "@/components/StatsCounter";
 
 export const metadata = {
   title: "MonMarché — Marchés publics qualifiés par IA pour les PME",
@@ -14,18 +16,58 @@ export default function HomePage() {
     <>
       <style>{`
         *{margin:0;padding:0;box-sizing:border-box}
-        @keyframes mmUp{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:translateY(0)}}
+
+        /* ── Clip-path reveal (replaces basic fade) ── */
+        @keyframes mmReveal{
+          from{opacity:0;transform:translateY(32px);clip-path:inset(100% 0 0 0)}
+          to{opacity:1;transform:translateY(0);clip-path:inset(0 0 0 0)}
+        }
+
+        /* ── @property animated gradient ── */
+        @keyframes mmGradShift{
+          0%,100%{--grad-a:#6366F1;--grad-b:#A78BFA}
+          33%{--grad-a:#818CF8;--grad-b:#C4B5FD}
+          66%{--grad-a:#4F46E5;--grad-b:#7C3AED}
+        }
+        .mm-grad-text{
+          background:linear-gradient(135deg,var(--grad-a),var(--grad-b));
+          -webkit-background-clip:text;
+          -webkit-text-fill-color:transparent;
+          background-clip:text;
+          animation:mmGradShift 6s ease infinite;
+        }
+        .mm-grad-line{
+          background:linear-gradient(90deg,var(--grad-a),var(--grad-b));
+          animation:mmGradShift 6s ease infinite;
+        }
+
+        /* ── Ambient animations ── */
         @keyframes mmPulse{0%,100%{opacity:1}50%{opacity:.35}}
-        @keyframes mmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
         @keyframes mmDrift{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(30px,-20px) scale(1.05)}66%{transform:translate(-20px,15px) scale(0.95)}}
-        @keyframes mmShimmer{0%{background-position:200% center}100%{background-position:-200% center}}
         @keyframes mmSpin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}
+
+        /* ── Breathing scroll cue ── */
+        @keyframes mmFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+        @keyframes mmBreath{
+          0%{transform:scale(0.8);opacity:0.5}
+          50%{transform:scale(1.6);opacity:0}
+          100%{transform:scale(0.8);opacity:0.5}
+        }
+
+        /* ── Spinning border for cards ── */
+        @keyframes mmBorderSpin{
+          from{--border-angle:0deg}
+          to{--border-angle:360deg}
+        }
+
+        /* ── Layout ── */
         .mm-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
         .mm-stats{display:flex;gap:56px}
         .mm-sh{display:flex;justify-content:space-between;align-items:flex-end}
         .mm-wl{display:flex;justify-content:space-between;align-items:center}
         .mm-ft{display:flex;justify-content:space-between;align-items:center}
         a:focus-visible{outline:2px solid #6366F1;outline-offset:2px}
+
         @media(max-width:860px){
           .mm-grid{grid-template-columns:1fr;max-width:420px;margin:0 auto}
           .mm-stats{flex-wrap:wrap;gap:28px 40px}
@@ -47,11 +89,28 @@ export default function HomePage() {
           position: "relative",
           overflow: "hidden",
         }}>
+          {/* SVG noise filter definition */}
+          <svg style={{ position: "absolute", width: 0, height: 0 }} aria-hidden="true">
+            <filter id="grain">
+              <feTurbulence type="fractalNoise" baseFrequency="0.65" numOctaves="3" stitchTiles="stitch" />
+              <feColorMatrix type="saturate" values="0" />
+            </filter>
+          </svg>
+
+          {/* grain texture overlay */}
+          <div style={{
+            position: "absolute", inset: 0,
+            filter: "url(#grain)",
+            opacity: 0.03,
+            pointerEvents: "none",
+            zIndex: 1,
+          }} />
+
           {/* refined cross-hatch grid */}
           <div style={{
             position: "absolute", inset: 0,
             backgroundImage:
-              "linear-gradient(rgba(99,102,241,.035) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,.035) 1px, transparent 1px)",
+              "linear-gradient(rgba(99,102,241,.03) 1px, transparent 1px), linear-gradient(90deg, rgba(99,102,241,.03) 1px, transparent 1px)",
             backgroundSize: "48px 48px",
             pointerEvents: "none",
           }} />
@@ -60,7 +119,7 @@ export default function HomePage() {
           <div style={{
             position: "absolute", top: "-5%", right: "-8%",
             width: "45vw", height: "45vw", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(99,102,241,.06) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(99,102,241,.07) 0%, transparent 70%)",
             filter: "blur(120px)", pointerEvents: "none",
             animation: "mmDrift 20s ease-in-out infinite",
           }} />
@@ -69,7 +128,7 @@ export default function HomePage() {
           <div style={{
             position: "absolute", bottom: "5%", left: "-12%",
             width: "40vw", height: "40vw", borderRadius: "50%",
-            background: "radial-gradient(circle, rgba(167,139,250,.05) 0%, transparent 70%)",
+            background: "radial-gradient(circle, rgba(167,139,250,.06) 0%, transparent 70%)",
             filter: "blur(100px)", pointerEvents: "none",
             animation: "mmDrift 25s ease-in-out infinite",
             animationDelay: "-8s",
@@ -78,11 +137,11 @@ export default function HomePage() {
           {/* decorative concentric rings */}
           <div style={{
             position: "absolute", top: "8%", right: "5%",
-            width: 280, height: 280,
+            width: 320, height: 320,
             pointerEvents: "none",
             animation: "mmSpin 60s linear infinite",
           }}>
-            {[280, 200, 120].map((size, i) => (
+            {[320, 220, 130].map((size, i) => (
               <div key={size} style={{
                 position: "absolute",
                 top: "50%", left: "50%",
@@ -99,7 +158,7 @@ export default function HomePage() {
             height: 3,
             background: "linear-gradient(90deg, #6366F1 0%, #A78BFA 40%, transparent 100%)",
             position: "relative", zIndex: 2,
-            boxShadow: "0 0 20px rgba(99,102,241,0.25)",
+            boxShadow: "0 0 24px rgba(99,102,241,0.3)",
           }} />
 
           {/* nav */}
@@ -147,8 +206,8 @@ export default function HomePage() {
             maxWidth: 1100, width: "100%", margin: "0 auto",
             position: "relative", zIndex: 2,
           }}>
-            {/* headline */}
-            <div style={{ animation: "mmUp .7s ease both" }}>
+            {/* headline — clip-path reveal */}
+            <div style={{ animation: "mmReveal .8s cubic-bezier(0.16,1,0.3,1) .2s both" }}>
               <h1 style={{
                 fontFamily: "'Space Grotesk', sans-serif",
                 fontSize: "clamp(44px, 7vw, 84px)",
@@ -160,28 +219,20 @@ export default function HomePage() {
               }}>
                 Les marchés publics<br />
                 qui vous{" "}
-                <span style={{
-                  background: "linear-gradient(90deg, #6366F1, #A78BFA, #6366F1)",
-                  backgroundSize: "200% auto",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                  animation: "mmShimmer 4s ease infinite",
-                }}>échappent</span>.
+                <span className="mm-grad-text">échappent</span>.
               </h1>
             </div>
 
-            {/* rule + subtitle */}
-            <div style={{ animation: "mmUp .7s ease .15s both" }}>
-              <div style={{
+            {/* rule + subtitle — staggered reveal */}
+            <div style={{ animation: "mmReveal .8s cubic-bezier(0.16,1,0.3,1) .5s both" }}>
+              <div className="mm-grad-line" style={{
                 width: 60, height: 2,
-                background: "linear-gradient(90deg, #6366F1, #A78BFA)",
                 marginTop: 32, borderRadius: 1,
               }} />
               <p style={{
                 fontSize: "clamp(15px, 1.4vw, 18px)",
                 lineHeight: 1.7,
-                color: "#666",
+                color: "#555",
                 maxWidth: 480,
                 marginTop: 20,
                 fontWeight: 400,
@@ -190,52 +241,38 @@ export default function HomePage() {
               </p>
             </div>
 
-            {/* stats with gradient numbers */}
-            <div className="mm-stats" style={{ animation: "mmUp .7s ease .3s both", marginTop: 48 }}>
-              {[
-                { n: "900+", l: "opportunités détectées / mois" },
-                { n: "2 min", l: "au lieu de 2h de veille" },
-                { n: "1 marché", l: "gagné rembourse 10 ans" },
-              ].map(({ n, l }) => (
-                <div key={l}>
-                  <div style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 24, fontWeight: 500,
-                    background: "linear-gradient(135deg, #6366F1, #A78BFA)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
-                    letterSpacing: "-0.02em",
-                  }}>{n}</div>
-                  <div style={{
-                    fontFamily: "'JetBrains Mono', monospace",
-                    fontSize: 10, color: "#b0b0b0",
-                    letterSpacing: ".05em", marginTop: 6,
-                  }}>{l}</div>
-                </div>
-              ))}
-            </div>
+            {/* animated stats counter */}
+            <StatsCounter />
           </div>
 
-          {/* scroll cue */}
+          {/* scroll cue with breathing ring */}
           <div style={{
             position: "absolute", bottom: 28, left: "50%",
             transform: "translateX(-50%)", zIndex: 2,
             display: "flex", flexDirection: "column",
             alignItems: "center", gap: 8,
-            animation: "mmFloat 3s ease infinite, mmUp .6s ease 1s both",
+            animation: "mmFloat 3s ease infinite, mmReveal .6s ease 1.2s both",
           }}>
-            <div style={{ display: "flex", gap: 6 }}>
-              <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#0EA5E9" }} />
-              <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#10B981" }} />
-              <span style={{ width: 5, height: 5, borderRadius: "50%", background: "#EA580C" }} />
+            {/* breathing ring */}
+            <div style={{ position: "relative", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <div style={{
+                position: "absolute", inset: 0,
+                borderRadius: "50%",
+                border: "1px solid rgba(99,102,241,0.3)",
+                animation: "mmBreath 3s ease infinite",
+              }} />
+              <div style={{ display: "flex", gap: 4 }}>
+                <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#0EA5E9" }} />
+                <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#10B981" }} />
+                <span style={{ width: 4, height: 4, borderRadius: "50%", background: "#EA580C" }} />
+              </div>
             </div>
             <span style={{
               fontFamily: "'JetBrains Mono', monospace",
-              fontSize: 9, color: "#ccc",
+              fontSize: 9, color: "#bbb",
               letterSpacing: ".14em", textTransform: "uppercase",
             }}>secteurs</span>
-            <span style={{ color: "#ccc", fontSize: 16 }}>↓</span>
+            <span style={{ color: "#bbb", fontSize: 14 }}>↓</span>
           </div>
         </section>
 
@@ -250,87 +287,87 @@ export default function HomePage() {
           <div style={{
             position: "absolute", top: -100, left: "50%", transform: "translateX(-50%)",
             width: "60vw", height: 200, borderRadius: "50%",
-            background: "radial-gradient(ellipse, rgba(99,102,241,0.03) 0%, transparent 70%)",
+            background: "radial-gradient(ellipse, rgba(99,102,241,0.04) 0%, transparent 70%)",
             pointerEvents: "none",
           }} />
 
           <div style={{ maxWidth: 1100, margin: "0 auto", position: "relative" }}>
 
-            {/* section header */}
-            <div className="mm-sh" style={{ marginBottom: 52 }}>
-              <div>
-                <span style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: 10, fontWeight: 500,
-                  color: "#b0b0b0", textTransform: "uppercase",
-                  letterSpacing: ".14em",
-                }}>secteurs</span>
-                <h2 style={{
-                  fontFamily: "'Space Grotesk', sans-serif",
-                  fontSize: "clamp(28px, 4vw, 48px)",
-                  letterSpacing: "-0.03em", fontWeight: 700,
-                  marginTop: 8, color: "#0f0f0f", lineHeight: 1.1,
-                }}>
-                  Votre secteur.{" "}<br />
+            {/* section header — scroll reveal */}
+            <ScrollReveal>
+              <div className="mm-sh" style={{ marginBottom: 52 }}>
+                <div>
                   <span style={{
-                    background: "linear-gradient(135deg, #6366F1, #A78BFA)",
-                    WebkitBackgroundClip: "text",
-                    WebkitTextFillColor: "transparent",
-                    backgroundClip: "text",
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 10, fontWeight: 500,
+                    color: "#b0b0b0", textTransform: "uppercase",
+                    letterSpacing: ".14em",
+                  }}>secteurs</span>
+                  <h2 style={{
+                    fontFamily: "'Space Grotesk', sans-serif",
+                    fontSize: "clamp(28px, 4vw, 48px)",
+                    letterSpacing: "-0.03em", fontWeight: 700,
+                    marginTop: 8, color: "#0f0f0f", lineHeight: 1.1,
                   }}>
-                    Votre avantage.
-                  </span>
-                </h2>
+                    Votre secteur.{" "}<br />
+                    <span className="mm-grad-text">
+                      Votre avantage.
+                    </span>
+                  </h2>
+                </div>
+                <p style={{
+                  fontSize: 13.5, color: "#999",
+                  maxWidth: 280, textAlign: "right", lineHeight: 1.65,
+                }}>
+                  Une IA entraînée sur votre métier,
+                  pas un moteur de recherche généraliste.
+                </p>
               </div>
-              <p style={{
-                fontSize: 13.5, color: "#999",
-                maxWidth: 280, textAlign: "right", lineHeight: 1.65,
-              }}>
-                Une IA entraînée sur votre métier,
-                pas un moteur de recherche généraliste.
-              </p>
-            </div>
+            </ScrollReveal>
 
-            {/* cards */}
+            {/* cards — staggered scroll reveal */}
             <div className="mm-grid">
               {sectors.map((sector, i) => (
-                <SectorCard
-                  key={sector.slug}
-                  slug={sector.slug}
-                  name={sector.name}
-                  description={`${sector.seo.description.split(".")[0]}.`}
-                  color={sector.landing.color}
-                  colorLight={sector.landing.colorLight}
-                  colorDark={sector.landing.colorDark}
-                  index={i}
-                  stat={sector.landing.socialProof.stat}
-                  statLabel={sector.landing.socialProof.label}
-                />
+                <ScrollReveal key={sector.slug} delay={i * 120}>
+                  <SectorCard
+                    slug={sector.slug}
+                    name={sector.name}
+                    description={`${sector.seo.description.split(".")[0]}.`}
+                    color={sector.landing.color}
+                    colorLight={sector.landing.colorLight}
+                    colorDark={sector.landing.colorDark}
+                    index={i}
+                    stat={sector.landing.socialProof.stat}
+                    statLabel={sector.landing.socialProof.label}
+                  />
+                </ScrollReveal>
               ))}
             </div>
 
             {/* waitlist */}
-            <div className="mm-wl" style={{
-              marginTop: 48, padding: "18px 28px",
-              borderRadius: 10, border: "1px solid #e8e5df",
-              background: "rgba(255,255,255,0.7)",
-              backdropFilter: "blur(8px)",
-            }}>
-              <p style={{ fontSize: 13.5, color: "#999" }}>
-                Votre secteur n&apos;est pas encore disponible&nbsp;?
-              </p>
-              <a
-                href="mailto:contact@monmarche.fr?subject=Waitlist"
-                style={{
-                  fontFamily: "'JetBrains Mono', monospace",
-                  fontSize: 11, fontWeight: 500,
-                  color: "#6366F1", textDecoration: "none",
-                  display: "flex", alignItems: "center", gap: 6,
-                }}
-              >
-                Rejoindre la liste d&apos;attente <span>→</span>
-              </a>
-            </div>
+            <ScrollReveal delay={400}>
+              <div className="mm-wl" style={{
+                marginTop: 48, padding: "18px 28px",
+                borderRadius: 10, border: "1px solid #e8e5df",
+                background: "rgba(255,255,255,0.7)",
+                backdropFilter: "blur(8px)",
+              }}>
+                <p style={{ fontSize: 13.5, color: "#999" }}>
+                  Votre secteur n&apos;est pas encore disponible&nbsp;?
+                </p>
+                <a
+                  href="mailto:contact@monmarche.fr?subject=Waitlist"
+                  style={{
+                    fontFamily: "'JetBrains Mono', monospace",
+                    fontSize: 11, fontWeight: 500,
+                    color: "#6366F1", textDecoration: "none",
+                    display: "flex", alignItems: "center", gap: 6,
+                  }}
+                >
+                  Rejoindre la liste d&apos;attente <span>→</span>
+                </a>
+              </div>
+            </ScrollReveal>
           </div>
         </section>
 
